@@ -5,8 +5,16 @@
 <hibernate-configuration>
 	<session-factory>
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-		<property name="hibernate.connection.datasource">java:comp/env/jdbc/MyLocalDB</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 		<property name="hibernate.current_session_context_class">thread</property>
+		<property name="hibernate.connection.url">
+			jdbc:mysql://localhost/albums
+		</property>
+		<property name="hibernate.connection.username">
+			root
+		</property>
+		<property name="hibernate.connection.password">
+			root
+		</property>
 	</session-factory>
 </hibernate-configuration>
