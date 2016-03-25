@@ -46,10 +46,16 @@
 				<artifactId>log4j</artifactId>
 				<version>${log4j.version}</version>
 	</dependency>
-	
+	<dependency>
+<groupId>${project.groupId}</groupId>
+<artifactId>ChatApplication-common</artifactId>
+<version>${project.version}</version>
+</dependency>
   </dependencies>
  
 	<modules>
     <module>ChatApplication-data-service</module>
+    <module>ChatApplication-server</module>
+    <module>ChatApplication-common</module>
   </modules>
 </project>
