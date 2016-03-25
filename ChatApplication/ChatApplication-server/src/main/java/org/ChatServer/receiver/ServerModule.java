@@ -12,11 +12,13 @@ import java.nio.channels.SocketChannel;
 import org.ChatApplication.data.DAO.UserDAO;
 import org.apache.log4j.Logger;
 
-import project.HandlerThread;
 
 /**
  * @author Devdatta
  *
+ * Start class of chat application.
+ * Main thread to accept new clients
+ * Internally creates NioServerModule to handle non-blocking IO of accepted clients
  */
 public class ServerModule {
 	private SocketChannel client;
@@ -38,6 +40,7 @@ public class ServerModule {
 			server = ServerSocketChannel.open();
 			SocketAddress portAdd = new InetSocketAddress(port);
 			server.socket().bind(portAdd);
+			startFlag = true;
 			logger.trace("Server bind complete, going to start message handler");
 			handlerThread.init();
 			new Thread(handlerThread).start();
@@ -45,11 +48,10 @@ public class ServerModule {
 			System.out.println("Server ready to accept");
 			while(true){
 				client = server.accept();
-				System.out.println("Accepted: "+client.getRemoteAddress());
+				logger.debug("Accepted: "+client.getRemoteAddress());
 				handlerThread.addClient(client);
-				System.out.println("Client "+client.getRemoteAddress()+" sent to handler");
+				logger.trace("Client "+client.getRemoteAddress()+" sent to handler");
 			}
-			startFlag = true;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
