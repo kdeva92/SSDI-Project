@@ -21,14 +21,15 @@ import org.apache.log4j.Logger;
  *
  *	Class for java nio thread to control non blocking io of accepted clients
  */
-public class NioServerModule {
+public class NioServerModule implements Runnable {
 
 	private final static Logger logger = Logger.getLogger(NioServerModule.class);
-	private NioServerModule module;
+	private static NioServerModule module;
 	Selector s;
 	ClientHolder clientHolder;
-
-	NioServerModule getNioServerModule() throws IOException{
+	private NioServerModule(){super();}
+	
+	static NioServerModule getNioServerModule() throws IOException{
 		if(module != null){
 			return module;
 		}
@@ -67,12 +68,12 @@ public class NioServerModule {
 				logger.error("selector failed to select", e1);
 			}
 			if(readyChannels == 0){
-//				try {
-//					Thread.sleep(300);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				//				try {
+				//					Thread.sleep(300);
+				//				} catch (InterruptedException e) {
+				//					// TODO Auto-generated catch block
+				//					e.printStackTrace();
+				//				}
 				continue;
 			}
 
@@ -88,7 +89,7 @@ public class NioServerModule {
 
 					ObjectInputStream ois = new ObjectInputStream(((SocketChannel)clientObj).socket().getInputStream());
 					String s = (String)ois.readObject();
-					System.out.println("String is: '" + s + "'");
+					//					System.out.println("String is: '" + s + "'");
 
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
