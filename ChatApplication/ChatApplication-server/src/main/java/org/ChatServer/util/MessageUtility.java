@@ -25,7 +25,7 @@ public final class MessageUtility {
 	
 	public static String getMessageReceiver(ByteBuffer message) {
 		byte[] receiver = new byte[SENDER_SIZE];
-		message.ge
+//		message.ge
 		return new String();
 	}
 }
