@@ -5,6 +5,7 @@ package org.ChatApplication.server.receiver;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -87,14 +88,28 @@ public class NioServerModule implements Runnable {
 					if(! (clientObj instanceof SocketChannel))
 						System.err.println("ERROR client object not a socket channel");
 
-					ObjectInputStream ois = new ObjectInputStream(((SocketChannel)clientObj).socket().getInputStream());
-					String s = (String)ois.readObject();
-					//					System.out.println("String is: '" + s + "'");
+					SocketChannel client = (SocketChannel)clientObj;
+					System.out.println("Selected: "+client.getRemoteAddress());
+					ByteBuffer buff = ByteBuffer.allocate(512);
+					int size = client.read(buff);
+					buff.flip();
+					System.out.println("read size: "+size);
+					System.out.println("data buff: "+new String(buff.array()));
+					byte[] arr = new byte[size];
+					System.out.println("buffer data: ");
+					for (int i = 0; i < arr.length; i++) {
+						System.out.print(" "+ (char)buff.get(i));
+					}
+					buff.get(arr,0,arr.length);
+					System.out.println("array data: ");
+					for (int i = 0; i < arr.length; i++) {
+						System.out.print(" "+ arr[i]);
+					}
+					System.out.println("String size" +arr.length+ " data: "+ new String(arr));
+					String str = new String(arr,"UTF-8");
+
 
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
