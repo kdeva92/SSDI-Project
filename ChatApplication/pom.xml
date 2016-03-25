@@ -55,7 +55,7 @@
  
 	<modules>
     <module>ChatApplication-data-service</module>
-    <module>ChatApplication-server</module>
     <module>ChatApplication-common</module>
+    <module>ChatApplication-server</module>
   </modules>
 </project>

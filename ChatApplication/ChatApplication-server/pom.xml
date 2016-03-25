@@ -8,9 +8,9 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <groupId>ChatApplication</groupId>
-  <artifactId>ChatServer</artifactId>
+  <artifactId>ChatApplication-server</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>ChatServer</name>
+  <name>ChatApplication-server</name>
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

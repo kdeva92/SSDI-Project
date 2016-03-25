@@ -1,4 +1,4 @@
-package org.ChatApplication.common;
+package org.ChatApplication.server;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

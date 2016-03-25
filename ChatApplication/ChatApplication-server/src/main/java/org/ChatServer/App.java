@@ -1,4 +1,4 @@
-package org.ChatApplication.common;
+package org.ChatServer;
 
 /**
  * Hello world!
