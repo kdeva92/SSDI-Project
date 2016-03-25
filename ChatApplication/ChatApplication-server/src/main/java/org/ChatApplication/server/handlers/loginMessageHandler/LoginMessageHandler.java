@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.ChatServer.handlers.loginMessageHandler;
+package org.ChatApplication.server.handlers.loginMessageHandler;
 
 /**
  * @author Devdatta

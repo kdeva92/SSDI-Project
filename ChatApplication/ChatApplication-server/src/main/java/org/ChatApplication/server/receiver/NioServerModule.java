@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.ChatServer.receiver;
+package org.ChatApplication.server.receiver;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,7 +11,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.ChatServer.sender.ClientHolder;
+import org.ChatApplication.server.sender.ClientHolder;
 import org.apache.log4j.Logger;
 
 

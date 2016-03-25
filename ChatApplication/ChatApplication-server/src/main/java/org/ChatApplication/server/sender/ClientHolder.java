@@ -1,4 +1,4 @@
-package org.ChatServer.sender;
+package org.ChatApplication.server.sender;
 
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
@@ -6,7 +6,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.ChatServer.receiver.ServerModule;
+import org.ChatApplication.server.receiver.ServerModule;
 import org.apache.log4j.Logger;
 
 

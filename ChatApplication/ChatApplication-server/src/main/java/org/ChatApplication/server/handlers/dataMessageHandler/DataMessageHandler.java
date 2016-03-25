@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.ChatServer.handlers.dataMessageHandler;
+package org.ChatApplication.server.handlers.dataMessageHandler;
 
 /**
  * @author Devdatta

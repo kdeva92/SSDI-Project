@@ -1,4 +1,4 @@
-package org.ChatServer.receiver;
+package org.ChatApplication.server.receiver;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -6,7 +6,6 @@ import java.net.SocketAddress;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
-import org.ChatApplication.data.DAO.UserDAO;
 import org.apache.log4j.Logger;
 
 /**

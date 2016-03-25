@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.ChatServer.util;
+package org.ChatApplication.server.util;
 
 import java.nio.ByteBuffer;
 

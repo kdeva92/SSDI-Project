@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.ChatServer.handlers.messageHandler;
+package org.ChatApplication.server.handlers.messageHandler;
 
 import java.nio.ByteBuffer;
 
@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 public class MessageHandler implements IMessageHandler {
 
 	/* (non-Javadoc)
-	 * @see org.ChatServer.handlers.messageHandler.IMessageHandler#handleMessage(java.nio.ByteBuffer)
+	 * @see org.ChatApplication.server.handlers.messageHandler.IMessageHandler#handleMessage(java.nio.ByteBuffer)
 	 */
 	public int handleMessage(ByteBuffer message) {
 		// TODO Auto-generated method stub

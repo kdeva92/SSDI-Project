@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.ChatServer.handlers.instructionHandler;
+package org.ChatApplication.server.handlers.instructionHandler;
 
 /**
  * @author Devdatta
