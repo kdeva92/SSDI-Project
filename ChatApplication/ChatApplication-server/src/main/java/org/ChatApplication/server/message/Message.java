@@ -1,7 +1,8 @@
+
 /**
  * 
  */
-package org.ChatApplication.server;
+package org.ChatApplication.server.message;
 
 /**
  * @author Devdatta
