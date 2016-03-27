@@ -30,5 +30,7 @@ public class UserRegisterationClient {
 		return 1;
 		
 	}
+	
+	
 
 }
