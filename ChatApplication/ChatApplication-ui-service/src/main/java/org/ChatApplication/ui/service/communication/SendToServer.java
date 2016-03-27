@@ -1,0 +1,20 @@
+package org.ChatApplication.ui.service.communication;
+
+import java.net.Socket;
+
+public class SendToServer implements Runnable {
+Socket sock = null;
+
+public SendToServer(Socket s)
+{
+this.sock = s;	
+}
+	public void run() {
+		// TODO Auto-generated method stub
+		if(sock.isConnected())
+		{
+			// TODO
+		}
+	}
+
+}

@@ -1,0 +1,18 @@
+
+.root {
+     -fx-background-image: url("/org/ChatApplication/ui/service/graphics/bk1.jpg");
+     
+}
+
+.label{
+	-fx-font-size: 12px;
+	-fx-font-weight: bold;
+	-fx-text-fill: #ffffff;
+	
+}
+
+.heading_label{
+	-fx-font-size: 22px;
+	-fx-font-weight: bold;
+	-fx-text-fill: #ffffff;
+}
