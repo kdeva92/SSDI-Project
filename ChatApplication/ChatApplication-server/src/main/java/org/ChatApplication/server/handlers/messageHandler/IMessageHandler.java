@@ -3,7 +3,7 @@
  */
 package org.ChatApplication.server.handlers.messageHandler;
 
-import java.nio.ByteBuffer;
+import org.ChatApplication.server.message.Message;
 
 /**
  * @author Devdatta
@@ -11,6 +11,6 @@ import java.nio.ByteBuffer;
  */
 public interface IMessageHandler {
 
-	public int handleMessage(ByteBuffer message);
+	public void handleMessage(Message message);
 	
 }

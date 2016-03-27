@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
 public class ClientHolder {
 
 	//map of channel to selectionkey - to be used by keep alive check
-	ConcurrentHashMap<SocketChannel,SelectionKey> keyChannelMap;
+	ConcurrentHashMap<String,ClientData> clientMap;
 	static private ClientHolder holder = null;
 	private final static Logger logger = Logger.getLogger(ClientHolder.class);
 
@@ -35,11 +35,11 @@ public class ClientHolder {
 
 	private ClientHolder() {
 		// TODO Auto-generated constructor stub
-		keyChannelMap = new ConcurrentHashMap<SocketChannel,SelectionKey>();
+		clientMap = new ConcurrentHashMap<String,ClientData>();
 	}
 
-	public void addClient(SelectionKey key, SocketChannel channel) {
-		keyChannelMap.put(channel,key);		
+	public void addClient(String clientId,SelectionKey key, SocketChannel channel) {
+		clientMap.put(clientId, new ClientData(channel,key));		
 		if(logger.isTraceEnabled()){
 			try {
 				logger.trace("added client "+channel.getRemoteAddress()+" to holder");
@@ -50,21 +50,21 @@ public class ClientHolder {
 		}
 	}
 
-	public Set<SocketChannel> getAllConnectedClients() {
+	public Set<String> getAllConnectedClients() {
 		if(logger.isTraceEnabled())
-			logger.trace("Holder return "+ keyChannelMap.keySet().size()+" clients");
-		return keyChannelMap.keySet();	
+			logger.trace("Holder return "+ clientMap.keySet().size()+" clients");
+		return clientMap.keySet();	
 	}
 
-	public SelectionKey getSelectionKeyForClient(SocketChannel client) {
+	public ClientData getSelectionKeyForClient(SocketChannel client) {
 		if(logger.isTraceEnabled()){
 			try {
-				logger.trace("returning selection key for "+client.getRemoteAddress()+" as "+keyChannelMap.get(client));
+				logger.trace("returning selection key for "+client.getRemoteAddress()+" as "+clientMap.get(client));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		return keyChannelMap.get(client);	
+		return clientMap.get(client);	
 	}
 }

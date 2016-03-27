@@ -12,24 +12,29 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.ChatApplication.server.handlers.messageHandler.MessageHandler;
+import org.ChatApplication.server.message.Message;
 import org.ChatApplication.server.sender.ClientHolder;
+import org.ChatApplication.server.util.MessageUtility;
 import org.apache.log4j.Logger;
 
 
 /**
  * @author Devdatta
- *
- *
- *	Class for java nio thread to control non blocking io of accepted clients
+ */
+/**
+ *  
+ *  Class for java nio thread to control non blocking io of accepted clients
  */
 public class NioServerModule implements Runnable {
 
+	private static final MessageHandler mssageHandler = MessageHandler.getMessageHandler();
 	private final static Logger logger = Logger.getLogger(NioServerModule.class);
 	private static NioServerModule module;
-	Selector s;
+	Selector selector;
 	ClientHolder clientHolder;
 	private NioServerModule(){super();}
-	
+
 	static NioServerModule getNioServerModule() throws IOException{
 		if(module != null){
 			return module;
@@ -42,28 +47,28 @@ public class NioServerModule implements Runnable {
 	}
 
 	public void init() throws IOException{
-		s = Selector.open();		
+		selector = Selector.open();		
 		clientHolder = ClientHolder.getClientHolder();
 		logger.trace("init complete for NioServerModule");
 	}
 
-	public void addClient(SocketChannel sc) throws IOException {
+	public void addClient(String clientId,SocketChannel sc) throws IOException {
 		sc.configureBlocking(false);
 		//register socketchannel as attribute to reduce lookup time in map
-		SelectionKey key = sc.register(s, SelectionKey.OP_READ, sc);
+		SelectionKey key = sc.register(selector, SelectionKey.OP_READ, sc);
 		//we still need map to keep track and keepalive 
-		clientHolder.addClient(key, sc);
+		clientHolder.addClient(clientId,key, sc);
 		if(logger.isDebugEnabled())
 			logger.debug("selector set for channel: "+sc.getRemoteAddress());
 	}
 
 	public void run() {
 		Set<SelectionKey> keyset;
-		logger.debug("HandlerThread running..");
+		logger.debug("NIO server thread running..");
 		while(true){
 			int readyChannels = 0;
 			try {
-				readyChannels = s.select(100);
+				readyChannels = selector.select(100);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				logger.error("selector failed to select", e1);
@@ -78,7 +83,7 @@ public class NioServerModule implements Runnable {
 				continue;
 			}
 
-			keyset = s.selectedKeys();
+			keyset = selector.selectedKeys();
 			if(logger.isTraceEnabled())
 				logger.trace("Selector selected keys: "+keyset.size());
 			for (Iterator iterator = keyset.iterator(); iterator.hasNext();) {
@@ -90,24 +95,25 @@ public class NioServerModule implements Runnable {
 
 					SocketChannel client = (SocketChannel)clientObj;
 					System.out.println("Selected: "+client.getRemoteAddress());
-					ByteBuffer buff = ByteBuffer.allocate(512);
+					ByteBuffer buff = ByteBuffer.allocate(Message.MAX_MESSAGE_SIZE);
 					int size = client.read(buff);
 					buff.flip();
-					System.out.println("read size: "+size);
-					System.out.println("data buff: "+new String(buff.array()));
-					byte[] arr = new byte[size];
-					System.out.println("buffer data: ");
-					for (int i = 0; i < arr.length; i++) {
-						System.out.print(" "+ (char)buff.get(i));
-					}
-					buff.get(arr,0,arr.length);
-					System.out.println("array data: ");
-					for (int i = 0; i < arr.length; i++) {
-						System.out.print(" "+ arr[i]);
-					}
-					System.out.println("String size" +arr.length+ " data: "+ new String(arr));
-					String str = new String(arr,"UTF-8");
-
+					//System.out.println("read size: "+size);
+					//System.out.println("data buff: "+new String(buff.array()));
+					//byte[] arr = new byte[size];
+					//System.out.println("buffer data: ");
+					//for (int i = 0; i < arr.length; i++) {
+					//	System.out.print(" "+ (char)buff.get(i));
+					//}
+					//buff.get(arr,0,arr.length);
+					//System.out.println("array data: ");
+					//for (int i = 0; i < arr.length; i++) {
+					//	System.out.print(" "+ arr[i]);
+					//}
+					//System.out.println("String size" +arr.length+ " data: "+ new String(arr).trim());
+					//String str = new String(arr,"UTF-8");
+					Message message = MessageUtility.getMessage(buff);
+					mssageHandler.handleMessage(message);
 
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -115,12 +121,12 @@ public class NioServerModule implements Runnable {
 				}
 			}
 			keyset.clear();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			//			try {
+			//				Thread.sleep(1000);
+			//			} catch (InterruptedException e) {
+			//				// TODO Auto-generated catch block
+			//				e.printStackTrace();
+			//			}
 		}
 
 	}

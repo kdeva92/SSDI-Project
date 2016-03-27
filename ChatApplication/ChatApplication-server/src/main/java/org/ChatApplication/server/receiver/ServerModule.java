@@ -44,7 +44,8 @@ public class ServerModule {
 			while (true) {
 				client = server.accept();
 				logger.debug("Accepted: " + client.getRemoteAddress());
-				nioServerModule.addClient(client);
+				//change after login init
+				nioServerModule.addClient("800000000",client);
 				logger.trace("Client " + client.getRemoteAddress() + " sent to handler");
 			}
 		} catch (IOException e) {
