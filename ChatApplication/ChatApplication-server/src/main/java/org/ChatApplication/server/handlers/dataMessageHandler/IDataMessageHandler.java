@@ -9,6 +9,6 @@ import org.ChatApplication.server.handlers.messageHandler.IMessageHandler;
  * @author Devdatta
  *
  */
-public interface IDataMessageHandler  extends IMessageHandler{
+public interface IDataMessageHandler extends IMessageHandler {
 
 }

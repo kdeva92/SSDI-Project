@@ -14,7 +14,7 @@ public class LoginMessageHandler implements ILoginMessageHandler {
 
 	public void handleMessage(Message message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public IMessageHandler getInstance() {

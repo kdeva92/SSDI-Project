@@ -18,11 +18,12 @@ import org.apache.log4j.Logger;
 public class ServerModule {
 	private SocketChannel client;
 	private ServerSocketChannel server;
-	//HandlerThread handlerThread = new HandlerThread();
+	// HandlerThread handlerThread = new HandlerThread();
 	NioServerModule nioServerModule;
 	private boolean startFlag = false;
 	private int port;
 	private final static Logger logger = Logger.getLogger(ServerModule.class);
+	int id = 800000000;
 
 	public void start(int port) throws IllegalStateException, IOException {
 		nioServerModule = NioServerModule.getNioServerModule();
@@ -44,9 +45,11 @@ public class ServerModule {
 			while (true) {
 				client = server.accept();
 				logger.debug("Accepted: " + client.getRemoteAddress());
-				//change after login init
-				nioServerModule.addClient("800000000",client);
+				// change after login init
+				System.out.println("Adding client id " + id);
+				nioServerModule.addClient("" + id++, client);
 				logger.trace("Client " + client.getRemoteAddress() + " sent to handler");
+				System.out.println("Client " + client.getRemoteAddress() + " sent to handler");
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

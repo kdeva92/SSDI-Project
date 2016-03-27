@@ -13,7 +13,7 @@ public class InstructionHandler implements IInstructionHandler {
 
 	public void handleMessage(Message message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

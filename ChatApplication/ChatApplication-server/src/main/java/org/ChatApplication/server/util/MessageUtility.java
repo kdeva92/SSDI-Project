@@ -26,7 +26,9 @@ public final class MessageUtility {
 		Message message = new Message();
 		System.out.println("Reading buffer: "+new String(buffer.array()));
 		//message type
-		switch (buffer.get()) {
+		int i = buffer.get();
+		System.out.println("Messageutil type: "+i);
+		switch (i) {
 		case 1:
 			message.setType(MessageTypeEnum.CHAT_MSG);
 			System.out.println("type = chat message");
@@ -45,7 +47,8 @@ public final class MessageUtility {
 		//set receiver
 		buffer.get(sender, 0, 9);
 		message.setReceiver(new String(sender));
-		System.out.println("receiver type: "+buffer.get());
+		message.setReceiverType(buffer.get());
+		//		System.out.println("receiver type: "+buffer.get());
 		//no of packets
 		message.setNoOfPackets(buffer.getInt());
 		//# of packet
@@ -58,7 +61,7 @@ public final class MessageUtility {
 		//		buffer.get(data, 0, msgSize);
 		//		message.se
 
-		return new Message();
+		return message;
 	}
 
 
