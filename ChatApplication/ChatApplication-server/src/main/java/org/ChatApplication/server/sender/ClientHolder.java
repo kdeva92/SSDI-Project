@@ -3,6 +3,7 @@ package org.ChatApplication.server.sender;
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -59,5 +60,23 @@ public class ClientHolder {
 			logger.trace("returning selection key for " + clientId);
 		}
 		return clientMap.get(clientId);
+	}
+
+	/**
+	 * @param socketChannel
+	 *            Removes passed socket channel from client holder Expensive and
+	 *            to be used only if id of client id is not known
+	 */
+	public void removeClient(SocketChannel socketChannel) {
+		// TODO Auto-generated method stub
+		Set<String> allClients = clientMap.keySet();
+		for (Iterator iterator = allClients.iterator(); iterator.hasNext();) {
+			String clientId = (String) iterator.next();
+			if (clientMap.get(clientId).getSocketChannel().equals(socketChannel)) {
+				clientMap.remove(clientId);
+				break;
+			}
+		}
+
 	}
 }

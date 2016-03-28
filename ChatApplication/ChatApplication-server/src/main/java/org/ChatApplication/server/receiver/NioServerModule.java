@@ -63,6 +63,11 @@ public class NioServerModule implements Runnable {
 		if (logger.isDebugEnabled())
 			logger.debug("selector set for channel: " + sc.getRemoteAddress());
 	}
+	
+	
+	public void removeClient(SocketChannel sc) {
+		clientHolder.removeClient(sc);
+	}
 
 	public void run() {
 		Set<SelectionKey> keyset;
@@ -103,6 +108,7 @@ public class NioServerModule implements Runnable {
 					} catch (IOException e) {
 						System.out.println("Client disconnect.. removing " + client.getRemoteAddress());
 						selectionKey.cancel();
+						continue;
 					}
 					buff.flip();
 					// System.out.println("read size: "+size);
