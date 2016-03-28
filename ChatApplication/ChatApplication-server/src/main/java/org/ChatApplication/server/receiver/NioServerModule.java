@@ -12,10 +12,10 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.ChatApplication.common.util.MessageUtility;
 import org.ChatApplication.server.handlers.messageHandler.MessageHandler;
 import org.ChatApplication.server.message.Message;
 import org.ChatApplication.server.sender.ClientHolder;
-import org.ChatApplication.server.util.MessageUtility;
 import org.apache.log4j.Logger;
 
 /**
