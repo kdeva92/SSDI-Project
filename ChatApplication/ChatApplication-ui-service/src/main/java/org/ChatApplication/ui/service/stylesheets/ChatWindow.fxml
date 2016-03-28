@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.*?>
+
+<HBox id="chatWindow" prefHeight="583.0" prefWidth="760.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <!-- TODO Add Nodes -->
+  <children>
+    <VBox id="contactsBox" prefHeight="583.0" prefWidth="270.0">
+      <children>
+        <VBox id="searchBox" prefHeight="201.0" prefWidth="248.0" spacing="10.0" style="-fx-background-color: #e6e6fa">
+          <children>
+            <Label id="searchHeading" alignment="CENTER" prefHeight="49.0" prefWidth="248.0" text="Search user">
+              <font>
+                <Font name="Arial Bold" size="14.0" />
+              </font>
+            </Label>
+            <TextField id="searchUserT" prefHeight="34.0" prefWidth="247.99990000000253" promptText="Enter Niner ID or Email" />
+            <HBox id="searchControlBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+              <children>
+                <Button id="srchBtn" mnemonicParsing="false" prefHeight="49.0" prefWidth="88.0" text="Search User" />
+                <Button id="addBtn" mnemonicParsing="false" prefHeight="49.0" prefWidth="115.0" text="Add To Contacts" />
+              </children>
+            </HBox>
+          </children>
+        </VBox>
+        <VBox id="ContactsListBox" prefHeight="382.0" prefWidth="248.0" style="-fx-background-color: #778899" VBox.vgrow="ALWAYS" />
+      </children>
+    </VBox>
+    <VBox id="chatBox" alignment="TOP_CENTER" prefHeight="583.0" prefWidth="535.0">
+      <children>
+        <VBox id="ChatTableBox" prefHeight="495.0" prefWidth="513.0" style="-fx-background-color: #add8e6" />
+        <HBox id="msgSendBox" alignment="CENTER" prefHeight="123.99990000000253" prefWidth="513.0" spacing="20.0" VBox.vgrow="ALWAYS">
+          <children>
+            <TextArea id="messageBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="64.0" prefWidth="329.0" wrapText="true" HBox.hgrow="ALWAYS" />
+            <VBox id="msgControlBox" alignment="CENTER" prefHeight="106.0" prefWidth="140.0" spacing="20.0">
+              <children>
+                <Button id="sendBtn" mnemonicParsing="false" text="&gt;" />
+                <Button id="attachBtn" mnemonicParsing="false" text="Attach" />
+              </children>
+            </VBox>
+          </children>
+          <padding>
+            <Insets bottom="30.0" left="10.0" right="10.0" top="10.0" />
+          </padding>
+        </HBox>
+      </children>
+    </VBox>
+  </children>
+</HBox>

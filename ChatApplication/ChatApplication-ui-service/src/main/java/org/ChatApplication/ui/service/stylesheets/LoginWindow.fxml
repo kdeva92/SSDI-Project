@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.*?>
+<?scenebuilder-stylesheet Basic_Style.css?>
+
+<VBox id="LoginContainer" alignment="TOP_CENTER" prefHeight="507.0" prefWidth="888.0000694824193" style="" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <!-- TODO Add Nodes -->
+  <children>
+    <HBox id="HeadingBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+      <children>
+        <Label id="headingLbl" alignment="CENTER" prefHeight="44.0" prefWidth="711.0" text="UNCC Chat Login" textAlignment="CENTER" textFill="WHITE">
+          <font>
+            <Font name="Arial Bold" size="28.0" />
+          </font>
+        </Label>
+      </children>
+      <padding>
+        <Insets />
+      </padding>
+      <VBox.margin>
+        <Insets top="40.0" />
+      </VBox.margin>
+    </HBox>
+    <VBox id="ControlBox" alignment="TOP_CENTER" prefHeight="279.0" prefWidth="538.0">
+      <children>
+        <HBox id="DataEntryBox" alignment="TOP_CENTER" prefHeight="113.0" prefWidth="538.0">
+          <children>
+            <VBox id="LabelBox" alignment="CENTER" prefHeight="133.0" prefWidth="101.0" spacing="10.0">
+              <children>
+                <Label id="userNameL" alignment="CENTER_LEFT" prefWidth="100.0" text="User Name:" textFill="WHITE">
+                  <font>
+                    <Font name="Arial Black" size="14.0" fx:id="x1" />
+                  </font>
+                </Label>
+                <Label id="passwordL" font="$x1" prefWidth="100.0" text="Password:" textFill="WHITE" />
+              </children>
+            </VBox>
+            <VBox id="FieldBox" alignment="CENTER" prefHeight="133.0" prefWidth="163.0" spacing="10.0">
+              <children>
+                <TextField id="userNameF" prefWidth="200.0" />
+                <PasswordField id="passwordF" prefWidth="200.0" />
+              </children>
+            </VBox>
+          </children>
+        </HBox>
+        <HBox id="ButtonBox" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+          <children>
+            <Button id="loginBtn" mnemonicParsing="false" prefHeight="60.0" prefWidth="163.0" text="Login">
+              <font>
+                <Font name="Arial Black" size="12.0" fx:id="x2" />
+              </font>
+            </Button>
+            <Button id="backBtn" font="$x2" mnemonicParsing="false" prefHeight="60.0" prefWidth="163.0" text="Cancel" />
+          </children>
+        </HBox>
+      </children>
+      <padding>
+        <Insets top="10.0" />
+      </padding>
+      <VBox.margin>
+        <Insets top="20.0" />
+      </VBox.margin>
+    </VBox>
+  </children>
+</VBox>
