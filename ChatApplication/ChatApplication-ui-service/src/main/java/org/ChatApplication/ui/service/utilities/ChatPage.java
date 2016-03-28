@@ -2,24 +2,21 @@ package org.ChatApplication.ui.service.utilities;
 
 import java.io.IOException;
 
-
+import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.ChatApplication.ui.service.application.ChatApp;
 import org.ChatApplication.ui.service.connector.SenderController;
 import org.ChatApplication.ui.service.models.Contact;
 import org.ChatApplication.ui.service.models.Message;
-import org.ChatApplication.ui.service.models.ReceiverTypeEnum;
 import org.ChatApplication.ui.service.models.User;
+import org.ChatApplication.ui.service.observer.MessageListener;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -27,7 +24,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -35,7 +31,7 @@ import javafx.scene.layout.VBox;
 public class ChatPage {
 	TextArea messageBox;
 	TextField searchUserField;
-	String user_name;
+	String user_name,id;
 	public TableView<Message> chatString;
 	public TableView<Contact> savedContacts;
 	public ObservableList<Contact> conT;
@@ -44,10 +40,11 @@ public class ChatPage {
 	Thread recieveThread;
 	Button sendButton;
 	String srchUser;
-	User user;
+	
 
-	void loadChatPage(User chatUser) throws IOException {
-		user = chatUser;
+	void loadChatPage(String chatUser,String ninerID) throws IOException {
+		user_name = chatUser;
+		id = ninerID;
 		
 		/*
 		 * UI Elements discovery
@@ -80,12 +77,15 @@ public class ChatPage {
 		public void handle(ActionEvent event) {
 			// TODO Auto-generated method stub
 			SenderController sender = new SenderController();
-			sender.sendChatMessage(user.getNinerID(), "Anonymous", messageBox.getText().trim(), ReceiverTypeEnum.INDIVIDUAL_MSG);
+			sender.sendChatMessage(id, "Anonymous", messageBox.getText().trim(), ReceiverTypeEnum.INDIVIDUAL_MSG);
 			//dataT.add(new Message(user_name, null, messageBox.getText().trim()));
 			
 			//chatString.setItems(dataT);
 			
-			messageBox.clear();
+			//MessageListener listener = MessageListener.getInstance();
+			//listener.updateUI(id, messageBox.getText().trim());
+			messageBox.setText("");
+			messageBox.positionCaret(0);
 
 		}
 	});
@@ -97,8 +97,10 @@ public class ChatPage {
 			// TODO Auto-generated method stub
 			if (event.getCode() == KeyCode.ENTER) {
 				SenderController sender = new SenderController();
-				sender.sendChatMessage(user.getNinerID(), "Anonymous", messageBox.getText().trim(), ReceiverTypeEnum.INDIVIDUAL_MSG);
+				sender.sendChatMessage(id, "Anonymous", messageBox.getText().trim(), ReceiverTypeEnum.INDIVIDUAL_MSG);
 				//dataT.add(new Message(user_name, "Anonymous", messageBox.getText().trim()));
+			//	MessageListener listener = MessageListener.getInstance();
+				//listener.updateUI(id, messageBox.getText().trim());
 				messageBox.setText("");
 				messageBox.positionCaret(0);
 			}

@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import org.ChatApplication.ui.service.application.ChatApp;
 import org.ChatApplication.ui.service.models.User;
+import org.ChatApplication.ui.service.observer.MessageListener;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -115,10 +116,12 @@ try {
 			//System.out.println("Login Status = "+status);
 			 * 
 			 */
-			User sample_user = new User("800934991", "Gaurav Dhamdhere", "gdhamdhe@uncc.edu", "980-3188104", "qwerty");
+			MessageListener list = MessageListener.getInstance();
+			
 			ChatPage chatPage = new ChatPage();
+			list.setUIInstance(chatPage);
 			try {
-				chatPage.loadChatPage(sample_user);
+				chatPage.loadChatPage("Gaurav Dhamdhere","800934991");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

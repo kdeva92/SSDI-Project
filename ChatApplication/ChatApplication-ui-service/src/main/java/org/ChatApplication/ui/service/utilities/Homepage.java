@@ -87,7 +87,14 @@ public class Homepage{
 				// TODO Auto-generated method stub
 				Login login = new Login();
 				login.loadLoginPage();
-				
+			
+//				ChatPage chat = new ChatPage();
+//				try {
+//					chat.loadChatPage("Test_User","800934991");
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 			}
 		});
 		
