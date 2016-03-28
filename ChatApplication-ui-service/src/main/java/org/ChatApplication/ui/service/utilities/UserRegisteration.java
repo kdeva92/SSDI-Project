@@ -1,6 +1,7 @@
 package org.ChatApplication.ui.service.utilities;
 
 import org.ChatApplication.ui.service.application.ChatApp;
+import org.ChatApplication.ui.service.models.User;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -83,17 +84,21 @@ void loadSignupPage(){
 		
 		public void handle(ActionEvent event) {
 			// TODO Auto-generated method stub
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Login Error");
+			
 			UserRegisterationClient urc = new UserRegisterationClient();
 			int status = urc.validate(nameField.getText(),ninerField.getText(),emailField.getText(),contactField.getText(),passwordField.getText(),confirmPasswordField.getText());
 		
 			if(status == 1)	// Registration Success
 			{
+				User user = new User(ninerField.getText(),nameField.getText(),emailField.getText(),contactField.getText(),passwordField.getText());
+				
+				//boolean signUpStatus = komalSignupModule.signup()
+				//if(signUpStatus)
 				Alerts.signUpSuccess();	
 				
 				Login login = new Login();
 				login.loadLoginPage();
+				//else	-	Alert
 			}
 			else
 			{

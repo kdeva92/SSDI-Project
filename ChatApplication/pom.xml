@@ -27,9 +27,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.xerial</groupId>
-			<artifactId>sqlite-jdbc</artifactId>
-			<version>${splite.jdbc.version}</version>
+    		<groupId>com.h2database</groupId>
+   		 	<artifactId>h2</artifactId>
+    		<version>1.4.191</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
