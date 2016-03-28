@@ -14,9 +14,7 @@ package org.ChatApplication.ui.service.utilities;
 import java.io.IOException;
 
 import org.ChatApplication.ui.service.application.ChatApp;
-
-
-
+import org.ChatApplication.ui.service.models.User;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -92,6 +90,7 @@ try {
 
 		public void handle(ActionEvent arg0) {
 			// TODO Auto-generated method stub
+	/*		
 			LoginClient loginClient = new LoginClient();
 			
 			
@@ -99,6 +98,7 @@ try {
 				{
 				ChatPage chatPage = new ChatPage();
 				try {
+					
 					chatPage.loadChatPage(userName_text.getText());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -113,6 +113,16 @@ try {
 				Alerts.loginError();
 				}
 			//System.out.println("Login Status = "+status);
+			 * 
+			 */
+			User sample_user = new User("800934991", "Gaurav Dhamdhere", "gdhamdhe@uncc.edu", "980-3188104", "qwerty");
+			ChatPage chatPage = new ChatPage();
+			try {
+				chatPage.loadChatPage(sample_user);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	});
 	

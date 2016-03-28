@@ -85,15 +85,9 @@ public class Homepage{
 			
 			public void handle(ActionEvent event) {
 				// TODO Auto-generated method stub
-//				Login login = new Login();
-//				login.loadLoginPage();
-				ChatPage chat = new ChatPage();
-				try {
-					chat.loadChatPage("Test_User");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				Login login = new Login();
+				login.loadLoginPage();
+				
 			}
 		});
 		

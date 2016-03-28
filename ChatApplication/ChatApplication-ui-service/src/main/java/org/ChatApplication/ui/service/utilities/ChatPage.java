@@ -2,16 +2,24 @@ package org.ChatApplication.ui.service.utilities;
 
 import java.io.IOException;
 
+
 import org.ChatApplication.ui.service.application.ChatApp;
+import org.ChatApplication.ui.service.connector.SenderController;
+import org.ChatApplication.ui.service.models.Contact;
 import org.ChatApplication.ui.service.models.Message;
+import org.ChatApplication.ui.service.models.ReceiverTypeEnum;
+import org.ChatApplication.ui.service.models.User;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -19,6 +27,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -28,14 +37,17 @@ public class ChatPage {
 	TextField searchUserField;
 	String user_name;
 	public TableView<Message> chatString;
+	public TableView<Contact> savedContacts;
+	public ObservableList<Contact> conT;
 	public ObservableList<Message> dataT;
 	Thread sendThread;
 	Thread recieveThread;
 	Button sendButton;
 	String srchUser;
+	User user;
 
-	void loadChatPage(String username) throws IOException {
-		user_name = username;
+	void loadChatPage(User chatUser) throws IOException {
+		user = chatUser;
 		
 		/*
 		 * UI Elements discovery
@@ -48,8 +60,16 @@ public class ChatPage {
 		VBox msgControlBox = (VBox) msgSendBox.lookup("#msgControlBox");
 		VBox chatTableBox = (VBox) ChatPane.lookup("#ChatTableBox");
 		sendButton = (Button) msgControlBox.lookup("#sendBtn");
-		sendButton.setStyle("-fx-background-color: #000000");
+		sendButton.setStyle("-fx-background-color: #d8bfd8");
+		Button attachBtn = (Button) msgControlBox.lookup("#attachBtn");
+		attachBtn.setStyle("-fx-background-color: #d8bfd8");
 		messageBox = (TextArea)  msgSendBox.lookup("#messageBox");
+		VBox ContactsListBox = (VBox) contactsBox.lookup("#ContactsListBox");
+		
+		
+		//msgSendBox.prefWidthProperty().bind(chatBox.widthProperty().multiply(0.1));
+		//chatTableBox.prefWidthProperty().bind(chatBox.widthProperty().multiply(0.9));
+		
 	
 		/*
 		 * Message Send triggers
@@ -59,11 +79,12 @@ public class ChatPage {
 
 		public void handle(ActionEvent event) {
 			// TODO Auto-generated method stub
-			ChatClient cc = new ChatClient();
-			dataT.add(new Message(user_name, null, messageBox.getText().toString()));
+			SenderController sender = new SenderController();
+			sender.sendChatMessage(user.getNinerID(), "Anonymous", messageBox.getText().trim(), ReceiverTypeEnum.INDIVIDUAL_MSG);
+			//dataT.add(new Message(user_name, null, messageBox.getText().trim()));
 			
-			chatString.setItems(dataT);
-			cc.sendMessage(user_name, messageBox.getText());
+			//chatString.setItems(dataT);
+			
 			messageBox.clear();
 
 		}
@@ -75,8 +96,9 @@ public class ChatPage {
 		public void handle(KeyEvent event) {
 			// TODO Auto-generated method stub
 			if (event.getCode() == KeyCode.ENTER) {
-				ChatClient cc = new ChatClient();
-				dataT.add(new Message(user_name, "Anonymous", messageBox.getText().trim()));
+				SenderController sender = new SenderController();
+				sender.sendChatMessage(user.getNinerID(), "Anonymous", messageBox.getText().trim(), ReceiverTypeEnum.INDIVIDUAL_MSG);
+				//dataT.add(new Message(user_name, "Anonymous", messageBox.getText().trim()));
 				messageBox.setText("");
 				messageBox.positionCaret(0);
 			}
@@ -102,19 +124,28 @@ public class ChatPage {
 		messageCol.setCellValueFactory(new PropertyValueFactory("messageBody"));
 
 		chatString.getColumns().addAll(userCol, messageCol);
-		final ObservableList<Message> data = FXCollections.observableArrayList(new Message("A", "B", "C"));
+		
 
 		chatTableBox.getChildren().add(chatString);
 		chatTableBox.setVgrow(chatString, Priority.ALWAYS);
 		ChatPane.setHgrow(chatBox, Priority.ALWAYS);
-
+		
 	
 		/*
 		 * Contact Area
 		 */
 		
+		savedContacts = new TableView<Contact>();
 		
-
+		TableColumn contactCol = new TableColumn("My Contacts");
+		contactCol.prefWidthProperty().bind(savedContacts.widthProperty().multiply(1));
+		conT = FXCollections.observableArrayList();
+		savedContacts.setItems(conT);
+		contactCol.setCellValueFactory(new PropertyValueFactory("name"));
+		savedContacts.getColumns().add(contactCol);
+		ContactsListBox.getChildren().add(savedContacts);
+		ContactsListBox.setVgrow(savedContacts, Priority.ALWAYS);
+		
 		
 
 		Scene scene = new Scene(ChatPane, ChatApp.stage.getWidth(), ChatApp.stage.getHeight());
