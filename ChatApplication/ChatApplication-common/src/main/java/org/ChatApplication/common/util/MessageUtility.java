@@ -1,8 +1,13 @@
-package org.ChatApplication.ui.service.utilities;
+/**
+ * 
+ */
+package org.ChatApplication.common.util;
 
 import java.nio.ByteBuffer;
 
-import org.ChatApplication.ui.service.models.ReceiverTypeEnum;
+import org.ChatApplication.server.message.Message;
+import org.ChatApplication.server.message.MessageTypeEnum;
+import org.ChatApplication.server.message.ReceiverTypeEnum;
 
 /**
  * @author Devdatta
@@ -13,17 +18,60 @@ public final class MessageUtility {
 	// constants
 	static int SENDER_SIZE = 9;
 	static int RECEIVER_SIZE = 9;
-
-	// private constructor
-	private MessageUtility() {
-	}
-
 	static String c = "u0095";
 	static String end = "u0004";
 	static byte START_OF_MESSAGE = c.getBytes()[0];
 	static byte END_OF_MESSAGE = end.getBytes()[0];
 	static byte CHAT_MESSAGE = (byte) 1;
 	static byte USER_RECEIVER = (byte) 1;
+
+	// private constructor
+	private MessageUtility() {
+	}
+
+	public static Message getMessage(ByteBuffer buffer) {
+
+		Message message = new Message();
+		System.out.println("Reading buffer: " + new String(buffer.array()));
+		// message type
+		int i = buffer.get();
+		System.out.println("Messageutil type: " + i);
+		switch (i) {
+		case 1:
+			message.setType(MessageTypeEnum.CHAT_MSG);
+			System.out.println("type = chat message");
+			break;
+		default:
+			System.out.println("default type");
+			message.setType(null);
+			break;
+		}
+		// empty byte
+		buffer.get();
+		// sender
+		byte[] sender = new byte[9];
+		buffer.get(sender, 0, 9);
+		message.setSender(new String(sender));
+		// set receiver
+		buffer.get(sender, 0, 9);
+		message.setReceiver(new String(sender));
+		message.setReceiverType(buffer.get());
+		// System.out.println("receiver type: "+buffer.get());
+		// no of packets
+		message.setNoOfPackets(buffer.getInt());
+		// # of packet
+		message.setPacketNo(buffer.getInt());
+		// length
+		int msgSize = buffer.getShort();
+		message.setLength(msgSize);
+		message.setData(buffer);
+		// byte[] data = new byte[msgSize];
+		// buffer.get(data, 0, msgSize);
+		// message.se
+
+		return message;
+	}
+
 
 	public static ByteBuffer packMessage(String message, String senderID, String receiverID,
 			ReceiverTypeEnum receiverTypeEnum) {
@@ -107,4 +155,5 @@ public final class MessageUtility {
 		return buffer;
 
 	}
+
 }

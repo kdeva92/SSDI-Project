@@ -1,4 +1,4 @@
-package org.ChatApplication.ui.service.models;
+package org.ChatApplication.server.message;
 
 /**
  * 
