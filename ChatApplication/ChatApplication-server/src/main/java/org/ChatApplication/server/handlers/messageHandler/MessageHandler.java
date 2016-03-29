@@ -44,6 +44,7 @@ public class MessageHandler implements IMessageHandler {
 
 	public void handleMessage(Message message) {
 		// TODO Auto-generated method stub
+		//System.out.println("Messagehandler handling: "+new String(message.getData().array()).trim());
 		messageQueue.add(message);
 	}
 
@@ -75,7 +76,7 @@ public class MessageHandler implements IMessageHandler {
 					}
 					continue;
 				}
-				System.out.println("MessageHandler msg:" + new String(message.getData().array()));
+				//System.out.println("MessageHandler msg:" + new String(message.getData().array()));
 				dataMessageHandler.handleMessage(message);
 
 				// switch (message.getType()) {

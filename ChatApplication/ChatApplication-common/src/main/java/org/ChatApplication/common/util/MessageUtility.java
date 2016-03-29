@@ -3,6 +3,7 @@
  */
 package org.ChatApplication.common.util;
 
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 import org.ChatApplication.server.message.Message;
@@ -29,20 +30,20 @@ public final class MessageUtility {
 	private MessageUtility() {
 	}
 
-	public static Message getMessage(ByteBuffer buffer) {
+	public static Message getMessage(ByteBuffer buffer) throws BufferUnderflowException {
 
 		Message message = new Message();
-		System.out.println("Reading buffer: " + new String(buffer.array()));
+		//System.out.println("Reading buffer: " + new String(buffer.array()));
 		// message type
 		int i = buffer.get();
-		System.out.println("Messageutil type: " + i);
+		//System.out.println("Messageutil type: " + i);
 		switch (i) {
 		case 1:
 			message.setType(MessageTypeEnum.CHAT_MSG);
-			System.out.println("type = chat message");
+			//System.out.println("type = chat message");
 			break;
 		default:
-			System.out.println("default type");
+			//System.out.println("default type");
 			message.setType(null);
 			break;
 		}

@@ -5,6 +5,7 @@ package org.ChatApplication.server.receiver;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -63,8 +64,7 @@ public class NioServerModule implements Runnable {
 		if (logger.isDebugEnabled())
 			logger.debug("selector set for channel: " + sc.getRemoteAddress());
 	}
-	
-	
+
 	public void removeClient(SocketChannel sc) {
 		clientHolder.removeClient(sc);
 	}
@@ -91,6 +91,7 @@ public class NioServerModule implements Runnable {
 			}
 
 			keyset = selector.selectedKeys();
+			System.out.println("total Selected channels: " + keyset);
 			if (logger.isTraceEnabled())
 				logger.trace("Selector selected keys: " + keyset.size());
 			for (Iterator iterator = keyset.iterator(); iterator.hasNext();) {
@@ -105,8 +106,16 @@ public class NioServerModule implements Runnable {
 					ByteBuffer buff = ByteBuffer.allocate(Message.MAX_MESSAGE_SIZE);
 					try {
 						int size = client.read(buff);
+						// end of stream
+						if (size == -1) {
+							removeClient(client);
+							selectionKey.cancel();
+						}
+						//System.out.println("read size: " + size);
 					} catch (IOException e) {
 						System.out.println("Client disconnect.. removing " + client.getRemoteAddress());
+						removeClient(client);
+
 						selectionKey.cancel();
 						continue;
 					}
@@ -127,10 +136,17 @@ public class NioServerModule implements Runnable {
 					// System.out.println("String size" +arr.length+ " data: "+
 					// new String(arr).trim());
 					// String str = new String(arr,"UTF-8");
-					Message message = MessageUtility.getMessage(buff);
+					Message message = null;
+					try {
+						message = MessageUtility.getMessage(buff);
+					} catch (BufferUnderflowException e) {
+						iterator.remove();
+						continue;
+					}
+
 					mssageHandler.handleMessage(message);
 
-				} catch (IOException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
