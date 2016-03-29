@@ -19,33 +19,32 @@ public class SenderController {
 
 	private Socket socket;
 	private DataOutputStream dataOutputStream;
-	private static SenderController instance;
 	private static String HOST = "127.0.0.1";
 	private static int PORT = 1515;
 
 	private Logger logger = Logger.getLogger(getClass());
 
-	public static SenderController getInstance() {
-		if (instance == null) {
-			instance = new SenderController();
+	public SenderController(Socket socket) {
+		this.socket = socket;
+		try {
+			dataOutputStream = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return instance;
 	}
 
 	public void sendChatMessage(String senderId, String receiverId, String chatMessage,
 			ReceiverTypeEnum receiverTypeEnum) {
 		try {
-			initSocket();
-			dataOutputStream = new DataOutputStream(socket.getOutputStream());
-			while (true) {
-				ByteBuffer buff = MessageUtility.packMessage(chatMessage, senderId, receiverId, receiverTypeEnum);
-				byte[] b = buff.array();
-				dataOutputStream.write(b, 0, b.length);
-				System.out.println("written: " + new String(b, "UTF-8"));
-				dataOutputStream.flush();
-				if (logger.isDebugEnabled()) {
-					logger.debug("Sent: " + chatMessage);
-				}
+
+			ByteBuffer buff = MessageUtility.packMessage(chatMessage, senderId, receiverId, receiverTypeEnum);
+			byte[] b = buff.array();
+			dataOutputStream.write(b, 0, b.length);
+			System.out.println("written: " + new String(b, "UTF-8"));
+			dataOutputStream.flush();
+			if (logger.isDebugEnabled()) {
+				logger.debug("Sent: " + chatMessage);
 			}
 
 		} catch (UnknownHostException e) {
@@ -53,12 +52,11 @@ public class SenderController {
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		} finally {
-			try {
-				dataOutputStream.close();
-				socket.close();
-			} catch (IOException e) {
-				logger.error(e.getMessage());
-			}
+			// try {
+			// dataOutputStream.close();
+			// } catch (IOException e) {
+			// logger.error(e.getMessage());
+			// }
 
 		}
 
@@ -74,22 +72,19 @@ public class SenderController {
 	public void logInMessage(String userName, String password, String senderId) {
 		try {
 			dataOutputStream = new DataOutputStream(socket.getOutputStream());
-			while (true) {
-				ByteBuffer buff = MessageUtility.packLogInMessage(userName, password, senderId);
-				byte[] b = buff.array();
+			ByteBuffer buff = MessageUtility.packLogInMessage(userName, password, senderId);
+			byte[] b = buff.array();
 
-				dataOutputStream.write(b, 0, b.length);
+			dataOutputStream.write(b, 0, b.length);
 
-				System.out.println("written: " + new String(b, "UTF-8"));
-				dataOutputStream.flush();
-				System.out.println("Sent: " + userName);
-			}
+			System.out.println("written: " + new String(b, "UTF-8"));
+			dataOutputStream.flush();
+			System.out.println("Sent: " + userName);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		} finally {
 			try {
 				dataOutputStream.close();
-				socket.close();
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 			}
@@ -101,14 +96,10 @@ public class SenderController {
 
 	}
 
-	public void initSocket() throws UnknownHostException, IOException {
-//		HOST = PropertyReader.getInstance().getPropertyValue("host");
-		socket = new Socket(HOST, PORT);
-	}
-
 	public static void main(String[] args) throws UnknownHostException, IOException {
-
-		getInstance().sendChatMessage("hello", "123456789", "123456745", ReceiverTypeEnum.INDIVIDUAL_MSG);
+		Socket socket = new Socket(HOST, PORT);
+		SenderController s = new SenderController(socket);
+		s.sendChatMessage("hello", "123456789", "123456745", ReceiverTypeEnum.INDIVIDUAL_MSG);
 
 	}
 

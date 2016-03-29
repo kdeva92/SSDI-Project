@@ -14,24 +14,15 @@ package org.ChatApplication.ui.service.utilities;
 import java.io.IOException;
 
 import org.ChatApplication.ui.service.application.ChatApp;
-import org.ChatApplication.ui.service.models.User;
-import org.ChatApplication.ui.service.observer.MessageListener;
 
+import antlr.debug.MessageListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 
@@ -90,7 +81,16 @@ try {
 	loginBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 		public void handle(ActionEvent arg0) {
-			// TODO Auto-generated method stub
+			if(userName_text.getText()!="" && password_text.getText()!=""){
+				ChatPage chatPage = new ChatPage();
+				try {
+					chatPage.loadChatPage(userName_text.getText(),"12345");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
 	/*		
 			LoginClient loginClient = new LoginClient();
 			
@@ -116,16 +116,16 @@ try {
 			//System.out.println("Login Status = "+status);
 			 * 
 			 */
-			MessageListener list = MessageListener.getInstance();
-			
-			ChatPage chatPage = new ChatPage();
-			list.setUIInstance(chatPage);
-			try {
-				chatPage.loadChatPage("Gaurav Dhamdhere","800934991");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			MessageListener list = MessageListener.getInstance();
+//			
+//			ChatPage chatPage = new ChatPage();
+//			list.setUIInstance(chatPage);
+//			try {
+//				chatPage.loadChatPage("Gaurav Dhamdhere","800934991");
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 	});
 	
