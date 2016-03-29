@@ -3,7 +3,6 @@
  */
 package org.ChatApplication.server.sender;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -45,7 +44,7 @@ public class ServerSender implements ISender {
 	public void sendMessage(SocketChannel client, Message message) {
 		// TODO Auto-generated method stub
 		messageQueue.add(new MessageData(message, client));
-		System.out.println("ServerSender.. message added to queue");
+		//System.out.println("ServerSender.. message added to queue");
 	}
 
 	/**
@@ -105,7 +104,8 @@ public class ServerSender implements ISender {
 				}
 
 				// executor service
-				//System.out.println("SenderThread.. Message sending to executor service");
+				// System.out.println("SenderThread.. Message sending to
+				// executor service");
 				executorService.execute(new Sender(messageData));
 			}
 
@@ -126,7 +126,8 @@ public class ServerSender implements ISender {
 		public Sender(MessageData messageData) {
 			// TODO Auto-generated constructor stub
 			this.messageData = messageData;
-			//System.out.println("Constructor of Sender - target of exec serv");
+			// System.out.println("Constructor of Sender - target of exec
+			// serv");
 		}
 
 		public void run() {
@@ -136,11 +137,7 @@ public class ServerSender implements ISender {
 				// ObjectOutputStream(messageData.getClient().socket().getOutputStream());
 				System.out.println("Server Sender Sending.. Client: " + messageData.getClient().getRemoteAddress()
 						+ " Written object: " + new String(messageData.getMessage().getData().array()).trim());
-				
-				//DataOutputStream dos = new DataOutputStream(messageData.getClient().socket().getOutputStream());
-				//dos.write(messageData.getMessage().getData().array(), 0, messageData.getMessage().getData().array().length);
-				//messageData.getClient().write(messageData.getMessage().getData());
-			
+				messageData.getClient().write(messageData.getMessage().getData());
 				// oos.writeObject(messageData.message);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

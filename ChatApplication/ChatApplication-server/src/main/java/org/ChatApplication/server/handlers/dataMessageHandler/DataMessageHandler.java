@@ -1,3 +1,4 @@
+
 /**
  * 
  */
@@ -46,7 +47,7 @@ public class DataMessageHandler implements IDataMessageHandler {
 
 	public void handleMessage(Message message) {
 		// TODO Auto-generated method stub
-		//System.out.println("Message: " + new String(message.getData().array()));
+		System.out.println("Message: " + new String(message.getData().array()).trim());
 		messageQueue.add(message);
 	}
 
@@ -79,13 +80,14 @@ public class DataMessageHandler implements IDataMessageHandler {
 				for (Iterator iterator = allClients.iterator(); iterator.hasNext();) {
 					String thisClient = (String) iterator.next();
 					sender.sendMessage(clientHolder.getClientData(thisClient).getSocketChannel(), message);
-					try {
-						System.out.println("DataMessageHandler Broadcast "
-								+ clientHolder.getClientData(thisClient).getSocketChannel().getRemoteAddress());
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					// try {
+					// System.out.println("DataMessageHandler Broadcast "
+					// +
+					// clientHolder.getClientData(thisClient).getSocketChannel().getRemoteAddress());
+					// } catch (IOException e) {
+					// // TODO Auto-generated catch block
+					// e.printStackTrace();
+					// }
 				}
 
 			}
