@@ -3,6 +3,7 @@
  */
 package org.ChatApplication.common.util;
 
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 import org.ChatApplication.server.message.Message;
@@ -18,18 +19,22 @@ public final class MessageUtility {
 	// constants
 	static int SENDER_SIZE = 9;
 	static int RECEIVER_SIZE = 9;
-	static String c = "u0095";
-	static String end = "u0004";
-	static byte START_OF_MESSAGE = c.getBytes()[0];
-	static byte END_OF_MESSAGE = end.getBytes()[0];
+
+	// these constants are moved to Message class and referred from there
+	// static String c = "u0095";
+	// static String end = "u0004";
+	// static byte START_OF_MESSAGE = c.getBytes()[0];
+	// static byte END_OF_MESSAGE = end.getBytes()[0];
+
+	// NEED TO CHANGE
 	static byte CHAT_MESSAGE = (byte) 1;
-	static byte USER_RECEIVER = (byte) 1;
+	// static byte USER_RECEIVER = (byte) 1;
 
 	// private constructor
 	private MessageUtility() {
 	}
 
-	public static Message getMessage(ByteBuffer buffer) {
+	public static Message getMessage(ByteBuffer buffer) throws BufferUnderflowException {
 
 		Message message = new Message();
 		// System.out.println("Reading buffer: " + new String(buffer.array()));
@@ -79,7 +84,7 @@ public final class MessageUtility {
 		ByteBuffer buffer = ByteBuffer.allocate(100);
 
 		// put start of message
-		buffer = buffer.put(START_OF_MESSAGE);
+		buffer = buffer.put(Message.START_OF_MESSAGE);
 		// System.out.println("start of msg");
 		// printBuff(buffer);
 
@@ -113,7 +118,7 @@ public final class MessageUtility {
 
 		// put message
 		buffer.put(message.getBytes(), 0, message.getBytes().length);
-		buffer.put(END_OF_MESSAGE);
+		buffer.put(Message.END_OF_MESSAGE);
 		return buffer;
 	}
 
@@ -124,7 +129,7 @@ public final class MessageUtility {
 		ByteBuffer buffer = ByteBuffer.allocate(100);
 
 		// put start of message
-		buffer = buffer.put(START_OF_MESSAGE);
+		buffer = buffer.put(Message.START_OF_MESSAGE);
 		// System.out.println("start of msg");
 		// printBuff(buffer);
 

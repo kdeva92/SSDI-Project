@@ -18,7 +18,14 @@ import java.nio.ByteBuffer;
 public class Message {
 
 	public static final int MAX_MESSAGE_SIZE = 1400;
-
+	private static int start = 149;
+	private static int end = 004;
+	public static byte START_OF_MESSAGE = (byte)((char) start);
+	public static byte END_OF_MESSAGE = (byte)((char) end);
+	//chat message is from MessageType enum
+	//public static byte CHAT_MESSAGE = (byte) 1;
+	public static byte USER_RECEIVER = (byte) 1;
+	
 	private MessageTypeEnum type;
 	private String sender;
 	private String receiver;

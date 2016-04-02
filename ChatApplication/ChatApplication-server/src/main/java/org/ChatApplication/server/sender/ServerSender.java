@@ -4,7 +4,9 @@
 package org.ChatApplication.server.sender;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -138,6 +140,8 @@ public class ServerSender implements ISender {
 				System.out.println("Server Sender Sending.. Client: " + messageData.getClient().getRemoteAddress()
 						+ " Written object: " + new String(messageData.getMessage().getData().array()).trim());
 				messageData.getClient().write(messageData.getMessage().getData());
+				//messageData.getClient().write((ByteBuffer.wrap(new Date().toString().getBytes())));
+				
 				// oos.writeObject(messageData.message);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

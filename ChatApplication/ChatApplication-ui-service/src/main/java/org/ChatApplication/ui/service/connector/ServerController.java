@@ -19,8 +19,8 @@ public class ServerController {
 	public ServerController() throws UnknownHostException, IOException {
 		socket = new Socket(HOST, PORT);
 		senderController = new SenderController(socket);
-//		receiverController = new RecieverController(socket);
-//		receiverController.run();
+		// receiverController = new RecieverController(socket);
+		// receiverController.run();
 	}
 
 	public SenderController getSenderController() {
