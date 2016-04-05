@@ -20,6 +20,9 @@ public class User {
 	@Column(name = "id")
 	private int id;
 
+	@Column(name = "niner_id", nullable = false, unique = true)
+	private String ninerId;
+
 	@Column(name = "first_name")
 	private String firstName;
 
@@ -28,8 +31,8 @@ public class User {
 
 	@Column(name = "email", unique = true)
 	private String email;
-	
-	@Column(name="password")
+
+	@Column(name = "password")
 	private String password;
 
 	public int getId() {
@@ -70,6 +73,14 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getNinerId() {
+		return ninerId;
+	}
+
+	public void setNinerId(String ninerId) {
+		this.ninerId = ninerId;
 	}
 
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.ChatApplication</groupId>
@@ -17,6 +18,7 @@
 		<mysql.connector.version>5.1.25</mysql.connector.version>
 		<splite.jdbc.version>3.8.11.2</splite.jdbc.version>
 		<log4j.version>1.2.17</log4j.version>
+		<jackson.mapper>1.9.13</jackson.mapper>
 	</properties>
 
 	<dependencies>
@@ -27,14 +29,19 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-    		<groupId>com.h2database</groupId>
-   		 	<artifactId>h2</artifactId>
-    		<version>1.4.191</version>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.191</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>${hibernate.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>${jackson.mapper}</version>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
@@ -46,13 +53,13 @@
 			<artifactId>log4j</artifactId>
 			<version>${log4j.version}</version>
 		</dependency>
-		
+
 	</dependencies>
 
 	<modules>
 		<module>ChatApplication-data-service</module>
 		<module>ChatApplication-common</module>
 		<module>ChatApplication-server</module>
-    <module>ChatApplication-ui-service</module>
-  </modules>
+		<module>ChatApplication-ui-service</module>
+	</modules>
 </project>
