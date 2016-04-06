@@ -11,7 +11,6 @@ import java.nio.ByteBuffer;
 import org.ChatApplication.common.util.MessageUtility;
 import org.ChatApplication.server.message.Message;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
-import org.ChatApplication.ui.service.connector.NonBufferedReceiver;
 
 /**
  * @author Devdatta
@@ -21,14 +20,14 @@ public class NonBufferedReceiverTest {
 
 	public static void showReceivedMessage(Message message) {
 		System.out.println("Message received");
-		System.out.println(new String(message.getData().array()).trim());
+		System.out.println(new String(message.getData()).trim());
 	}
 
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		System.out.println("Trying to connect..");
 		Socket socket = new Socket("127.0.0.1", 1515);
 		System.out.println("Starting receiver");
-	//	NonBufferedReceiver receiver = new NonBufferedReceiver(socket);
+		// NonBufferedReceiver receiver = new NonBufferedReceiver(socket);
 		System.out.println("Started receiver");
 
 		ByteBuffer message = MessageUtility.packMessage("DemoMessage Hi ".getBytes(), "123456789", "987654321",

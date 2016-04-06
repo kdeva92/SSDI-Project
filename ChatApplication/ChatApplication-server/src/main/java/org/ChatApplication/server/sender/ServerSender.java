@@ -138,8 +138,8 @@ public class ServerSender implements ISender {
 				// ObjectOutputStream oos = new
 				// ObjectOutputStream(messageData.getClient().socket().getOutputStream());
 				System.out.println("Server Sender Sending.. Client: " + messageData.getClient().getRemoteAddress()
-						+ " Written object: " + new String(messageData.getMessage().getData().array()).trim());
-				messageData.getClient().write(messageData.getMessage().getData());
+						+ " Written object: " + new String(messageData.getMessage().getData()).trim());
+				messageData.getClient().write(ByteBuffer.wrap(messageData.getMessage().getData()));
 				//messageData.getClient().write((ByteBuffer.wrap(new Date().toString().getBytes())));
 				
 				// oos.writeObject(messageData.message);

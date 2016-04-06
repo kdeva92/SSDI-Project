@@ -69,10 +69,9 @@ public final class MessageUtility {
 		// length
 		int msgSize = buffer.getShort();
 		message.setLength(msgSize);
-		message.setData(buffer);
-		// byte[] data = new byte[msgSize];
-		// buffer.get(data, 0, msgSize);
-		// message.se
+		byte[] data = new byte[msgSize];
+		buffer.get(data, 0, msgSize);
+		message.setData(data);
 
 		return message;
 	}

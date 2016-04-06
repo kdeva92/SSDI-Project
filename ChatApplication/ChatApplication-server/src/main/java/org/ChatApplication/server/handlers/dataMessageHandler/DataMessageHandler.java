@@ -47,7 +47,7 @@ public class DataMessageHandler implements IDataMessageHandler {
 
 	public void handleMessage(Message message) {
 		// TODO Auto-generated method stub
-		System.out.println("Message: " + new String(message.getData().array()).trim());
+		System.out.println("Message: " + new String(message.getData()).trim());
 		messageQueue.add(message);
 	}
 

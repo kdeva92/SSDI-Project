@@ -59,7 +59,7 @@ public class NonBufferedReceiver {
 					
 					
 							try {
-								User recd_user = ByteToEntityConverter.getInstance().getUser(message.getData().array());
+								User recd_user = ByteToEntityConverter.getInstance().getUser(message.getData());
 								messageListener.updateLogin(recd_user);
 							} catch (JsonParseException e) {
 								// TODO Auto-generated catch block
