@@ -77,7 +77,7 @@ public final class MessageUtility {
 		return message;
 	}
 
-	public static ByteBuffer packMessage(String message, String senderID, String receiverID,
+	public static ByteBuffer packMessage(byte[] message, String senderID, String receiverID,
 			ReceiverTypeEnum receiverTypeEnum) {
 		// add loop here to return multiple buffers of packets
 
@@ -114,10 +114,10 @@ public final class MessageUtility {
 		buffer.putInt(1);
 
 		// put length of message
-		buffer.putShort((short) (message.length()));
+		buffer.putShort((short) (message.length));
 
 		// put message
-		buffer.put(message.getBytes(), 0, message.getBytes().length);
+		buffer.put(message, 0, message.length);
 		buffer.put(Message.END_OF_MESSAGE);
 		return buffer;
 	}

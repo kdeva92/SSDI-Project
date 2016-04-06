@@ -97,7 +97,7 @@ void loadSignupPage(){
 				Alerts.signUpSuccess();	
 				
 				Login login = new Login();
-				login.loadLoginPage();
+				//login.loadLoginPage();
 				//else	-	Alert
 			}
 			else
@@ -119,7 +119,7 @@ void loadSignupPage(){
 			confirmPasswordField.clear();
 			
 			Homepage homepage = new Homepage();
-			homepage.loadHomepage();
+		//	homepage.loadHomepage();
 		}
 	});
 	

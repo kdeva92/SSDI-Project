@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.*?>
+
+<VBox id="signUpBox" alignment="TOP_CENTER" prefHeight="517.0" prefWidth="740.0" spacing="0.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <!-- TODO Add Nodes -->
+  <children>
+    <HBox id="infoEntryBox" alignment="CENTER_LEFT" prefHeight="270.0" prefWidth="700.0" style="" VBox.vgrow="NEVER">
+      <children>
+        <VBox id="fieldsBox" alignment="CENTER_RIGHT" prefHeight="315.0" prefWidth="431.0" spacing="20.0" style="">
+          <children>
+            <TextField id="idField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="300.0" promptText="Niner ID" />
+            <TextField id="nameField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="300.0" promptText="Name" />
+            <TextField id="emailField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="300.0" promptText="UNCC Email" />
+            <TextField id="contactField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="300.0" promptText="Contact #" />
+            <PasswordField id="passwd1Field" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="300.0" promptText="Password" />
+            <PasswordField id="passwd2Field" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="300.0" promptText="Confirm Password" />
+          </children>
+          <padding>
+            <Insets right="10.0" />
+          </padding>
+          <HBox.margin>
+            <Insets />
+          </HBox.margin>
+        </VBox>
+        <VBox id="instructionBox" alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="23.0" style="" HBox.hgrow="ALWAYS">
+          <children>
+            <Label text="*" textFill="RED" />
+            <Label text="*" textFill="RED" />
+            <Label text="*" textFill="RED" />
+            <Label text="" textFill="RED" />
+            <Label text="*" textFill="RED" />
+            <Label text="*" textFill="RED" />
+          </children>
+          <padding>
+            <Insets left="10.0" />
+          </padding>
+        </VBox>
+      </children>
+    </HBox>
+    <HBox id="signUpControlBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="63.0" prefWidth="-1.0" spacing="20.0" style="">
+      <children>
+        <Button id="signUpBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Sign Up" />
+        <Button id="cancelBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Cancel" />
+      </children>
+    </HBox>
+    <VBox id="signUpInstructions" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="141.0" prefWidth="700.0" spacing="4.0" style="" VBox.vgrow="ALWAYS">
+      <children>
+        <Label id="heading" text="Sign Up Instructions" textFill="WHITE">
+          <font>
+            <Font name="System Bold Italic" size="17.0" />
+          </font>
+        </Label>
+        <HBox id="instructionHBox" prefHeight="100.0" prefWidth="200.0">
+          <children>
+            <VBox id="instVBox1" prefHeight="104.0" prefWidth="340.0" spacing="5.0">
+              <children>
+                <Label text="&gt; Fields marked with Asteriks (*) are compulsory" textFill="WHITE" />
+                <Label text="&gt; Contact # must be of 8 digits and must contain only numeric entries" textFill="WHITE" wrapText="true" />
+                <Label text="&gt; Email ID must end with &quot;@uncc.edu&quot;" textFill="WHITE" />
+                <Label text="&gt; Niner ID must start with '800' and have 9 digits" textFill="WHITE" wrapText="true" />
+              </children>
+              <padding>
+                <Insets left="5.0" right="5.0" fx:id="x1" />
+              </padding>
+            </VBox>
+            <VBox id="instVBox2" padding="$x1" prefHeight="99.0" prefWidth="340.0" spacing="5.0">
+              <children>
+                <Label text="Password Restrictions" textFill="WHITE">
+                  <font>
+                    <Font name="System Bold" size="12.0" />
+                  </font>
+                </Label>
+                <Label text="&gt; Must contain one digit from 0-9" textFill="WHITE" />
+                <Label text="&gt; Must contain one lowercase &amp; one uppercase character" textFill="WHITE" />
+                <Label text="&gt; Must contain one special symbol out of @ # $" textFill="WHITE" />
+                <Label text="&gt; Password Length : Minimum 8, Maximum 20" textFill="WHITE" />
+              </children>
+            </VBox>
+          </children>
+        </HBox>
+      </children>
+      <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      </padding>
+    </VBox>
+  </children>
+  <padding>
+    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+  </padding>
+</VBox>

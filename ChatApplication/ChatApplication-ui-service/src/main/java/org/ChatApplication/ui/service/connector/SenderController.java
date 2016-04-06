@@ -6,7 +6,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
+import org.ChatApplication.common.converter.EntityToByteConverter;
 import org.ChatApplication.common.util.MessageUtility;
+import org.ChatApplication.data.entity.User;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.apache.log4j.Logger;
 
@@ -38,7 +40,7 @@ public class SenderController {
 			ReceiverTypeEnum receiverTypeEnum) {
 		try {
 
-			ByteBuffer buff = MessageUtility.packMessage(chatMessage, senderId, receiverId, receiverTypeEnum);
+			ByteBuffer buff = MessageUtility.packMessage(chatMessage.getBytes(), senderId, receiverId, receiverTypeEnum);
 			byte[] b = buff.array();
 			dataOutputStream.write(b, 0, b.length);
 			System.out.println("written: " + new String(b, "UTF-8"));
@@ -69,17 +71,18 @@ public class SenderController {
 	 * @param senderId
 	 */
 
-	public void logInMessage(String userName, String password, String senderId) {
+	public void logInMessage(User user) {
 		try {
+			byte[] user_byte = EntityToByteConverter.getInstance().getBytes(user);
 			dataOutputStream = new DataOutputStream(socket.getOutputStream());
-			ByteBuffer buff = MessageUtility.packLogInMessage(userName, password, senderId);
+			ByteBuffer buff = MessageUtility.packMessage(user_byte, "000000000", "000000000", ReceiverTypeEnum.INDIVIDUAL_MSG);
 			byte[] b = buff.array();
 
 			dataOutputStream.write(b, 0, b.length);
 
 			System.out.println("written: " + new String(b, "UTF-8"));
 			dataOutputStream.flush();
-			System.out.println("Sent: " + userName);
+			//System.out.println("Sent: " + userName);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		} finally {

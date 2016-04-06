@@ -28,10 +28,10 @@ public class NonBufferedReceiverTest {
 		System.out.println("Trying to connect..");
 		Socket socket = new Socket("127.0.0.1", 1515);
 		System.out.println("Starting receiver");
-		NonBufferedReceiver receiver = new NonBufferedReceiver(socket);
+	//	NonBufferedReceiver receiver = new NonBufferedReceiver(socket);
 		System.out.println("Started receiver");
 
-		ByteBuffer message = MessageUtility.packMessage("DemoMessage Hi ", "123456789", "987654321",
+		ByteBuffer message = MessageUtility.packMessage("DemoMessage Hi ".getBytes(), "123456789", "987654321",
 				ReceiverTypeEnum.INDIVIDUAL_MSG);
 		System.out.println("Message before send: " + new String(message.array()).trim());
 		socket.getOutputStream().write(message.array());

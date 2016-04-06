@@ -29,12 +29,12 @@ import javafx.scene.layout.VBox;
 public class Login {
 	PasswordField password_text;
 	TextField userName_text;
+	public Presenter presenter;
 	
 	
-	
-	public void loadLoginPage()
+	public void loadLoginPage(Presenter present)
 	{
-		
+		this.presenter = present;
 VBox loginContainer = null;
 try {
 	loginContainer = (VBox) FXMLLoader.load(Login.class.getResource("/org/ChatApplication/ui/service/stylesheets/LoginWindow.fxml"));
@@ -81,51 +81,7 @@ try {
 	loginBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 		public void handle(ActionEvent arg0) {
-			if(userName_text.getText()!="" && password_text.getText()!=""){
-				ChatPage chatPage = new ChatPage();
-				try {
-					chatPage.loadChatPage(userName_text.getText(),"12345");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-	/*		
-			LoginClient loginClient = new LoginClient();
-			
-			
-			if(loginClient.authenticate(userName_text.getText(),password_text.getText() ))
-				{
-				ChatPage chatPage = new ChatPage();
-				try {
-					
-					chatPage.loadChatPage(userName_text.getText());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				}
-			else
-				{
-				userName_text.clear();
-				password_text.clear();
-				
-				Alerts.loginError();
-				}
-			//System.out.println("Login Status = "+status);
-			 * 
-			 */
-//			MessageListener list = MessageListener.getInstance();
-//			
-//			ChatPage chatPage = new ChatPage();
-//			list.setUIInstance(chatPage);
-//			try {
-//				chatPage.loadChatPage("Gaurav Dhamdhere","800934991");
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			presenter.sendLoginMessage(userName_text.getText().trim(), password_text.getText().trim());
 		}
 	});
 	

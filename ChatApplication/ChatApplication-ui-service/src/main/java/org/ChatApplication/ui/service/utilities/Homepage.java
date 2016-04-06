@@ -28,9 +28,10 @@ import javafx.scene.layout.VBox;
 
 
 public class Homepage{
-
-	public void loadHomepage()
+public Presenter presenter;
+	public void loadHomepage(Presenter present)
 	{
+		this.presenter = present;
 		Thread msgReciever = new Thread();
 		msgReciever.start();
 		
@@ -85,16 +86,7 @@ public class Homepage{
 			
 			public void handle(ActionEvent event) {
 				// TODO Auto-generated method stub
-				Login login = new Login();
-				login.loadLoginPage();
-			
-//				ChatPage chat = new ChatPage();
-//				try {
-//					chat.loadChatPage("Test_User","800934991");
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				presenter.loadLoginPage();
 			}
 		});
 		

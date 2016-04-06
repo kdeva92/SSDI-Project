@@ -1,31 +1,24 @@
 package org.ChatApplication.ui.service.observer;
 
+import java.io.IOException;
+
+import org.ChatApplication.data.entity.User;
 import org.ChatApplication.ui.service.models.Message;
 import org.ChatApplication.ui.service.utilities.ChatPage;
+import org.ChatApplication.ui.service.utilities.Presenter;
 
 public class MessageListener {
 	
-	static MessageListener instance;
-	ChatPage userInterface;
-	
-	public static MessageListener getInstance()
+	public Presenter presenter;
+	public MessageListener(Presenter present)
 	{
-		if(instance==null)
-		{
-			instance = new MessageListener();
-		}
+		this.presenter = present;
+	}
+	
+	public void updateLogin(User user) throws IOException
+	{
+		this.presenter.handleLogin(user);
 		
-		return instance;
-	}
-	
-	public void setUIInstance(ChatPage chatPage){
-		this.userInterface = chatPage;
-	}
-	
-	public void updateUI(String reciever, String message)
-	{
-		if(this.userInterface!=null)
-			this.userInterface.dataT.add(new Message(reciever, "Anonymous", message));
 	}
 
 }

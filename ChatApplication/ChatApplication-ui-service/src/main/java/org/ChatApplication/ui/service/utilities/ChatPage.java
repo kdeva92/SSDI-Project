@@ -29,6 +29,7 @@ import javafx.scene.layout.VBox;
 
 public class ChatPage {
 	@SuppressWarnings("restriction")
+	public Presenter presenter;
 	TextArea messageBox;
 	TextField searchUserField;
 	String user_name, id;
@@ -44,11 +45,9 @@ public class ChatPage {
 	private SenderController senderController;
 
 	@SuppressWarnings("restriction")
-	void loadChatPage(String chatUser, String ninerID) throws IOException {
-		serverController = new ServerController();
-		senderController = serverController.getSenderController();
-		user_name = chatUser;
-		id = ninerID;
+	void loadChatPage(Presenter present) throws IOException {
+		this.presenter = present;
+		
 
 		/*
 		 * UI Elements discovery
