@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.*?>
+
+<VBox id="groupContainer" alignment="TOP_CENTER" prefHeight="545.0" prefWidth="794.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <!-- TODO Add Nodes -->
+  <children>
+    <HBox id="headingBox" alignment="CENTER" prefHeight="79.0" prefWidth="794.0" style="-fx-background-color: #f0f8ff">
+      <children>
+        <Label text="Create Group">
+          <font>
+            <Font name="Bookman Old Style Bold Italic" size="22.0" />
+          </font>
+        </Label>
+      </children>
+    </HBox>
+    <HBox id="controlBox" prefHeight="362.0" prefWidth="794.0">
+      <children>
+        <VBox id="selectBox" prefHeight="362.0" prefWidth="397.0" spacing="10.0">
+          <children>
+            <TextField id="groupNameField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="250.0" promptText="Group Name" />
+            <ComboBox id="memberPicker" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="250.0" promptText="Select Members">
+              <items>
+                <FXCollections fx:factory="observableArrayList">
+                  <String fx:value="Item 1" />
+                  <String fx:value="Item 2" />
+                  <String fx:value="Item 3" />
+                </FXCollections>
+              </items>
+            </ComboBox>
+          </children>
+          <padding>
+            <Insets bottom="10.0" left="20.0" right="10.0" top="20.0" />
+          </padding>
+        </VBox>
+        <VBox id="selectResultBox" prefHeight="362.0" prefWidth="397.0" style="-fx-background-color: #60f8ff" />
+      </children>
+    </HBox>
+    <HBox id="buttonBox" alignment="TOP_CENTER" prefHeight="71.0" prefWidth="794.0" spacing="20.0" VBox.vgrow="ALWAYS">
+      <children>
+        <Button id="createBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Create">
+          <font>
+            <Font name="System Bold" size="15.0" fx:id="x1" />
+          </font>
+        </Button>
+        <Button id="cancelBtn" font="$x1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Cancel" />
+      </children>
+      <padding>
+        <Insets top="20.0" />
+      </padding>
+    </HBox>
+  </children>
+</VBox>

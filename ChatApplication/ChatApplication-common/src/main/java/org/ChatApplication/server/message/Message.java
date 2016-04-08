@@ -4,8 +4,6 @@
  */
 package org.ChatApplication.server.message;
 
-import java.nio.ByteBuffer;
-
 /**
  * @author Devdatta
  *  
@@ -20,12 +18,12 @@ public class Message {
 	public static final int MAX_MESSAGE_SIZE = 1400;
 	private static int start = 149;
 	private static int end = 004;
-	public static byte START_OF_MESSAGE = (byte)((char) start);
-	public static byte END_OF_MESSAGE = (byte)((char) end);
-	//chat message is from MessageType enum
-	//public static byte CHAT_MESSAGE = (byte) 1;
+	public static byte START_OF_MESSAGE = (byte) ((char) start);
+	public static byte END_OF_MESSAGE = (byte) ((char) end);
+	// chat message is from MessageType enum
+	// public static byte CHAT_MESSAGE = (byte) 1;
 	public static byte USER_RECEIVER = (byte) 1;
-	
+
 	private MessageTypeEnum type;
 	private String sender;
 	private String receiver;
@@ -33,7 +31,7 @@ public class Message {
 	private int noOfPackets;
 	private int packetNo;
 	private int length;
-	private ByteBuffer data;
+	private byte[] data;
 	private int receiverType;
 
 	public int getReceiverType() {
@@ -100,11 +98,11 @@ public class Message {
 		this.length = length;
 	}
 
-	public ByteBuffer getData() {
+	public byte[] getData() {
 		return data;
 	}
 
-	public void setData(ByteBuffer data) {
+	public void setData(byte[] data) {
 		this.data = data;
 	}
 

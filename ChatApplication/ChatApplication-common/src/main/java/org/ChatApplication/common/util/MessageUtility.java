@@ -69,15 +69,14 @@ public final class MessageUtility {
 		// length
 		int msgSize = buffer.getShort();
 		message.setLength(msgSize);
-		message.setData(buffer);
-		// byte[] data = new byte[msgSize];
-		// buffer.get(data, 0, msgSize);
-		// message.se
+		byte[] data = new byte[msgSize];
+		buffer.get(data, 0, msgSize);
+		message.setData(data);
 
 		return message;
 	}
 
-	public static ByteBuffer packMessage(String message, String senderID, String receiverID,
+	public static ByteBuffer packMessage(byte[] message, String senderID, String receiverID,
 			ReceiverTypeEnum receiverTypeEnum) {
 		// add loop here to return multiple buffers of packets
 
@@ -114,10 +113,10 @@ public final class MessageUtility {
 		buffer.putInt(1);
 
 		// put length of message
-		buffer.putShort((short) (message.length()));
+		buffer.putShort((short) (message.length));
 
 		// put message
-		buffer.put(message.getBytes(), 0, message.getBytes().length);
+		buffer.put(message, 0, message.length);
 		buffer.put(Message.END_OF_MESSAGE);
 		return buffer;
 	}
