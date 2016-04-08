@@ -38,8 +38,6 @@ public class AppTest extends TestCase {
 		assertTrue(true);
 		createUserTest();
 	}
-	
-
 
 	public void createUserTest() {
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -69,6 +67,5 @@ public class AppTest extends TestCase {
 		}
 		assertTrue(true);
 	}
-	
-	
+
 }
