@@ -6,6 +6,8 @@ import java.net.SocketAddress;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
+import org.ChatApplication.server.handlers.loginMessageHandler.ILoginMessageHandler;
+import org.ChatApplication.server.handlers.loginMessageHandler.LoginMessageHandler;
 import org.apache.log4j.Logger;
 
 /**
@@ -24,6 +26,7 @@ public class ServerModule {
 	private int port;
 	private final static Logger logger = Logger.getLogger(ServerModule.class);
 	int id = 800000000;
+	
 
 	public void start(int port) throws IllegalStateException, IOException {
 		nioServerModule = NioServerModule.getNioServerModule();
@@ -45,9 +48,9 @@ public class ServerModule {
 			while (true) {
 				client = server.accept();
 				logger.debug("Accepted: " + client.getRemoteAddress());
-				// change after login init
-				System.out.println("Adding client id " + id);
-				nioServerModule.addClient("" + id++, client);
+				// change after login init	
+				System.out.println("Adding client " + client.getRemoteAddress());
+				nioServerModule.addClient(client);
 				logger.trace("Client " + client.getRemoteAddress() + " sent to handler");
 				System.out.println("Client " + client.getRemoteAddress() + " sent to handler");
 			}

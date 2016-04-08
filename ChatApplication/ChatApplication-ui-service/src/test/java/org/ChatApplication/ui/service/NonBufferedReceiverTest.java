@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 
 import org.ChatApplication.common.util.MessageUtility;
 import org.ChatApplication.server.message.Message;
+import org.ChatApplication.server.message.MessageTypeEnum;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
 
 /**
@@ -31,7 +32,7 @@ public class NonBufferedReceiverTest {
 		System.out.println("Started receiver");
 
 		ByteBuffer message = MessageUtility.packMessage("DemoMessage Hi ".getBytes(), "123456789", "987654321",
-				ReceiverTypeEnum.INDIVIDUAL_MSG);
+				ReceiverTypeEnum.INDIVIDUAL_MSG,MessageTypeEnum.CHAT_MSG);
 		System.out.println("Message before send: " + new String(message.array()).trim());
 		socket.getOutputStream().write(message.array());
 		socket.getOutputStream().flush();

@@ -36,6 +36,7 @@ public class UserDAO {
 		logger.info("Leaving createUser");
 	}
 
+
 	public User getUser(String userName, String password) throws HibernateException, Exception {
 		logger.info("Entering getUser");
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
