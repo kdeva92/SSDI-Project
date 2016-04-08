@@ -36,12 +36,13 @@ public class UserDAO {
 		logger.info("Leaving createUser");
 	}
 
-	public User getUser(String email, String password) throws HibernateException, Exception {
+	public User getUser(String userName, String password) throws HibernateException, Exception {
 		logger.info("Entering getUser");
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 		Query query = sessionFactory.getCurrentSession()
-				.createQuery("from User where email = :email and password =: password");
-		query.setParameter("email", email);
+				.createQuery("from User where email = :email or ninerId=:ninerId and password =: password");
+		query.setParameter("email", userName);
+		query.setParameter("ninerId", userName);
 		query.setParameter("password", password);
 		List<User> users = query.list();
 		if (users == null || users.size() <= 0) {
