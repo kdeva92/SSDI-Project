@@ -3,6 +3,7 @@
  */
 package org.ChatApplication.server.receiver;
 
+import java.awt.TrayIcon.MessageType;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.BufferUnderflowException;
@@ -165,12 +166,14 @@ public class NioServerModule implements Runnable {
 							if(user == null){
 								selectionKey.cancel();
 								client.close();
+								continue;
 							}
 							//for valid login request
 							addClientToClientHolder(user.getNinerId(), selectionKey, client);
-							message.setData(EntityToByteConverter.getInstance().getBytes(user));
+							message.setData(MessageUtility.packMessage(EntityToByteConverter.getInstance().getBytes(user), message.getSender(), message.getReceiver(), ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.LOG_IN_MSG).array());
 							ServerSender.getSender().sendMessage(client, message);
 							System.out.println("Login successful user added to client holder");
+							continue;
 						}
 					} catch (BufferUnderflowException e) {
 						iterator.remove();

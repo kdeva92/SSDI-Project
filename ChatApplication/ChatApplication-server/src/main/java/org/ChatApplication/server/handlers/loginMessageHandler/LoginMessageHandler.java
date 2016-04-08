@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.ChatApplication.data.DAO.UserDAO;
 import org.ChatApplication.data.entity.User;
+import org.ChatApplication.data.service.UserService;
 import org.ChatApplication.server.handlers.dataMessageHandler.DataMessageHandler;
 import org.ChatApplication.server.handlers.dataMessageHandler.IDataMessageHandler;
 import org.ChatApplication.server.message.Message;
@@ -42,7 +43,7 @@ public class LoginMessageHandler implements ILoginMessageHandler {
 	public User validateLogin(User user) {
 		// TODO Auto-generated method stub
 		try {
-			return UserDAO.getInstance().getUser(user.getEmail(), user.getPassword());
+			return UserService.getInstance().getUser(user.getNinerId(), user.getPassword());
 		} catch (HibernateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

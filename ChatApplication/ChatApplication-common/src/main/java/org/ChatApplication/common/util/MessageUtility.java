@@ -91,7 +91,7 @@ public final class MessageUtility {
 			ReceiverTypeEnum receiverTypeEnum, MessageTypeEnum messageType) {
 		// add loop here to return multiple buffers of packets
 
-		ByteBuffer buffer = ByteBuffer.allocate(100);
+		ByteBuffer buffer = ByteBuffer.allocate(Message.MAX_MESSAGE_SIZE);
 
 		// put start of message
 		buffer = buffer.put(Message.START_OF_MESSAGE);

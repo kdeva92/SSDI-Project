@@ -47,6 +47,7 @@ public class NonBufferedReceiver {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					System.exit(1);
 					continue;
 				}
 				if(read == Message.START_OF_MESSAGE){
