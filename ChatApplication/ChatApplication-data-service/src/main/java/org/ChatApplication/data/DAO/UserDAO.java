@@ -2,6 +2,7 @@ package org.ChatApplication.data.DAO;
 
 import java.util.List;
 
+import org.ChatApplication.data.entity.Group;
 import org.ChatApplication.data.entity.User;
 import org.ChatApplication.data.util.HibernateUtil;
 import org.apache.log4j.Logger;
@@ -50,7 +51,6 @@ public class UserDAO {
 		}
 		logger.info("Leaving getUser");
 		return users.get(0);
-
 	}
 
 	public List<User> getUsers(String searchString) throws HibernateException, Exception {
@@ -64,6 +64,15 @@ public class UserDAO {
 		List<User> users = query.list();
 		logger.info("Leaving getUser");
 		return users;
+	}
+
+	public void createGroup(Group group) {
+
+		logger.info("Entering createGroup");
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+		sessionFactory.getCurrentSession().save(group);
+		logger.info("Leaving createGroup");
+
 	}
 
 }
