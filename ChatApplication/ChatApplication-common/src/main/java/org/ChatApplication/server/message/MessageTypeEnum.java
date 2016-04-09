@@ -19,7 +19,6 @@ public enum MessageTypeEnum {
 	static {
 		for (MessageTypeEnum e : MessageTypeEnum.values()) {
 			valueMap.put(e.getIntEquivalant(), e);
-			System.out.println("valuemap put: " + e.getIntEquivalant() + " : " + e);
 		}
 	}
 
