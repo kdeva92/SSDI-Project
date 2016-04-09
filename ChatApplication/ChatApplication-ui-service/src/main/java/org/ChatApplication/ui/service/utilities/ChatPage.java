@@ -2,12 +2,13 @@ package org.ChatApplication.ui.service.utilities;
 
 import java.io.IOException;
 
+import org.ChatApplication.data.entity.User;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.ChatApplication.ui.service.application.ChatApp;
 import org.ChatApplication.ui.service.connector.SenderController;
 import org.ChatApplication.ui.service.connector.ServerController;
 import org.ChatApplication.ui.service.models.Contact;
-import org.ChatApplication.ui.service.models.Message;
+import org.ChatApplication.ui.service.models.Message1;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,12 +32,12 @@ public class ChatPage {
 	@SuppressWarnings("restriction")
 	public Presenter presenter;
 	TextArea messageBox;
-	
+	public User user;
 	String user_name, id;
-	public TableView<Message> chatString;
+	public TableView<Message1> chatString;
 	public TableView<Contact> savedContacts;
 	public ObservableList<Contact> conT;
-	public ObservableList<Message> dataT;
+	public ObservableList<Message1> dataT;
 	
 	Button sendButton;
 	Button crtGrpBtn;
@@ -47,9 +48,9 @@ public class ChatPage {
 	TextField searchUserT;
 
 	@SuppressWarnings("restriction")
-	void loadChatPage(Presenter present) throws IOException {
+	void loadChatPage(Presenter present,User user1) throws IOException {
 		this.presenter = present;
-		
+		this.user = user1;
 
 		/*
 		 * UI Elements discovery
@@ -85,8 +86,10 @@ public class ChatPage {
 		sendButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				dataT.add(new Message(user_name, null, messageBox.getText().trim()));
-				senderController.sendChatMessage(id, "Anonymous", messageBox.getText().trim(),
+				String niner = user.getNinerId();
+				Message1 mess = new Message1(niner, "000000001", messageBox.getText().trim());
+				dataT.add(mess);
+				presenter.sendChatMessage(niner, "000000001", messageBox.getText().trim(),
 						ReceiverTypeEnum.INDIVIDUAL_MSG);
 						// dataT.add(new Message(user_name, null,
 						// messageBox.getText().trim()));
@@ -106,8 +109,10 @@ public class ChatPage {
 			public void handle(KeyEvent event) {
 				// TODO Auto-generated method stub
 				if (event.getCode() == KeyCode.ENTER) {
-					dataT.add(new Message(user_name, null, messageBox.getText().trim()));
-					senderController.sendChatMessage(id, "Anonymous", messageBox.getText().trim(),
+					String niner = user.getNinerId();
+					Message1 mess = new Message1(niner, "000000001", messageBox.getText().trim());
+					dataT.add(mess);
+					presenter.sendChatMessage(niner, "000000001", messageBox.getText().trim(),
 							ReceiverTypeEnum.INDIVIDUAL_MSG);
 					// dataT.add(new Message(user_name, "Anonymous",
 					// messageBox.getText().trim()));
@@ -151,7 +156,7 @@ public class ChatPage {
 		 * Chat Area
 		 */
 
-		chatString = new TableView<Message>();
+		chatString = new TableView<Message1>();
 
 		TableColumn messageCol = new TableColumn("Message");
 		TableColumn userCol = new TableColumn("User");

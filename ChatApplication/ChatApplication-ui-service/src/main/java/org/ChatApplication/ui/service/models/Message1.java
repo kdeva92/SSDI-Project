@@ -2,13 +2,13 @@ package org.ChatApplication.ui.service.models;
 
 import javafx.beans.property.SimpleStringProperty;
 
-public class Message {
+public class Message1 {
 
 	SimpleStringProperty sender;
 	SimpleStringProperty reciever;
 	SimpleStringProperty messageBody;
 	
-	public Message(String sender, String reciever, String messageBody)
+	public Message1(String sender, String reciever, String messageBody)
 	{
 		this.sender = new SimpleStringProperty(sender);
 		this.reciever = new SimpleStringProperty(reciever);

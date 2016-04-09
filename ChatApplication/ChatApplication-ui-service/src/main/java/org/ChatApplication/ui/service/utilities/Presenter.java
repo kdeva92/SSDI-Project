@@ -11,10 +11,12 @@ import org.ChatApplication.common.converter.ByteToEntityConverter;
 import org.ChatApplication.data.entity.User;
 import org.ChatApplication.server.message.Message;
 import org.ChatApplication.server.message.MessageTypeEnum;
+import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.ChatApplication.ui.service.application.ChatApp;
 import org.ChatApplication.ui.service.connector.SenderController;
 import org.ChatApplication.ui.service.connector.ServerController;
 import org.ChatApplication.ui.service.database.DatabaseConnecter;
+import org.ChatApplication.ui.service.models.Message1;
 import org.ChatApplication.ui.service.observer.MessageListener;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -128,6 +130,7 @@ public class Presenter {
 		case ADD_CONTACT:
 			break;
 		case CHAT_MSG:
+			updateChatUI(message);
 			break;
 		case CREATE_GROUP:
 			break;
@@ -181,7 +184,7 @@ public class Presenter {
 		// TODO Auto-generated method stub
 		try {
 			User user = ByteToEntityConverter.getInstance().getUser(message.getData());
-			chatPage.loadChatPage(this);
+			chatPage.loadChatPage(this,user);
 		} catch (JsonParseException e) {
 			loginPage.loadLoginPage(this);
 			// TODO Auto-generated catch block
@@ -224,4 +227,16 @@ public class Presenter {
 		}
 	}
 
+	public void sendChatMessage(String senderId, String receiverId, String chatMessage,
+			ReceiverTypeEnum receiverTypeEnum){
+		senderController.sendChatMessage(senderId, receiverId, chatMessage,receiverTypeEnum);
+	}
+	
+	public void updateChatUI(Message message){
+		String messageBody = new String(message.getData());
+		String receiver = new String(message.getReceiver());
+		Message1 mess = new Message1(messageBody,chatPage.user.getNinerId().trim(),messageBody);
+		chatPage.dataT.add(mess);
+	}
+	
 }
