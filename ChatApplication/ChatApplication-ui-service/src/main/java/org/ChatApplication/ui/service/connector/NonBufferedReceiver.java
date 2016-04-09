@@ -57,38 +57,12 @@ public class NonBufferedReceiver {
 					//uncomment below for test
 					//NonBufferedReceiverTest.showReceivedMessage(message);	
 					
-					
-							try {
-								User recd_user = ByteToEntityConverter.getInstance().getUser(message.getData());
-								messageListener.updateLogin(recd_user);
-							} catch (JsonParseException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-								try {
-									messageListener.updateLogin(null);
-								} catch (IOException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}								
-							} catch (JsonMappingException e) {
-								// TODO Auto-generated catch block
-								try {
-									messageListener.updateLogin(null);
-								} catch (IOException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}								
-								e.printStackTrace();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								try {
-									messageListener.updateLogin(null);
-								} catch (IOException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}								
-								e.printStackTrace();
-							}
+					try {
+						messageListener.updateUI(message);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 						
 					
 				}

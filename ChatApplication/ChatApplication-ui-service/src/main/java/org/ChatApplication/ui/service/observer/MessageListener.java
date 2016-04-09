@@ -2,8 +2,10 @@ package org.ChatApplication.ui.service.observer;
 
 import java.io.IOException;
 
+import org.ChatApplication.common.converter.ByteToEntityConverter;
 import org.ChatApplication.data.entity.User;
-import org.ChatApplication.ui.service.models.Message;
+import org.ChatApplication.server.message.Message;
+import org.ChatApplication.server.message.MessageTypeEnum;
 import org.ChatApplication.ui.service.utilities.ChatPage;
 import org.ChatApplication.ui.service.utilities.Presenter;
 
@@ -15,10 +17,12 @@ public class MessageListener {
 		this.presenter = present;
 	}
 	
-	public void updateLogin(User user) throws IOException
+	public void updateUI(Message message) throws IOException
 	{
-		this.presenter.handleLogin(user);
-		
+		if(message.getType().equals(MessageTypeEnum.LOG_IN_MSG))
+		{
+			this.presenter.handleLogin(message);
+		}
 	}
 
 }

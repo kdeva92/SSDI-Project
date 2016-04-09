@@ -31,7 +31,7 @@ public class ChatPage {
 	@SuppressWarnings("restriction")
 	public Presenter presenter;
 	TextArea messageBox;
-	TextField searchUserField;
+	
 	String user_name, id;
 	public TableView<Message> chatString;
 	public TableView<Contact> savedContacts;
@@ -40,9 +40,12 @@ public class ChatPage {
 	Thread sendThread;
 	Thread recieveThread;
 	Button sendButton;
+	Button crtGrpBtn;
+	Button srchBtn;
 	String srchUser;
 	private ServerController serverController;
 	private SenderController senderController;
+	TextField searchUserT;
 
 	@SuppressWarnings("restriction")
 	void loadChatPage(Presenter present) throws IOException {
@@ -67,6 +70,12 @@ public class ChatPage {
 		messageBox = (TextArea) msgSendBox.lookup("#messageBox");
 		VBox ContactsListBox = (VBox) contactsBox.lookup("#ContactsListBox");
 
+		VBox searchBox = (VBox) contactsBox.lookup("#searchBox");
+		HBox searchControlBox = (HBox) searchBox.lookup("#searchControlBox");
+		
+		searchUserT = (TextField) searchBox.lookup("#searchUserT");
+		srchBtn = (Button) searchControlBox.lookup("#srchBtn");
+		crtGrpBtn = (Button) searchControlBox.lookup("#crtGrpBtn");
 		// msgSendBox.prefWidthProperty().bind(chatBox.widthProperty().multiply(0.1));
 		// chatTableBox.prefWidthProperty().bind(chatBox.widthProperty().multiply(0.9));
 
@@ -112,6 +121,33 @@ public class ChatPage {
 
 		});
 
+		
+		
+		/*
+		 * Create Group Triggers
+		 */
+		
+		crtGrpBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+				//presenter.createGrp();
+			}
+		});
+		
+		/*
+		 * Search Contact Trigger
+		 */
+		
+		srchBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+				presenter.searchContact(searchUserT.getText().trim());
+			}
+		});
+		
+		
 		/*
 		 * Chat Area
 		 */
