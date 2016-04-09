@@ -2,6 +2,7 @@ package org.ChatApplication.server;
 
 import java.io.IOException;
 
+import org.ChatApplication.data.util.HibernateUtil;
 import org.ChatApplication.server.receiver.ServerModule;
 
 /**
@@ -11,6 +12,7 @@ import org.ChatApplication.server.receiver.ServerModule;
 public class App {
 	public static void main(String[] args) {
 		System.out.println("Hello World!");
+		HibernateUtil.getSessionFactory();
 		ServerModule serverModule = new ServerModule();
 		try {
 			serverModule.start(1515);

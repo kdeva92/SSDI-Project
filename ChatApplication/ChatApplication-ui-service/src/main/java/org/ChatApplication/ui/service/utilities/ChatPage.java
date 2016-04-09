@@ -37,8 +37,7 @@ public class ChatPage {
 	public TableView<Contact> savedContacts;
 	public ObservableList<Contact> conT;
 	public ObservableList<Message> dataT;
-	Thread sendThread;
-	Thread recieveThread;
+	
 	Button sendButton;
 	Button crtGrpBtn;
 	Button srchBtn;

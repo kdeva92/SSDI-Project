@@ -46,6 +46,7 @@ public class UserService {
 	public User getUser(String email, String password) throws Exception {
 		logger.info("Entering createUser");
 		User user = null;
+		SessionFactory sessionFactory = HibernateSessionUtil.getCurrentSessionTransaction();
 		try {
 			user = DAOObjectFactory.getUserDAO().getUser(email, password);
 		} catch (HibernateException e) {

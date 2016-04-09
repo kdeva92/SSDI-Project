@@ -3,6 +3,7 @@
  */
 package org.ChatApplication.server.receiver;
 
+import java.awt.TrayIcon.MessageType;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.BufferUnderflowException;
@@ -13,10 +14,18 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.ChatApplication.common.converter.ByteToEntityConverter;
+import org.ChatApplication.common.converter.EntityToByteConverter;
 import org.ChatApplication.common.util.MessageUtility;
+import org.ChatApplication.data.entity.User;
+import org.ChatApplication.server.handlers.loginMessageHandler.ILoginMessageHandler;
+import org.ChatApplication.server.handlers.loginMessageHandler.LoginMessageHandler;
 import org.ChatApplication.server.handlers.messageHandler.MessageHandler;
 import org.ChatApplication.server.message.Message;
+import org.ChatApplication.server.message.MessageTypeEnum;
+import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.ChatApplication.server.sender.ClientHolder;
+import org.ChatApplication.server.sender.ServerSender;
 import org.apache.log4j.Logger;
 
 /**
@@ -28,6 +37,7 @@ import org.apache.log4j.Logger;
  */
 public class NioServerModule implements Runnable {
 
+	private ILoginMessageHandler loginHandler = LoginMessageHandler.getMessageHandler();
 	private static final MessageHandler mssageHandler = MessageHandler.getMessageHandler();
 	private final static Logger logger = Logger.getLogger(NioServerModule.class);
 	private static NioServerModule module;
@@ -55,14 +65,23 @@ public class NioServerModule implements Runnable {
 		logger.trace("init complete for NioServerModule");
 	}
 
-	public void addClient(String clientId, SocketChannel sc) throws IOException {
+	public void addClient(SocketChannel sc) throws IOException {
 		sc.configureBlocking(false);
 		// register socketchannel as attribute to reduce lookup time in map
 		SelectionKey key = sc.register(selector, SelectionKey.OP_READ, sc);
-		// we still need map to keep track and keepalive
-		clientHolder.addClient(clientId, key, sc);
+		// we still need map to keep track and keepalive this will be done after
+		// login success
 		if (logger.isDebugEnabled())
 			logger.debug("selector set for channel: " + sc.getRemoteAddress());
+	}
+
+	private void addClientToClientHolder(String clientId, SelectionKey key, SocketChannel sc) {
+		clientHolder.addClient(clientId, key, sc);
+		if (logger.isDebugEnabled()) {
+			try {
+				logger.debug("selector set for channel: " + sc.getRemoteAddress());
+			} catch (IOException e) {}
+		}
 	}
 
 	public void removeClient(SocketChannel sc) {
@@ -111,7 +130,7 @@ public class NioServerModule implements Runnable {
 							removeClient(client);
 							selectionKey.cancel();
 						}
-						//System.out.println("read size: " + size);
+						// System.out.println("read size: " + size);
 					} catch (IOException e) {
 						System.out.println("Client disconnect.. removing " + client.getRemoteAddress());
 						removeClient(client);
@@ -139,6 +158,23 @@ public class NioServerModule implements Runnable {
 					Message message = null;
 					try {
 						message = MessageUtility.getMessage(buff);
+						//Handle complete login messages here as special case
+						if(message.getType() == MessageTypeEnum.LOG_IN_MSG){
+							System.out.println("Login message in nio module");
+							User user = loginHandler.validateLogin(ByteToEntityConverter.getInstance().getUser( message.getData()));
+							//force terminate to invalid client
+							if(user == null){
+								selectionKey.cancel();
+								client.close();
+								continue;
+							}
+							//for valid login request
+							addClientToClientHolder(user.getNinerId(), selectionKey, client);
+							message.setData(MessageUtility.packMessage(EntityToByteConverter.getInstance().getBytes(user), message.getSender(), message.getReceiver(), ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.LOG_IN_MSG).array());
+							ServerSender.getSender().sendMessage(client, message);
+							System.out.println("Login successful user added to client holder");
+							continue;
+						}
 					} catch (BufferUnderflowException e) {
 						iterator.remove();
 						continue;

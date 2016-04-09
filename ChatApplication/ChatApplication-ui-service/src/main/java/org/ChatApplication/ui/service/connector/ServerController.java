@@ -15,13 +15,15 @@ public class ServerController {
 	private Socket socket;
 	private SenderController senderController;
 	private NonBufferedReceiver nonBufferedReceiver;
-	private static String HOST = "127.0.0.1";
+	private static String HOST = "192.168.82.1";
 	private static int PORT = 1515;
 
 	public ServerController(MessageListener ml) throws UnknownHostException, IOException {
 		socket = new Socket(HOST, PORT);
 		senderController = new SenderController(socket);
+		System.out.println("Sender Started");
 		nonBufferedReceiver = new NonBufferedReceiver(socket,ml);
+		System.out.println("Reciever Started");
 		// receiverController = new RecieverController(socket);
 		// receiverController.run();
 	}
@@ -32,6 +34,10 @@ public class ServerController {
 
 	public void setSenderController(SenderController senderController) {
 		this.senderController = senderController;
+	}
+	
+	public void terminateConnection() throws IOException{
+		socket.close();
 	}
 
 }

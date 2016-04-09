@@ -1,9 +1,15 @@
 package org.ChatApplication.data.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 /**
@@ -17,7 +23,7 @@ public class User {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "id")
+	@Column(name = "user_id")
 	private int id;
 
 	@Column(name = "niner_id", nullable = false, unique = true)
@@ -37,6 +43,20 @@ public class User {
 
 	@Column(name = "password")
 	private String password;
+
+	// @ManyToMany
+	// @JoinTable(name = "GROUP_USER", joinColumns = { @JoinColumn(name =
+	// "user_id") }, inverseJoinColumns = {
+	// @JoinColumn(name = "group_id") })
+	// private List<Group> groups = new ArrayList<Group>();
+	//
+	// public List<Group> getGroups() {
+	// return groups;
+	// }
+	//
+	// public void setGroups(List<Group> groups) {
+	// this.groups = groups;
+	// }
 
 	public int getId() {
 		return id;
