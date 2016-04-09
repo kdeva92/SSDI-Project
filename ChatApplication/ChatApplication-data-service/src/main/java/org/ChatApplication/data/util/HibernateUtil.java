@@ -1,5 +1,6 @@
 package org.ChatApplication.data.util;
 
+import org.ChatApplication.data.entity.Group;
 import org.ChatApplication.data.entity.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -19,6 +20,7 @@ public class HibernateUtil {
 		try {
 			Configuration config = new Configuration();
 			config.addAnnotatedClass(User.class);
+			config.addAnnotatedClass(Group.class);
 			config.configure("resources/hibernate.cfg.xml");
 			new SchemaUpdate(config).execute(true, true);
 

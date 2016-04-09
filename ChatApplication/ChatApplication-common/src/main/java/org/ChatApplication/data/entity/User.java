@@ -41,18 +41,19 @@ public class User {
 	@Column(name = "password")
 	private String password;
 
-	@ManyToMany
-	@JoinTable(name = "GROUP_USER", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
-			@JoinColumn(name = "group_id") })
-	private List<Group> groups = new ArrayList<Group>();
-
-	public List<Group> getGroups() {
-		return groups;
-	}
-
-	public void setGroups(List<Group> groups) {
-		this.groups = groups;
-	}
+	// @ManyToMany
+	// @JoinTable(name = "GROUP_USER", joinColumns = { @JoinColumn(name =
+	// "user_id") }, inverseJoinColumns = {
+	// @JoinColumn(name = "group_id") })
+	// private List<Group> groups = new ArrayList<Group>();
+	//
+	// public List<Group> getGroups() {
+	// return groups;
+	// }
+	//
+	// public void setGroups(List<Group> groups) {
+	// this.groups = groups;
+	// }
 
 	public int getId() {
 		return id;
