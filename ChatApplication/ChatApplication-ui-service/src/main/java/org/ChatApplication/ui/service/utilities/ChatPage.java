@@ -223,6 +223,20 @@ public class ChatPage {
 
 			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
 				Contact contact = (Contact) newValue;
+				DatabaseConnecter dbConnector = new DatabaseConnecter();
+				Connection conn = dbConnector.getConn();
+				dataT.clear();
+				try {
+					Statement stat = conn.createStatement();
+					ResultSet rs = stat.executeQuery("SELECT * FROM " + contact.getNinerID() + "Chat");
+
+					while (rs.next()) {
+						dataT.add(new Message1(rs.getString(1), "", rs.getString(2)));
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				// System.out.println(contact.getNinerID()+contact.getName()+contact.getEmail());
 
 			}
@@ -244,6 +258,16 @@ public class ChatPage {
 		dataT.add(mess);
 		presenter.sendChatMessage(niner, contact.getNinerID(), messageBox.getText().trim(),
 				ReceiverTypeEnum.INDIVIDUAL_MSG);
+		DatabaseConnecter dbConnector = new DatabaseConnecter();
+		Connection conn = dbConnector.getConn();
+		try {
+			Statement stat = conn.createStatement();
+			stat.execute("INSERT INTO " + contact.getNinerID() + "Chat VALUES('" + niner + "','"
+					+ messageBox.getText().trim() + "')");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// dataT.add(new Message(user_name, "Anonymous",
 		// messageBox.getText().trim()));
 		// MessageListener listener = MessageListener.getInstance();

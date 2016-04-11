@@ -3,6 +3,7 @@ package org.ChatApplication.ui.service.utilities;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.ChatApplication.ui.service.connector.SenderController;
 import org.ChatApplication.ui.service.connector.ServerController;
 import org.ChatApplication.ui.service.database.DatabaseConnecter;
+import org.ChatApplication.ui.service.models.Contact;
 import org.ChatApplication.ui.service.models.Message1;
 import org.ChatApplication.ui.service.observer.MessageListener;
 import org.codehaus.jackson.JsonParseException;
@@ -182,7 +184,7 @@ public class Presenter {
 		// TODO Auto-generated method stub
 		try {
 			User user = ByteToEntityConverter.getInstance().getUser(message.getData());
-			chatPage.loadChatPage(this,user);
+			chatPage.loadChatPage(this, user);
 		} catch (JsonParseException e) {
 			loginPage.loadLoginPage(this);
 			// TODO Auto-generated catch block
@@ -210,7 +212,7 @@ public class Presenter {
 	 * Search Contact
 	 */
 	public void searchContact(String searchString) {
-
+		// senderController.searchContact(searchString);
 	}
 
 	/*
@@ -218,23 +220,77 @@ public class Presenter {
 	 */
 
 	public void addToContact(User user) {
-		if (user.equals(null)) {
-			this.contactsHandler.add2Contacts(user, conn);
-		} else {
-
+		DatabaseConnecter dbConnector = new DatabaseConnecter();
+		conn = dbConnector.getConn();
+		try {
+			stat = conn.createStatement();
+			stat.execute("INSERT INTO User VALUES('" + user.getNinerId() + "','" + user.getFirstName() + "','"
+					+ user.getEmail() + "','" + "9999999999" + "','" + user.getPassword() + "')");
+			System.out.println("Contact Inserted to DB: " + user.getNinerId());
+			chatPage.conT.add(new Contact(user.getNinerId(), user.getFirstName(), user.getEmail()));
+			System.out.println("Contact Inserted UI: " + user.getNinerId());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
 	}
 
 	public void sendChatMessage(String senderId, String receiverId, String chatMessage,
-			ReceiverTypeEnum receiverTypeEnum){
-		senderController.sendChatMessage(senderId, receiverId, chatMessage,receiverTypeEnum);
+			ReceiverTypeEnum receiverTypeEnum) {
+		senderController.sendChatMessage(senderId, receiverId, chatMessage, receiverTypeEnum);
 	}
-	
-	public void updateChatUI(Message message){
+
+	public void updateChatUI(Message message) {
 		String messageBody = new String(message.getData());
 		String receiver = new String(message.getReceiver());
-		Message1 mess = new Message1(messageBody,chatPage.user.getNinerId().trim(),messageBody);
-		chatPage.dataT.add(mess);
+		String name = getReceiverName(receiver);
+		if (name != null) {
+			Message1 mess = new Message1(name, chatPage.user.getNinerId().trim(), messageBody);
+			chatPage.dataT.add(mess);
+		} else {
+			Message1 mess = new Message1(receiver, chatPage.user.getNinerId().trim(), messageBody);
+			chatPage.dataT.add(mess);
+		}
+		DatabaseConnecter dbConnector = new DatabaseConnecter();
+		conn = dbConnector.getConn();
+		try {
+			stat = conn.createStatement();
+			stat.execute(
+					"CREATE TABLE IF NOT EXISTS " + receiver + "Chat(sender varchar(10),messageBody varchar(500))");
+			stat.execute("INSERT INTO " + receiver + "Chat VALUES('" + receiver + "','" + messageBody + "')");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
-	
+
+	private String getReceiverName(String ninerId) {
+		DatabaseConnecter dbConnector = new DatabaseConnecter();
+		conn = dbConnector.getConn();
+		try {
+			stat = conn.createStatement();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		ResultSet rs;
+		String retVal = null;
+		try {
+			rs = stat.executeQuery("SELECT studentName FROM User WHERE niner_id='" + ninerId + "'");
+
+			while (rs.next()) {
+				retVal = rs.getString(1);
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return retVal;
+
+	}
+
 }
