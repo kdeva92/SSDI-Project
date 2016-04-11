@@ -3,9 +3,7 @@
  */
 package org.ChatApplication.server.receiver;
 
-import java.awt.TrayIcon.MessageType;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -80,7 +78,8 @@ public class NioServerModule implements Runnable {
 		if (logger.isDebugEnabled()) {
 			try {
 				logger.debug("selector set for channel: " + sc.getRemoteAddress());
-			} catch (IOException e) {}
+			} catch (IOException e) {
+			}
 		}
 	}
 
@@ -158,22 +157,33 @@ public class NioServerModule implements Runnable {
 					Message message = null;
 					try {
 						message = MessageUtility.getMessage(buff);
-						//Handle complete login messages here as special case
-						if(message.getType() == MessageTypeEnum.LOG_IN_MSG){
+						// Handle complete login messages here as special case
+						if (message.getType() == MessageTypeEnum.LOG_IN_MSG) {
 							System.out.println("Login message in nio module");
-							User user = loginHandler.validateLogin(ByteToEntityConverter.getInstance().getUser( message.getData()));
-							//force terminate to invalid client
-							if(user == null){
+							User user = loginHandler
+									.validateLogin(ByteToEntityConverter.getInstance().getUser(message.getData()));
+							// force terminate to invalid client
+							if (user == null) {
 								selectionKey.cancel();
 								client.close();
 								continue;
 							}
-							//for valid login request
+							// for valid login request
 							addClientToClientHolder(user.getNinerId(), selectionKey, client);
-							message.setData(MessageUtility.packMessage(EntityToByteConverter.getInstance().getBytes(user), message.getSender(), message.getReceiver(), ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.LOG_IN_MSG).array());
+							message.setData(
+									MessageUtility
+											.packMessage(EntityToByteConverter.getInstance().getBytes(user),
+													message.getSender(), message.getReceiver(),
+													ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.LOG_IN_MSG)
+											.array());
 							ServerSender.getSender().sendMessage(client, message);
 							System.out.println("Login successful user added to client holder");
 							continue;
+						}
+						if (message.getType() == MessageTypeEnum.CHAT_MSG) {
+							System.out.println("NIO chat message");
+							buff.flip();
+							message.setData(buff.array());
 						}
 					} catch (BufferUnderflowException e) {
 						iterator.remove();

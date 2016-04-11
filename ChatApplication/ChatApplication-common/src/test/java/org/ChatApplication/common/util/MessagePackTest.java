@@ -21,7 +21,7 @@ public class MessagePackTest {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		ByteBuffer message = MessageUtility.packMessage("Demo Message123".getBytes(), "000000000", "000000000", ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.LOG_IN_MSG);
+		ByteBuffer message = MessageUtility.packMessage("Demo Message123".getBytes(), "000000000", "000000000", ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.CHAT_MSG);
 //		for(int i=0;i<50;i++)
 //			System.out.print(" "+message.get());
 //		
