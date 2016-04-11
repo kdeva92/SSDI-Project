@@ -9,7 +9,7 @@ import java.util.HashMap;
  */
 public enum MessageTypeEnum {
 
-	CHAT_MSG("Chat Message", 1), LOG_IN_MSG("Log in message", 2), LOG_OUT_MSG("Log out message", 3), EDIT_PROFILE(
+	CHAT_MSG("Chat Message", 11), LOG_IN_MSG("Log in message", 2), LOG_OUT_MSG("Log out message", 3), EDIT_PROFILE(
 			"Edit profile message", 4), ADD_CONTACT("Add contact message", 5), CREATE_GROUP("Create group message",
 					6), EDIT_GROUP("Edit group message", 7), SEARCH_USER("Search User message",
 							8), GET_USER("Get User message", 9), TERMINATE("Termination message", 10);

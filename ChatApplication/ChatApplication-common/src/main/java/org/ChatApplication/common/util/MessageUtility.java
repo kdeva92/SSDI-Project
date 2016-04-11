@@ -83,7 +83,10 @@ public final class MessageUtility {
 		byte[] data = new byte[msgSize];
 		buffer.get(data, 0, msgSize);
 		message.setData(data);
-
+		
+		System.out.println("getMessage "+ data.length);
+		for(int i1=0;i1<30 && i1 < data.length;i1++)
+			System.out.println(i1+" "+data[i1]);
 		return message;
 	}
 
@@ -100,7 +103,7 @@ public final class MessageUtility {
 
 		// put message type as chat message
 		buffer = buffer.put(messageType.getByteEquivalant());
-		System.out.println("MessageUtil type put: "+ messageType.getByteEquivalant());
+		System.out.println("MessageUtil packmsg type put: "+ messageType.getByteEquivalant());
 
 		// keep index 2 as empty
 		buffer.put((byte) 0);
@@ -130,6 +133,7 @@ public final class MessageUtility {
 		// put message
 		buffer.put(message, 0, message.length);
 		buffer.put(Message.END_OF_MESSAGE);
+		System.out.println("Buffer put end of message");
 		return buffer;
 	}
 	/*

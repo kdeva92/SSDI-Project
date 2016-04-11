@@ -12,6 +12,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.ChatApplication.server.handlers.messageHandler.MessageHandler;
 import org.ChatApplication.server.message.Message;
+import org.ChatApplication.server.message.MessageTypeEnum;
+import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.ChatApplication.server.sender.ClientData;
 import org.ChatApplication.server.sender.ClientHolder;
 import org.ChatApplication.server.sender.ISender;
@@ -47,7 +49,7 @@ public class DataMessageHandler implements IDataMessageHandler {
 
 	public void handleMessage(Message message) {
 		// TODO Auto-generated method stub
-		System.out.println("Message: " + new String(message.getData()).trim());
+		System.out.println("Message: " + new String(message.getData()));
 		messageQueue.add(message);
 	}
 
@@ -70,25 +72,43 @@ public class DataMessageHandler implements IDataMessageHandler {
 					continue;
 				}
 
+				//Handle the client not connected situation here..
+				if (message.getReceiverType() == ReceiverTypeEnum.INDIVIDUAL_MSG.getIntEquivalant()) {
+					System.out.println("DataMessageHandler sending to: " + message.getReceiver());
+					if(clientHolder.getClientData(message.getReceiver()) == null){
+						System.out.println("Client not connected..");
+						continue;
+					}
+					sender.sendMessage(clientHolder.getClientData(message.getReceiver()).getSocketChannel(), message); 
+				}else if(message.getReceiverType() == ReceiverTypeEnum.GROUP_MSG.getIntEquivalant()) {
+					 //operate on group - DB access and individual send to each receiver
+				}
+				
+				System.out.println("DataMessageHandler complete");
+				
+				
+				
 				// change when login implemented
 				// ClientData clientData =
 				// clientHolder.getClientData(message.getReceiver());
 				// sender.sendMessage(clientData.getSocketChannel(), message);
-
-				Set<String> allClients = clientHolder.getAllConnectedClients();
-				System.out.println("DataMessageHandler Broadcast to all connected clients.." + allClients.size());
-				for (Iterator iterator = allClients.iterator(); iterator.hasNext();) {
-					String thisClient = (String) iterator.next();
-					sender.sendMessage(clientHolder.getClientData(thisClient).getSocketChannel(), message);
-					// try {
-					// System.out.println("DataMessageHandler Broadcast "
-					// +
-					// clientHolder.getClientData(thisClient).getSocketChannel().getRemoteAddress());
-					// } catch (IOException e) {
-					// // TODO Auto-generated catch block
-					// e.printStackTrace();
-					// }
-				}
+				// Set<String> allClients =
+				// clientHolder.getAllConnectedClients();
+				// for (Iterator iterator = allClients.iterator();
+				// iterator.hasNext();) {
+				// String thisClient = (String) iterator.next();
+				// sender.sendMessage(clientHolder.getClientData(thisClient).getSocketChannel(),
+				// message);
+				// // try {
+				// // System.out.println("DataMessageHandler Broadcast "
+				// // +
+				// //
+				// clientHolder.getClientData(thisClient).getSocketChannel().getRemoteAddress());
+				// // } catch (IOException e) {
+				// // // TODO Auto-generated catch block
+				// // e.printStackTrace();
+				// // }
+				// }
 
 			}
 		}

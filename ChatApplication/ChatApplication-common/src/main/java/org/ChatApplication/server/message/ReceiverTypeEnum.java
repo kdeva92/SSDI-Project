@@ -22,4 +22,8 @@ public enum ReceiverTypeEnum {
 	public void setMsgType(int msgType) {
 		this.msgType = msgType;
 	}
+	
+	public int getIntEquivalant() {
+		return msgType;
+	}
 }
