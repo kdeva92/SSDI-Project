@@ -39,7 +39,7 @@ public class ByteToEntityConverter {
 
 	public List<UserVO> getUsers(byte[] users) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.readValue(users, TypeFactory.collectionType(List.class, User.class));
+		return objectMapper.readValue(users, TypeFactory.collectionType(List.class, UserVO.class));
 	}
 
 
