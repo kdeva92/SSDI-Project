@@ -239,31 +239,33 @@ public class Presenter {
 		String receiver = new String(message.getSender());
 		String name = getReceiverName(receiver);
 		if (name != null) {
-		MessageVO mess = new MessageVO(name, chatPage.user.getNinerId().trim(), messageBody);
-		chatPage.dataT.add(mess);
+			MessageVO mess = new MessageVO(name, chatPage.user.getNinerId().trim(), messageBody);
+			chatPage.dataT.add(mess);
 		} else {
-		MessageVO mess = new MessageVO(receiver, chatPage.user.getNinerId().trim(), messageBody);
-		chatPage.dataT.add(mess);
+			MessageVO mess = new MessageVO(receiver, chatPage.user.getNinerId().trim(), messageBody);
+			chatPage.dataT.add(mess);
 		}
-//		DatabaseConnecter dbConnector = new DatabaseConnecter();
-//		conn = dbConnector.getConn();
-//		try {
-//		stat = conn.createStatement();
-//		stat.execute(
-//		"CREATE TABLE IF NOT EXISTS " + receiver + "Chat(sender varchar(10),messageBody varchar(500))");
-//		stat.execute("INSERT INTO " + receiver + "Chat VALUES('" + receiver + "','" + messageBody + "')");
-//		} catch (SQLException e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//		}
+		// DatabaseConnecter dbConnector = new DatabaseConnecter();
+		// conn = dbConnector.getConn();
+		// try {
+		// stat = conn.createStatement();
+		// stat.execute(
+		// "CREATE TABLE IF NOT EXISTS " + receiver + "Chat(sender
+		// varchar(10),messageBody varchar(500))");
+		// stat.execute("INSERT INTO " + receiver + "Chat VALUES('" + receiver +
+		// "','" + messageBody + "')");
+		// } catch (SQLException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 	}
 
 	private void updateGroupCreation(Message message) {
 
-		GroupVO group=null;
+		GroupVO group = null;
 		try {
 			group = ByteToEntityConverter.getInstance().getGroupVO(message.getData());
-			chatPage.conT.add(new Contact("1", group.getGroupName(), ""));
+			chatPage.conT.add(new Contact(group.getGroupId() + "", group.getGroupName(), ""));
 		} catch (JsonParseException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -278,7 +280,7 @@ public class Presenter {
 		conn = dbConnector.getConn();
 		try {
 			stat = conn.createStatement();
-			stat.execute("INSERT INTO User VALUES('" + "1" + "','" + group.getGroupName() + "','"
+			stat.execute("INSERT INTO User VALUES('" + group.getGroupId() + "" + "','" + group.getGroupName() + "','"
 					+ "" + "','" + "9999999999" + "','" + "" + "')");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -316,8 +318,7 @@ public class Presenter {
 	public void setUser(UserVO user) {
 		this.user = user;
 	}
-	
-	
+
 	private String getReceiverName(String ninerId) {
 		DatabaseConnecter dbConnector = new DatabaseConnecter();
 		conn = dbConnector.getConn();

@@ -75,8 +75,7 @@ public class UserDAO {
 		logger.info("Entering getUser");
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
-		Query query = sessionFactory.getCurrentSession()
-				.createQuery("from User where ninerId IN(:ninerId)");
+		Query query = sessionFactory.getCurrentSession().createQuery("from User where ninerId IN(:ninerId)");
 		query.setParameterList("ninerId", ninerIds);
 		List<User> users = query.list();
 		if (users == null) {
@@ -91,5 +90,20 @@ public class UserDAO {
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 		sessionFactory.getCurrentSession().save(group);
 		logger.info("Leaving createGroup");
+	}
+
+	public Group getGroup(int groupId) {
+
+		logger.info("Entering getGroup");
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+		Query query = sessionFactory.getCurrentSession().createQuery("from Group where grpouId =:grpouId");
+		query.setParameter("grpouId", groupId);
+		List<Group> groups = query.list();
+		if (groups == null || groups.size() <= 0) {
+			return null;
+		}
+		logger.info("Leaving getGroup");
+		return groups.get(0);
+
 	}
 }

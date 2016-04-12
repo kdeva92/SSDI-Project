@@ -97,6 +97,20 @@ public class UserService {
 		}
 
 	}
+	public Group getGroup(int groupId)throws Exception {
+
+		logger.info("Entering createUser");
+		Group group = null;
+		SessionFactory sessionFactory = HibernateSessionUtil.getCurrentSessionTransaction();
+		try {
+			group = DAOObjectFactory.getUserDAO().getGroup(groupId);
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new Exception(e.getMessage());
+		}
+		return group;
+	
+	}
 
 
 	public static void main(String[] args) throws Exception {
