@@ -9,32 +9,57 @@ import org.ChatApplication.server.message.Message;
 import org.ChatApplication.server.message.MessageTypeEnum;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
 
+import junit.framework.TestCase;
+
 /**
  * @author Devdatta
  *
  */
-public class MessagePackTest {
+public class MessagePackTest extends TestCase {
 
+	public void testChatMessagePack() {
+		String messageData = "Demo Message123";
+		String sender = "000000000";
+		String receiver = "999999999";
+		ReceiverTypeEnum receiverTypeEnum = ReceiverTypeEnum.INDIVIDUAL_MSG;
+		MessageTypeEnum messageTypeEnum =MessageTypeEnum.CHAT_MSG;
+		
+		ByteBuffer message = MessageUtility.packMessage(messageData.getBytes(), sender, receiver, receiverTypeEnum, messageTypeEnum);
+		
+		message.flip();
+		Message msg = MessageUtility.getMessage(message);
+
+		if(msg.getType() == messageTypeEnum && msg.getSender().equals(sender) && msg.getReceiver().equals(receiver) && msg.getReceiverType() == receiverTypeEnum.getIntEquivalant())
+			assertTrue(true);
+		else 
+			assertTrue(false);
+	}
+
+	public void testInstructionMessagePack() {
+		String messageData = "Demo Message123";
+		String sender = "000000000";
+		String receiver = "999999999";
+		ReceiverTypeEnum receiverTypeEnum = ReceiverTypeEnum.GROUP_MSG;
+		MessageTypeEnum messageTypeEnum =MessageTypeEnum.CREATE_GROUP;
+		
+		ByteBuffer message = MessageUtility.packMessage(messageData.getBytes(), sender, receiver, receiverTypeEnum, messageTypeEnum);
+		
+		message.flip();
+		Message msg = MessageUtility.getMessage(message);
+
+		if(msg.getType() == messageTypeEnum && msg.getSender().equals(sender) && msg.getReceiver().equals(receiver) && msg.getReceiverType() == receiverTypeEnum.getIntEquivalant())
+			assertTrue(true);
+		else 
+			assertTrue(false);
+	}
+
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-
-		ByteBuffer message = MessageUtility.packMessage("Demo Message123".getBytes(), "000000000", "000000000", ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.CHAT_MSG);
-//		for(int i=0;i<50;i++)
-//			System.out.print(" "+message.get());
-//		
-		
-		System.out.println("Message: "+new String(message.array()));
-		message.flip();
-		Message msg = MessageUtility.getMessage(message);
-		System.out.println("Message: "+new String(msg.getData()).trim());
-		System.out.println("Receiver "+msg.getReceiver());
-		System.out.println("Sender "+msg.getSender());
-		System.out.println("Receiver Type "+msg.getReceiverType());
-		System.out.println("Message type "+msg.getType());
-		
+		new MessagePackTest().testInstructionMessagePack();
 	}
 
 }

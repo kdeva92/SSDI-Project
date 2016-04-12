@@ -4,6 +4,7 @@
 package org.ChatApplication.server.handlers.instructionHandler;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,6 +14,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.ChatApplication.common.converter.ByteToEntityConverter;
 import org.ChatApplication.common.converter.EntityToByteConverter;
+import org.ChatApplication.common.converter.EntityToVoMapper;
 import org.ChatApplication.common.util.MessageUtility;
 import org.ChatApplication.data.entity.Group;
 import org.ChatApplication.data.entity.GroupVO;
@@ -93,7 +95,7 @@ public class InstructionHandler implements IInstructionHandler {
 					}
 
 					try {
-						message.setData(MessageUtility.packMessage(EntityToByteConverter.getInstance().getBytes(users),
+						message.setData(MessageUtility.packMessage(EntityToByteConverter.getInstance().getBytes(EntityToVoMapper.userToUserVo(users)),
 								message.getReceiver(), message.getSender(), ReceiverTypeEnum.INDIVIDUAL_MSG,
 								MessageTypeEnum.SEARCH_USER).array());
 						System.out.println("search user reply data: " + new String(message.getData()));
@@ -127,13 +129,16 @@ public class InstructionHandler implements IInstructionHandler {
 						GroupVO groupVO = ByteToEntityConverter.getInstance().getGroupVO(message.getData());
 						List<User> usersForGrp = UserService.getInstance().getUsers(groupVO.getListOfMembers());
 						Group group = new Group();
-						group.setMembers(new HashSet<User>(usersForGrp));
+						group.setMembers(usersForGrp);
 						group.setName(groupVO.getGroupName());
 						userService.createGroup(group);
 						System.out.println("Group created: "+ groupVO.getGroupName()+" #members: "+group.getMembers().size());
+						groupVO.setGroupId(group.getGrpouId());
 						
+						ByteBuffer mesg = MessageUtility.packMessage(EntityToByteConverter.getInstance().getBytes(groupVO), message.getSender(), message.getReceiver(), ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.CREATE_GROUP);
+						message.setData(mesg.array());
 						//notify each member about group
-						Set<User> members = group.getMembers();
+						List<User> members = group.getMembers();
 						for (Iterator iterator = members.iterator(); iterator.hasNext();) {
 							User user = (User) iterator.next();
 							cData = clientHolder.getClientData(user.getNinerId());

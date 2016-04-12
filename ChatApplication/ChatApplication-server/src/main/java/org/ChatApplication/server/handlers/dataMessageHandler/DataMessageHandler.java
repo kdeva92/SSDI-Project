@@ -82,6 +82,7 @@ public class DataMessageHandler implements IDataMessageHandler {
 					sender.sendMessage(clientHolder.getClientData(message.getReceiver()).getSocketChannel(), message); 
 				}else if(message.getReceiverType() == ReceiverTypeEnum.GROUP_MSG.getIntEquivalant()) {
 					 //operate on group - DB access and individual send to each receiver
+					
 				}
 				
 				System.out.println("DataMessageHandler complete");
