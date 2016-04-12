@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ChatApplication.common.converter.ByteToEntityConverter;
 import org.ChatApplication.data.entity.User;
@@ -16,6 +17,7 @@ import org.ChatApplication.ui.service.connector.ServerController;
 import org.ChatApplication.ui.service.database.DatabaseConnecter;
 import org.ChatApplication.ui.service.models.Message1;
 import org.ChatApplication.ui.service.observer.MessageListener;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
@@ -30,13 +32,12 @@ public class Presenter {
 	private SenderController senderController;
 	private MessageListener messageListener;
 	private ContactsHandler contactsHandler;
-	Connection conn;
-	Statement stat;
+	private Connection conn;
+	private Statement stat;
+	final static Logger logger = Logger.getLogger(Presenter.class);
 
 	public Presenter(Homepage homepage) throws UnknownHostException, IOException {
-		// TODO Auto-generated constructor stub
 		this.homePage = homepage;
-
 		this.loginPage = new Login();
 		this.chatPage = new ChatPage();
 		this.contactsHandler = new ContactsHandler();
@@ -45,7 +46,6 @@ public class Presenter {
 	}
 
 	private void initConnection() throws UnknownHostException, IOException {
-		// TODO Auto-generated method stub
 		this.messageListener = new MessageListener(this);
 		this.serverController = new ServerController(this.messageListener);
 		this.senderController = serverController.getSenderController();
@@ -53,7 +53,6 @@ public class Presenter {
 	}
 
 	private void initializeClientDataBase() {
-		// TODO Auto-generated method stub
 		DatabaseConnecter dbConnector = new DatabaseConnecter();
 		conn = dbConnector.getConn();
 		stat = null;
@@ -62,8 +61,7 @@ public class Presenter {
 			stat.execute(
 					"CREATE TABLE IF NOT EXISTS User(niner_id varchar(10) primary key,studentName varchar(60),email varchar(60),contact varchar(10),password varchar(20))");
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -85,11 +83,9 @@ public class Presenter {
 		try {
 			initConnection();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		this.user = new User();
 		this.user.setNinerId(userId);
@@ -97,60 +93,57 @@ public class Presenter {
 
 		this.senderController.logInMessage(this.user);
 
-		// Message message= null;
-		// while(true){
-		// message = ChatApp.messageQueue.peek();
-		// if(!message.equals(null)&&
-		// !message.getType().equals(MessageTypeEnum.LOG_IN_MSG)){
-		// message = ChatApp.messageQueue.poll();
-		// try {
-		// User user =
-		// ByteToEntityConverter.getInstance().getUser(message.getData());
-		// } catch (JsonParseException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// } catch (JsonMappingException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-		// }
 	}
 
 	/*
 	 * Login Response Handler
 	 */
 	public void handleUI(Message message) {
-		switch (message.getType()) {
-		case ADD_CONTACT:
-			break;
-		case CHAT_MSG:
-			updateChatUI(message);
-			break;
-		case CREATE_GROUP:
-			break;
-		case EDIT_GROUP:
-			break;
-		case EDIT_PROFILE:
-			break;
-		case GET_USER:
-			break;
-		case LOG_IN_MSG:
-			handleLogIn(message);
-			break;
-		case LOG_OUT_MSG:
-			break;
-		case SEARCH_USER:
-			break;
-		case TERMINATE:
-			handleTermination();
-			break;
-		default:
-			break;
+		if (message != null && message.getType() != null) {
+			switch (message.getType()) {
+			case ADD_CONTACT:
+				break;
+			case CHAT_MSG:
+				updateChatUI(message);
+				break;
+			case CREATE_GROUP:
+				break;
+			case EDIT_GROUP:
+				break;
+			case EDIT_PROFILE:
+				break;
+			case GET_USER:
+				break;
+			case LOG_IN_MSG:
+				handleLogIn(message);
+				break;
+			case LOG_OUT_MSG:
+				break;
+			case SEARCH_USER:
+				handleSearchUser(message);
+				break;
+			case TERMINATE:
+				handleTermination();
+				break;
+			default:
+				break;
 
+			}
+		}
+
+	}
+
+	private void handleSearchUser(Message message) {
+
+		try {
+			List<User> users = ByteToEntityConverter.getInstance().getUsers(message.getData());
+			chatPage.renderSearchAlert(users);
+		} catch (JsonParseException e) {
+			logger.error(e.getMessage());
+		} catch (JsonMappingException e) {
+			logger.error(e.getMessage());
+		} catch (IOException e) {
+			logger.error(e.getMessage());
 		}
 
 	}
@@ -159,9 +152,8 @@ public class Presenter {
 
 		try {
 			serverController.terminateConnection();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
 		}
 
 		loginPage.loadLoginPage(this);
@@ -169,32 +161,26 @@ public class Presenter {
 		try {
 			initConnection();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 	}
 
 	private void handleLogIn(Message message) {
-		// TODO Auto-generated method stub
 		try {
-			User user = ByteToEntityConverter.getInstance().getUser(message.getData());
-			chatPage.loadChatPage(this,user);
+			this.user = ByteToEntityConverter.getInstance().getUser(message.getData());
+			chatPage.loadChatPage(this, user);
 		} catch (JsonParseException e) {
 			loginPage.loadLoginPage(this);
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
 			loginPage.loadLoginPage(this);
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			loginPage.loadLoginPage(this);
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -205,14 +191,6 @@ public class Presenter {
 	public void createGrp(String groupName, ArrayList<User> userList) {
 
 	}
-
-	/*
-	 * Search Contact
-	 */
-	public void searchContact(String searchString) {
-
-	}
-
 	/*
 	 * Handle Add Contact
 	 */
@@ -225,16 +203,35 @@ public class Presenter {
 		}
 	}
 
-	public void sendChatMessage(String senderId, String receiverId, String chatMessage,
-			ReceiverTypeEnum receiverTypeEnum){
-		senderController.sendChatMessage(senderId, receiverId, chatMessage,receiverTypeEnum);
+	/**
+	 * Handle Search contact
+	 * 
+	 * @param searchString
+	 */
+
+	public void searchContact(String searchString) {
+		senderController.sendSearchContactString(searchString, user.getNinerId());
+
 	}
-	
-	public void updateChatUI(Message message){
+
+	public void sendChatMessage(String senderId, String receiverId, String chatMessage,
+			ReceiverTypeEnum receiverTypeEnum) {
+		senderController.sendChatMessage(senderId, receiverId, chatMessage, receiverTypeEnum);
+	}
+
+	public void updateChatUI(Message message) {
 		String messageBody = new String(message.getData());
 		String receiver = new String(message.getReceiver());
-		Message1 mess = new Message1(messageBody,chatPage.user.getNinerId().trim(),messageBody);
+		Message1 mess = new Message1(messageBody, chatPage.user.getNinerId().trim(), messageBody);
 		chatPage.dataT.add(mess);
 	}
-	
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 }
