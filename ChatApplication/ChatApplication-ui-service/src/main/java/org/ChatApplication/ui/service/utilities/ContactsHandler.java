@@ -1,18 +1,15 @@
 package org.ChatApplication.ui.service.utilities;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.ChatApplication.data.entity.User;
-import org.h2.tools.DeleteDbFiles;
+import org.ChatApplication.data.entity.UserVO;
 
 public class ContactsHandler {
 
 	
-	public void add2Contacts(User user,Connection conn)
+	public void add2Contacts(UserVO user,Connection conn)
 	{
 		try {
 			Statement st = conn.createStatement();

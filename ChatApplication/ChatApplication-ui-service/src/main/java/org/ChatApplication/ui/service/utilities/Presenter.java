@@ -10,13 +10,15 @@ import java.util.List;
 
 import org.ChatApplication.common.converter.ByteToEntityConverter;
 import org.ChatApplication.data.entity.GroupVO;
-import org.ChatApplication.data.entity.User;
+import org.ChatApplication.data.entity.UserVO;
 import org.ChatApplication.server.message.Message;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.ChatApplication.ui.service.connector.SenderController;
 import org.ChatApplication.ui.service.connector.ServerController;
 import org.ChatApplication.ui.service.database.DatabaseConnecter;
+import org.ChatApplication.ui.service.models.Contact;
 import org.ChatApplication.ui.service.models.MessageVO;
+import org.ChatApplication.ui.service.models.User;
 import org.ChatApplication.ui.service.observer.MessageListener;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
@@ -24,7 +26,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 
 public class Presenter {
 
-	private User user;
+	private UserVO user;
 	private Homepage homePage;
 	private ChatPage chatPage;
 	private UserRegisteration signUpPage;
@@ -89,7 +91,7 @@ public class Presenter {
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
-		this.user = new User();
+		this.user = new UserVO();
 		this.user.setNinerId(userId);
 		this.user.setPassword(password);
 
@@ -138,7 +140,7 @@ public class Presenter {
 	private void handleSearchUser(Message message) {
 
 		try {
-			List<User> users = ByteToEntityConverter.getInstance().getUsers(message.getData());
+			List<UserVO> users = ByteToEntityConverter.getInstance().getUsers(message.getData());
 			chatPage.renderSearchAlert(users);
 		} catch (JsonParseException e) {
 			logger.error(e.getMessage());
@@ -150,7 +152,7 @@ public class Presenter {
 
 	}
 
-	private void handleTermination() {
+	public void handleTermination() {
 
 		try {
 			serverController.terminateConnection();
@@ -197,12 +199,21 @@ public class Presenter {
 	 * Handle Add Contact
 	 */
 
-	public void addToContact(User user) {
-		if (user.equals(null)) {
-			this.contactsHandler.add2Contacts(user, conn);
-		} else {
-
+	public void addToContact(UserVO user) {
+		DatabaseConnecter dbConnector = new DatabaseConnecter();
+		conn = dbConnector.getConn();
+		try {
+			stat = conn.createStatement();
+			stat.execute("INSERT INTO User VALUES('" + user.getNinerId() + "','" + user.getFirstName() + "','"
+					+ user.getEmail() + "','" + "9999999999" + "','" + user.getPassword() + "')");
+			System.out.println("Contact Inserted to DB: " + user.getNinerId());
+			chatPage.conT.add(new Contact(user.getNinerId(), user.getFirstName(), user.getEmail()));
+			System.out.println("Contact Inserted UI: " + user.getNinerId());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
 	}
 
 	/**
@@ -267,11 +278,11 @@ public class Presenter {
 		senderController.createGroupMessage(this.user.getNinerId(), groupObject);
 	}
 
-	public User getUser() {
+	public UserVO getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(UserVO user) {
 		this.user = user;
 	}
 

@@ -3,12 +3,12 @@ package org.ChatApplication.common.converter;
 import java.io.IOException;
 import java.util.List;
 
-import org.ChatApplication.data.entity.User;
+import org.ChatApplication.data.entity.UserVO;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
-import org.codehaus.jackson.type.JavaType;
+import org.h2.engine.User;
 
 /**
  * 
@@ -26,9 +26,9 @@ public class ByteToEntityConverter {
 		return instance;
 	}
 
-	public User getUser(byte[] user) throws JsonParseException, JsonMappingException, IOException {
+	public UserVO getUser(byte[] user) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.readValue(user, User.class);
+		return objectMapper.readValue(user, UserVO.class);
 	}
 
 	public User getUser(String user) throws JsonParseException, JsonMappingException, IOException {
@@ -36,7 +36,7 @@ public class ByteToEntityConverter {
 		return objectMapper.readValue(user, User.class);
 	}
 
-	public List<User> getUsers(byte[] users) throws JsonParseException, JsonMappingException, IOException {
+	public List<UserVO> getUsers(byte[] users) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		return objectMapper.readValue(users, TypeFactory.collectionType(List.class, User.class));
 	}

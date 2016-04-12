@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import org.ChatApplication.data.entity.User;
+import org.ChatApplication.data.entity.UserVO;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.ChatApplication.ui.service.application.ChatApp;
 import org.ChatApplication.ui.service.connector.SenderController;
@@ -27,10 +27,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -42,12 +39,15 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 
 public class ChatPage {
 	@SuppressWarnings("restriction")
 	public Presenter presenter;
 	TextArea messageBox;
-	public User user;
+	public UserVO user;
 	String user_name, id;
 	public TableView<MessageVO> chatString;
 	public TableView<Contact> savedContacts;
@@ -64,7 +64,7 @@ public class ChatPage {
 	HashMap<String, ArrayList<MessageVO>> chatsMap = new HashMap<String, ArrayList<MessageVO>>();
 
 	@SuppressWarnings("restriction")
-	public void loadChatPage(Presenter present, User user1) throws IOException {
+	public void loadChatPage(Presenter present, UserVO user1) throws IOException {
 		this.presenter = present;
 		this.user = user1;
 
@@ -116,7 +116,7 @@ public class ChatPage {
 
 			public void handle(ActionEvent event) {
 				// String niner = user.getNinerId();
-				// MessageVO mess = new MessageVO(niner, "000000001",
+				// Message1 mess = new Message1(niner, "000000001",
 				// messageBox.getText().trim());
 				// dataT.add(mess);
 				// presenter.sendChatMessage(niner, "000000001",
@@ -143,7 +143,7 @@ public class ChatPage {
 				// TODO Auto-generated method stub
 				if (event.getCode() == KeyCode.ENTER) {
 					// String niner = user.getNinerId();
-					// MessageVO mess = new MessageVO(niner, "000000001",
+					// Message1 mess = new Message1(niner, "000000001",
 					// messageBox.getText().trim());
 					// dataT.add(mess);
 					// presenter.sendChatMessage(niner, "000000001",
@@ -170,7 +170,8 @@ public class ChatPage {
 
 			public void handle(ActionEvent event) {
 				// TODO Auto-generated method stub
-				// presenter.createGrp();
+
+				presenter.loadCreateGroup();
 			}
 		});
 
@@ -181,9 +182,16 @@ public class ChatPage {
 		srchBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				if (searchUserT.getText() != null && !searchUserT.getText().isEmpty()) {
-					presenter.searchContact(searchUserT.getText().trim());
-				}
+				// TODO Auto-generated method stub
+				presenter.searchContact(searchUserT.getText().trim());
+			}
+		});
+
+		logoutBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+			public void handle(ActionEvent event) {
+				presenter.handleTermination();
+
 			}
 		});
 
@@ -229,6 +237,20 @@ public class ChatPage {
 
 			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
 				Contact contact = (Contact) newValue;
+				DatabaseConnecter dbConnector = new DatabaseConnecter();
+				Connection conn = dbConnector.getConn();
+				dataT.clear();
+				try {
+					Statement stat = conn.createStatement();
+					ResultSet rs = stat.executeQuery("SELECT * FROM " + contact.getNinerID() + "Chat");
+
+					while (rs.next()) {
+						dataT.add(new MessageVO(rs.getString(1), "", rs.getString(2)));
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				// System.out.println(contact.getNinerID()+contact.getName()+contact.getEmail());
 
 			}
@@ -250,6 +272,16 @@ public class ChatPage {
 		dataT.add(mess);
 		presenter.sendChatMessage(niner, contact.getNinerID(), messageBox.getText().trim(),
 				ReceiverTypeEnum.INDIVIDUAL_MSG);
+		DatabaseConnecter dbConnector = new DatabaseConnecter();
+		Connection conn = dbConnector.getConn();
+		try {
+			Statement stat = conn.createStatement();
+			stat.execute("INSERT INTO " + contact.getNinerID() + "Chat VALUES('" + niner + "','"
+					+ messageBox.getText().trim() + "')");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// dataT.add(new Message(user_name, "Anonymous",
 		// messageBox.getText().trim()));
 		// MessageListener listener = MessageListener.getInstance();
@@ -284,7 +316,7 @@ public class ChatPage {
 
 	}
 
-	public void renderSearchAlert(List<User> users) {
+	public void renderSearchAlert(List<UserVO> users) {
 		if (users != null && users.isEmpty()) {
 			Alerts.createInformationAlert("No Contact found", null, null);
 		} else {
@@ -303,6 +335,15 @@ public class ChatPage {
 			}
 
 		}
-	}
 
+		srchBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+			public void handle(ActionEvent event) {
+				if (searchUserT.getText() != null && !searchUserT.getText().isEmpty()) {
+					presenter.searchContact(searchUserT.getText().trim());
+				}
+			}
+		});
+
+	}
 }

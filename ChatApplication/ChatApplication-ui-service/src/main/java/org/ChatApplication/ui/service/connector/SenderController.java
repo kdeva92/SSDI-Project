@@ -9,7 +9,7 @@ import java.nio.ByteBuffer;
 import org.ChatApplication.common.converter.EntityToByteConverter;
 import org.ChatApplication.common.util.MessageUtility;
 import org.ChatApplication.data.entity.GroupVO;
-import org.ChatApplication.data.entity.User;
+import org.ChatApplication.data.entity.UserVO;
 import org.ChatApplication.server.message.MessageTypeEnum;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
 
@@ -77,7 +77,7 @@ public class SenderController {
 	 * @param senderId
 	 */
 
-	public void logInMessage(User user) {
+	public void logInMessage(UserVO user) {
 		try {
 			byte[] user_byte = EntityToByteConverter.getInstance().getBytes(user);
 			dataOutputStream = new DataOutputStream(socket.getOutputStream());

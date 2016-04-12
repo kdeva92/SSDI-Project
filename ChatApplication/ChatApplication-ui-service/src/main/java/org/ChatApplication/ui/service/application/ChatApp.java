@@ -15,15 +15,15 @@ import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import org.ChatApplication.data.entity.User;
+import javafx.application.Platform;
 import org.ChatApplication.server.message.Message;
 import org.ChatApplication.ui.service.database.DatabaseConnecter;
-import org.ChatApplication.ui.service.utilities.ChatPage;
+import org.ChatApplication.ui.service.utilities.Homepage;
 import org.ChatApplication.ui.service.utilities.Presenter;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
@@ -44,58 +44,55 @@ public class ChatApp extends Application {
 		primaryStage.setWidth(1000);
 		primaryStage.show();
 		// Loading Homepage
-		// Homepage homepage = new Homepage();
-		// presenter = new Presenter(homepage);
-		// homepage.loadHomepage(presenter);
+		Homepage homepage = new Homepage();
+		presenter = new Presenter(homepage);
+		homepage.loadHomepage(presenter);
 		DatabaseConnecter d = new DatabaseConnecter();
 		Connection conn = d.getConn();
 
 		Statement st = conn.createStatement();
-		// st.execute("CREATE TABLE IF NOT EXISTS User(niner_id
-		// varchar(10),studentName varchar(60),email varchar(60),contact
-		// varchar(10),password varchar(20))");
-		// st.execute("INSERT INTO User
-		// VALUES('800934991','Gaurav','g@uncc.edu','9999999999','abcd')");
-		// st.execute("INSERT INTO User
-		// VALUES('800934992','Devd','g@uncc.edu','9999999999','abcd')");
-		// st.execute("INSERT INTO User
-		// VALUES('800934993','Komal','g@uncc.edu','9999999999','abcd')");
-		// st.execute("INSERT INTO User
-		// VALUES('800934994','Hiten','g@uncc.edu','9999999999','abcd')");
-		// st.execute("INSERT INTO User VALUES('800934995','Honey
-		// Singh','g@uncc.edu','9999999999','abcd')");
+		st.execute(
+				"CREATE TABLE IF NOT EXISTS User(niner_id varchar(10),studentName varchar(60),email varchar(60),contact varchar(10),password varchar(20))");
+				// st.execute("INSERT INTO User
+				// VALUES('800934991','Gaurav','g@uncc.edu','9999999999','abcd')");
+				// st.execute("INSERT INTO User
+				// VALUES('800934992','Devd','g@uncc.edu','9999999999','abcd')");
+				// st.execute("INSERT INTO User
+				// VALUES('800934993','Komal','g@uncc.edu','9999999999','abcd')");
+				// st.execute("INSERT INTO User
+				// VALUES('800934994','Hiten','g@uncc.edu','9999999999','abcd')");
+				// st.execute("INSERT INTO User VALUES('800934995','Honey
+				// Singh','g@uncc.edu','9999999999','abcd')");
 
-		User u = new User();
-		u.setFirstName("Gaurav");
-		u.setLastName("D");
-		u.setEmail("g@uncc.edu");
-		u.setId(24);
-		u.setNinerId("800934991");
-		u.setPassword("ABCD");
-		ChatPage cp = new ChatPage();
-		cp.loadChatPage(null, u);
+		// User u = new User();
+		// u.setFirstName("Gaurav");
+		// u.setLastName("D");
+		// u.setEmail("g@uncc.edu");
+		// u.setId(24);
+		// u.setNinerId("800934991");
+		// u.setPassword("ABCD");
+		// ChatPage cp = new ChatPage();
+		// cp.loadChatPage(null, u);
 
-		// ChatApp.messageQueue.addListener(new ListChangeListener<Message>() {
-		// public void onChanged(javafx.collections.ListChangeListener.Change<?
-		// extends Message> c) {
-		// // TODO Auto-generated method stub
-		// System.out.println(ChatApp.messageQueue.size());
-		// Platform.runLater(new Runnable() {
-		//
-		// public void run() {
-		// if (ChatApp.messageQueue != null && ChatApp.messageQueue.size() > 0)
-		// {
-		//
-		// presenter.handleUI(ChatApp.messageQueue.get(0));
-		// ChatApp.messageQueue.remove(0);
-		// }
-		//
-		// }
-		// });
-		//
-		// }
-		//
-		// });
+		ChatApp.messageQueue.addListener(new ListChangeListener<Message>() {
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Message> c) {
+				// TODO Auto-generated method stub
+				System.out.println(ChatApp.messageQueue.size());
+				Platform.runLater(new Runnable() {
+
+					public void run() {
+						if (ChatApp.messageQueue != null && ChatApp.messageQueue.size() > 0) {
+
+							presenter.handleUI(ChatApp.messageQueue.get(0));
+							ChatApp.messageQueue.remove(0);
+						}
+
+					}
+				});
+
+			}
+
+		});
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 
 			public void handle(WindowEvent event) {

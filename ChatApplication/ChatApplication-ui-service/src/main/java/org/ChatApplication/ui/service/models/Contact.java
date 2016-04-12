@@ -43,4 +43,9 @@ public class Contact {
 	public void setEmail(String sender) {
 		this.email.set(sender);
 	}
+
+	@Override
+	public String toString() {
+		return name.get();
+	}
 }

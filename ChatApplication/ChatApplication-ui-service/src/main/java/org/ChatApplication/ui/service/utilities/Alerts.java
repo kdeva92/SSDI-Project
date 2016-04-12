@@ -2,7 +2,7 @@ package org.ChatApplication.ui.service.utilities;
 
 import java.util.List;
 
-import org.ChatApplication.data.entity.User;
+import org.ChatApplication.ui.service.models.User;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;

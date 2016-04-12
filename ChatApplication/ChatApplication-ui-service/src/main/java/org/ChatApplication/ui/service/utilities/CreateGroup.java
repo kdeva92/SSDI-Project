@@ -8,11 +8,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import org.ChatApplication.data.entity.GroupVO;
-import org.ChatApplication.data.entity.User;
+import org.ChatApplication.data.entity.UserVO;
 import org.ChatApplication.ui.service.application.ChatApp;
 import org.ChatApplication.ui.service.database.DatabaseConnecter;
 import org.ChatApplication.ui.service.models.Contact;
-
+import org.ChatApplication.ui.service.models.User;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,135 +30,130 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class CreateGroup {
-VBox groupContainer;
-TextField groupNameText;
-ComboBox memberPicker;
-TableView selectedContacts;
-ObservableList<Contact> contactList;
-Button addMemberButton;
-Button removeMemberButton;
-Button cancelBtn;
-Button createBtn;
-private Presenter presenter;
-ArrayList<String> listOfMembers;
-public void loadCreateGroupPage(Presenter present) throws IOException
-{
-	this.presenter = present;
-groupContainer = (VBox) FXMLLoader.load(Login.class.getResource("/org/ChatApplication/ui/service/stylesheets/CreateGroupWindow.fxml"));	
+	VBox groupContainer;
+	TextField groupNameText;
+	ComboBox memberPicker;
+	TableView selectedContacts;
+	ObservableList<Contact> contactList;
+	Button addMemberButton;
+	Button removeMemberButton;
+	Button cancelBtn;
+	Button createBtn;
+	private Presenter presenter;
+	ArrayList<String> listOfMembers;
 
-HBox controlBox = (HBox) groupContainer.lookup("#controlBox");
+	public void loadCreateGroupPage(Presenter present) throws IOException {
+		listOfMembers = new ArrayList<String>();
+		this.presenter = present;
+		groupContainer = (VBox) FXMLLoader
+				.load(Login.class.getResource("/org/ChatApplication/ui/service/stylesheets/CreateGroupWindow.fxml"));
 
-VBox selectBox = (VBox) controlBox.lookup("#selectBox");
-VBox selectResultBox = (VBox) controlBox.lookup("#selectResultBox");
+		HBox controlBox = (HBox) groupContainer.lookup("#controlBox");
 
-groupNameText = (TextField) selectBox.lookup("#groupNameText");
-memberPicker = (ComboBox) selectBox.lookup("#memberPicker");
-addMemberButton = (Button) selectBox.lookup("#addMemberButton");
-removeMemberButton = (Button) selectBox.lookup("#removeMemberButton");
+		VBox selectBox = (VBox) controlBox.lookup("#selectBox");
+		VBox selectResultBox = (VBox) controlBox.lookup("#selectResultBox");
 
-HBox buttonBox = (HBox) groupContainer.lookup("#buttonBox");
+		groupNameText = (TextField) selectBox.lookup("#groupNameField");
+		memberPicker = (ComboBox) selectBox.lookup("#memberPicker");
+		addMemberButton = (Button) selectBox.lookup("#addMemberButton");
+		removeMemberButton = (Button) selectBox.lookup("#removeMemberButton");
 
-createBtn = (Button) buttonBox.lookup("#createBtn");
-cancelBtn = (Button) buttonBox.lookup("#cancelBtn");
+		HBox buttonBox = (HBox) groupContainer.lookup("#buttonBox");
 
-User user = new User();
-DatabaseConnecter dbConnector = new DatabaseConnecter();
-Connection conn = dbConnector.getConn();
-try {
-	Statement stat = conn.createStatement();
-	ResultSet rs = stat.executeQuery("SELECT * from User");
-	while(rs.next()){
-		memberPicker.getItems().add(new Contact(rs.getString(1),rs.getString(2),rs.getString(2)));
-	}
-} catch (SQLException e) {
-	// TODO Auto-generated catch block
-	e.printStackTrace();
-}
-
-
-/*
- * Table Creation for Contacts
- */
-
-selectedContacts = new TableView<User>();
-
-TableColumn ninerIDCol = new TableColumn("Niner ID");
-TableColumn nameCol = new TableColumn("User");
-TableColumn emailCol = new TableColumn("Email ID");
-
-ninerIDCol.prefWidthProperty().bind(selectedContacts.widthProperty().multiply(0.20));
-emailCol.prefWidthProperty().bind(selectedContacts.widthProperty().multiply(0.40));
-nameCol.prefWidthProperty().bind(selectedContacts.widthProperty().multiply(0.40));
-
-contactList = FXCollections.observableArrayList();
-selectedContacts.setItems(contactList);
-
-ninerIDCol.setCellValueFactory(new PropertyValueFactory("ninerId"));
-emailCol.setCellValueFactory(new PropertyValueFactory("email"));
-nameCol.setCellValueFactory(new PropertyValueFactory("firstName"));
-
-selectedContacts.getColumns().addAll(ninerIDCol,emailCol,nameCol);
-
-
-
-/*
- * Add member button listener
- */
-addMemberButton.setOnAction(new EventHandler<ActionEvent>() {
-	
-	public void handle(ActionEvent event) {
-		// TODO Auto-generated method stub
-		Contact selectedUser = (Contact)memberPicker.getValue();
-		contactList.add(selectedUser);
-		memberPicker.getItems().remove(selectedUser);
-	}
-});
-
-/*
- * remove member button listener
- */
-removeMemberButton.setOnAction(new EventHandler<ActionEvent>() {
-	
-	public void handle(ActionEvent event) {
-		// TODO Auto-generated method stub
-		Contact selectedUser = (Contact)selectedContacts.getSelectionModel().getSelectedItem();
-		memberPicker.getItems().add(selectedUser);
-		contactList.remove(selectedUser);
-		
-	}
-});
-
-
-
-createBtn.setOnAction(new EventHandler<ActionEvent>() {
-
-	public void handle(ActionEvent event) {
-		listOfMembers.clear();
-		String groupName = groupNameText.getText();
-		for(Contact con : contactList){
-			listOfMembers.add(con.getNinerID());
+		createBtn = (Button) buttonBox.lookup("#createBtn");
+		cancelBtn = (Button) buttonBox.lookup("#cancelBtn");
+		memberPicker.getItems().clear();
+		UserVO user = new UserVO();
+		DatabaseConnecter dbConnector = new DatabaseConnecter();
+		Connection conn = dbConnector.getConn();
+		try {
+			Statement stat = conn.createStatement();
+			ResultSet rs = stat.executeQuery("SELECT * from User");
+			while (rs.next()) {
+				memberPicker.getItems().add(new Contact(rs.getString(1), rs.getString(2), rs.getString(2)));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		presenter.sendCreateGroupMessage(new GroupVO(groupNameText.getText().trim(),listOfMembers));
+
+		/*
+		 * Table Creation for Contacts
+		 */
+
+		selectedContacts = new TableView<UserVO>();
+
+		TableColumn ninerIDCol = new TableColumn("Niner ID");
+		TableColumn nameCol = new TableColumn("User");
+		TableColumn emailCol = new TableColumn("Email ID");
+
+		ninerIDCol.prefWidthProperty().bind(selectedContacts.widthProperty().multiply(0.20));
+		emailCol.prefWidthProperty().bind(selectedContacts.widthProperty().multiply(0.40));
+		nameCol.prefWidthProperty().bind(selectedContacts.widthProperty().multiply(0.40));
+
+		contactList = FXCollections.observableArrayList();
+		selectedContacts.setItems(contactList);
+
+		ninerIDCol.setCellValueFactory(new PropertyValueFactory("ninerId"));
+		emailCol.setCellValueFactory(new PropertyValueFactory("email"));
+		nameCol.setCellValueFactory(new PropertyValueFactory("firstName"));
+
+		selectedContacts.getColumns().addAll(ninerIDCol, emailCol, nameCol);
+		selectResultBox.getChildren().add(selectedContacts);
+
+		/*
+		 * Add member button listener
+		 */
+		addMemberButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+				Contact selectedUser = (Contact) memberPicker.getValue();
+				contactList.add(selectedUser);
+				memberPicker.getItems().remove(selectedUser);
+			}
+		});
+
+		/*
+		 * remove member button listener
+		 */
+		removeMemberButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+				Contact selectedUser = (Contact) selectedContacts.getSelectionModel().getSelectedItem();
+				memberPicker.getItems().add(selectedUser);
+				contactList.remove(selectedUser);
+
+			}
+		});
+
+		createBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+			public void handle(ActionEvent event) {
+				listOfMembers.clear();
+				String groupName = groupNameText.getText();
+				for (Contact con : contactList) {
+					listOfMembers.add(con.getNinerID());
+				}
+
+				presenter.sendCreateGroupMessage(new GroupVO(groupNameText.getText().trim(), listOfMembers));
+			}
+		});
+
+		cancelBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+			public void handle(ActionEvent event) {
+				presenter.loadChatPage();
+
+			}
+		});
+
+		Scene scene = new Scene(groupContainer, ChatApp.stage.getWidth(), ChatApp.stage.getHeight());
+		scene.getStylesheets().add(ChatApp.class
+				.getResource("/org/ChatApplication/ui/service/stylesheets/Basic_Style.css").toExternalForm());
+
+		ChatApp.stage.setScene(scene);
 	}
-});
 
-
-
-cancelBtn.setOnAction(new EventHandler<ActionEvent>() {
-
-	public void handle(ActionEvent event) {
-		presenter.loadChatPage();
-		
-	}
-});
-
-Scene scene = new Scene(groupContainer, ChatApp.stage.getWidth(), ChatApp.stage.getHeight());
-scene.getStylesheets().add(ChatApp.class.getResource("/org/ChatApplication/ui/service/stylesheets/Basic_Style.css").toExternalForm());
-
-ChatApp.stage.setScene(scene);
-}
-
-	
-	
 }
