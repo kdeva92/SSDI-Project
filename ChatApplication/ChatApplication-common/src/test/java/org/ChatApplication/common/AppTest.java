@@ -1,5 +1,6 @@
 package org.ChatApplication.common;
 
+import org.ChatApplication.common.converter.TestByteToEntityConverter;
 import org.ChatApplication.common.util.MessagePackTest;
 
 import junit.framework.Test;
@@ -34,5 +35,8 @@ public class AppTest extends TestCase {
 		MessagePackTest messagePackTest = new MessagePackTest();
 		messagePackTest.testChatMessagePack();
 		messagePackTest.testInstructionMessagePack();
+		
+		TestByteToEntityConverter byteToEntityConverter = new TestByteToEntityConverter();
+		byteToEntityConverter.testUserConversion();
 	}
 }

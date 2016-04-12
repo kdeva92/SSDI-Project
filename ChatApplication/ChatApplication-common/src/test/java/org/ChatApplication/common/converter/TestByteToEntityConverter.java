@@ -3,8 +3,12 @@
  */
 package org.ChatApplication.common.converter;
 
+import java.io.IOException;
+
 import org.ChatApplication.data.entity.User;
 import org.ChatApplication.data.entity.UserVO;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 
 import junit.framework.TestCase;
 
@@ -31,7 +35,26 @@ public class TestByteToEntityConverter extends TestCase {
 		userVO.setNinerId(ninerId);
 		userVO.setPassword(passwd);
 		
-		//EntityToByteConverter.getInstance().getBytes(userVO);
+		byte[] user;
+		try {
+			user = EntityToByteConverter.getInstance().getBytes(userVO);
+			UserVO retUser = ByteToEntityConverter.getInstance().getUser(user);
+			
+			if(retUser.getEmail().equals(userVO.getEmail())&& retUser.getFirstName().equals(userVO.getFirstName())&& retUser.getId()==userVO.getId()&& retUser.getNinerId().equals(userVO.getNinerId())&& retUser.getPassword().equals(userVO.getPassword()))
+				assertTrue(true);
+			else 
+				assertTrue(false);
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
 	}
 	
 }

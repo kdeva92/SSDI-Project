@@ -7,9 +7,13 @@ package org.ChatApplication.server.handlers.dataMessageHandler;
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.ChatApplication.data.entity.Group;
+import org.ChatApplication.data.entity.User;
+import org.ChatApplication.data.service.UserService;
 import org.ChatApplication.server.handlers.messageHandler.MessageHandler;
 import org.ChatApplication.server.message.Message;
 import org.ChatApplication.server.message.MessageTypeEnum;
@@ -55,8 +59,11 @@ public class DataMessageHandler implements IDataMessageHandler {
 
 	private class HandlerThread implements Runnable {
 
+		private UserService userService = UserService.getInstance();
 		private ISender sender = ServerSender.getSender();
 		private ClientHolder clientHolder = ClientHolder.getClientHolder();
+		private ClientData cData;
+		private SocketChannel cSock;
 
 		public void run() {
 			// TODO Auto-generated method stub
@@ -82,7 +89,24 @@ public class DataMessageHandler implements IDataMessageHandler {
 					sender.sendMessage(clientHolder.getClientData(message.getReceiver()).getSocketChannel(), message); 
 				}else if(message.getReceiverType() == ReceiverTypeEnum.GROUP_MSG.getIntEquivalant()) {
 					 //operate on group - DB access and individual send to each receiver
-					
+					try {
+						Group group = userService.getGroup(Integer.parseInt( message.getReceiver()));
+						
+						List<User> members = group.getMembers();
+						for (Iterator iterator = members.iterator(); iterator.hasNext();) {
+							User user = (User) iterator.next();
+							cData = clientHolder.getClientData(user.getNinerId());
+							cSock = cData.getSocketChannel();
+							sender.sendMessage(cSock, message);
+						}
+						
+					} catch (NumberFormatException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				
 				System.out.println("DataMessageHandler complete");
