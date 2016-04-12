@@ -112,6 +112,7 @@ public class Presenter {
 				updateChatUI(message);
 				break;
 			case CREATE_GROUP:
+				updateGroupCreation(message);
 				break;
 			case EDIT_GROUP:
 				break;
@@ -235,7 +236,7 @@ public class Presenter {
 
 	public void updateChatUI(Message message) {
 		String messageBody = new String(message.getData());
-		String receiver = new String(message.getReceiver());
+		String receiver = new String(message.getSender());
 		String name = getReceiverName(receiver);
 		if (name != null) {
 		MessageVO mess = new MessageVO(name, chatPage.user.getNinerId().trim(), messageBody);
@@ -259,14 +260,26 @@ public class Presenter {
 
 	private void updateGroupCreation(Message message) {
 
-		// GroupVO group =
-		// ByteToEntityConverter.getInstance().getUser(message.getData());
+		GroupVO group=null;
+		try {
+			group = ByteToEntityConverter.getInstance().getGroupVO(message.getData());
+			chatPage.conT.add(new Contact("1", group.getGroupName(), ""));
+		} catch (JsonParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JsonMappingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		DatabaseConnecter dbConnector = new DatabaseConnecter();
 		conn = dbConnector.getConn();
 		try {
 			stat = conn.createStatement();
-			stat.execute("INSERT INTO User VALUES('" + user.getNinerId() + "','" + user.getFirstName() + "','"
-					+ user.getEmail() + "','" + "9999999999" + "','" + user.getPassword() + "')");
+			stat.execute("INSERT INTO User VALUES('" + "1" + "','" + group.getGroupName() + "','"
+					+ "" + "','" + "9999999999" + "','" + "" + "')");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
