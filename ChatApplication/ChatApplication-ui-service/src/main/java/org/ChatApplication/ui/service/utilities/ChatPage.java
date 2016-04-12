@@ -15,7 +15,7 @@ import org.ChatApplication.ui.service.connector.SenderController;
 import org.ChatApplication.ui.service.connector.ServerController;
 import org.ChatApplication.ui.service.database.DatabaseConnecter;
 import org.ChatApplication.ui.service.models.Contact;
-import org.ChatApplication.ui.service.models.Message1;
+import org.ChatApplication.ui.service.models.MessageVO;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -44,10 +44,10 @@ public class ChatPage {
 	TextArea messageBox;
 	public User user;
 	String user_name, id;
-	public TableView<Message1> chatString;
+	public TableView<MessageVO> chatString;
 	public TableView<Contact> savedContacts;
 	public ObservableList<Contact> conT;
-	public ObservableList<Message1> dataT;
+	public ObservableList<MessageVO> dataT;
 	Button logoutBtn;
 	Button sendButton;
 	Button crtGrpBtn;
@@ -56,7 +56,7 @@ public class ChatPage {
 	private ServerController serverController;
 	private SenderController senderController;
 	TextField searchUserT;
-	HashMap<String, ArrayList<Message1>> chatsMap = new HashMap<String, ArrayList<Message1>>();
+	HashMap<String, ArrayList<MessageVO>> chatsMap = new HashMap<String, ArrayList<MessageVO>>();
 
 	@SuppressWarnings("restriction")
 	public void loadChatPage(Presenter present, User user1) throws IOException {
@@ -165,7 +165,8 @@ public class ChatPage {
 
 			public void handle(ActionEvent event) {
 				// TODO Auto-generated method stub
-				// presenter.createGrp();
+				
+				presenter.loadCreateGroup();
 			}
 		});
 
@@ -180,12 +181,21 @@ public class ChatPage {
 				presenter.searchContact(searchUserT.getText().trim());
 			}
 		});
+		
+		
+		logoutBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+			public void handle(ActionEvent event) {
+				presenter.handleTermination();
+				
+			}
+		});
 
 		/*
 		 * Chat Area
 		 */
 
-		chatString = new TableView<Message1>();
+		chatString = new TableView<MessageVO>();
 
 		TableColumn messageCol = new TableColumn("Message");
 		TableColumn userCol = new TableColumn("User");
@@ -231,7 +241,7 @@ public class ChatPage {
 					ResultSet rs = stat.executeQuery("SELECT * FROM " + contact.getNinerID() + "Chat");
 
 					while (rs.next()) {
-						dataT.add(new Message1(rs.getString(1), "", rs.getString(2)));
+						dataT.add(new MessageVO(rs.getString(1), "", rs.getString(2)));
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -254,7 +264,7 @@ public class ChatPage {
 		Contact contact = (Contact) savedContacts.getSelectionModel().selectedItemProperty().get();
 		System.out.println("Sending to :" + contact.getNinerID() + "\t" + contact.getName());
 		String niner = user.getNinerId();
-		Message1 mess = new Message1(niner, contact.getNinerID(), messageBox.getText().trim());
+		MessageVO mess = new MessageVO(niner, contact.getNinerID(), messageBox.getText().trim());
 		dataT.add(mess);
 		presenter.sendChatMessage(niner, contact.getNinerID(), messageBox.getText().trim(),
 				ReceiverTypeEnum.INDIVIDUAL_MSG);

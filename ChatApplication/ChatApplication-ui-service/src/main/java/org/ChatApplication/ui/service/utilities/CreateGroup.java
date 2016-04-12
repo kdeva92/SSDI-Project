@@ -1,10 +1,18 @@
 package org.ChatApplication.ui.service.utilities;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 
+import org.ChatApplication.data.entity.GroupVO;
 import org.ChatApplication.data.entity.User;
 import org.ChatApplication.ui.service.application.ChatApp;
+import org.ChatApplication.ui.service.database.DatabaseConnecter;
 import org.ChatApplication.ui.service.models.Contact;
+
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,12 +34,16 @@ VBox groupContainer;
 TextField groupNameText;
 ComboBox memberPicker;
 TableView selectedContacts;
-ObservableList<User> contactList;
+ObservableList<Contact> contactList;
 Button addMemberButton;
 Button removeMemberButton;
-
-public void loadCreateGroupPage() throws IOException
+Button cancelBtn;
+Button createBtn;
+private Presenter presenter;
+ArrayList<String> listOfMembers;
+public void loadCreateGroupPage(Presenter present) throws IOException
 {
+	this.presenter = present;
 groupContainer = (VBox) FXMLLoader.load(Login.class.getResource("/org/ChatApplication/ui/service/stylesheets/CreateGroupWindow.fxml"));	
 
 HBox controlBox = (HBox) groupContainer.lookup("#controlBox");
@@ -44,6 +56,24 @@ memberPicker = (ComboBox) selectBox.lookup("#memberPicker");
 addMemberButton = (Button) selectBox.lookup("#addMemberButton");
 removeMemberButton = (Button) selectBox.lookup("#removeMemberButton");
 
+HBox buttonBox = (HBox) groupContainer.lookup("#buttonBox");
+
+createBtn = (Button) buttonBox.lookup("#createBtn");
+cancelBtn = (Button) buttonBox.lookup("#cancelBtn");
+
+User user = new User();
+DatabaseConnecter dbConnector = new DatabaseConnecter();
+Connection conn = dbConnector.getConn();
+try {
+	Statement stat = conn.createStatement();
+	ResultSet rs = stat.executeQuery("SELECT * from User");
+	while(rs.next()){
+		memberPicker.getItems().add(new Contact(rs.getString(1),rs.getString(2),rs.getString(2)));
+	}
+} catch (SQLException e) {
+	// TODO Auto-generated catch block
+	e.printStackTrace();
+}
 
 
 /*
@@ -78,7 +108,7 @@ addMemberButton.setOnAction(new EventHandler<ActionEvent>() {
 	
 	public void handle(ActionEvent event) {
 		// TODO Auto-generated method stub
-		User selectedUser = (User)memberPicker.getValue();
+		Contact selectedUser = (Contact)memberPicker.getValue();
 		contactList.add(selectedUser);
 		memberPicker.getItems().remove(selectedUser);
 	}
@@ -91,9 +121,34 @@ removeMemberButton.setOnAction(new EventHandler<ActionEvent>() {
 	
 	public void handle(ActionEvent event) {
 		// TODO Auto-generated method stub
-		User selectedUser = (User)selectedContacts.getSelectionModel().getSelectedItem();
+		Contact selectedUser = (Contact)selectedContacts.getSelectionModel().getSelectedItem();
 		memberPicker.getItems().add(selectedUser);
 		contactList.remove(selectedUser);
+		
+	}
+});
+
+
+
+createBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+	public void handle(ActionEvent event) {
+		listOfMembers.clear();
+		String groupName = groupNameText.getText();
+		for(Contact con : contactList){
+			listOfMembers.add(con.getNinerID());
+		}
+		
+		presenter.sendCreateGroupMessage(new GroupVO(groupNameText.getText().trim(),listOfMembers));
+	}
+});
+
+
+
+cancelBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+	public void handle(ActionEvent event) {
+		presenter.loadChatPage();
 		
 	}
 });

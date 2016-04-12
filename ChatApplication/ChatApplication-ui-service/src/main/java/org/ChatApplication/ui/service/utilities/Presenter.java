@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import org.ChatApplication.common.converter.ByteToEntityConverter;
+import org.ChatApplication.data.entity.GroupVO;
 import org.ChatApplication.data.entity.User;
 import org.ChatApplication.server.message.Message;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
@@ -16,7 +17,7 @@ import org.ChatApplication.ui.service.connector.SenderController;
 import org.ChatApplication.ui.service.connector.ServerController;
 import org.ChatApplication.ui.service.database.DatabaseConnecter;
 import org.ChatApplication.ui.service.models.Contact;
-import org.ChatApplication.ui.service.models.Message1;
+import org.ChatApplication.ui.service.models.MessageVO;
 import org.ChatApplication.ui.service.observer.MessageListener;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -32,6 +33,7 @@ public class Presenter {
 	private SenderController senderController;
 	private MessageListener messageListener;
 	private ContactsHandler contactsHandler;
+	private CreateGroup createGroup;
 	Connection conn;
 	Statement stat;
 
@@ -42,6 +44,7 @@ public class Presenter {
 		this.loginPage = new Login();
 		this.chatPage = new ChatPage();
 		this.contactsHandler = new ContactsHandler();
+		this.createGroup = new CreateGroup();
 
 		initializeClientDataBase();
 	}
@@ -133,6 +136,7 @@ public class Presenter {
 			updateChatUI(message);
 			break;
 		case CREATE_GROUP:
+			updateGroupCreation(message);
 			break;
 		case EDIT_GROUP:
 			break;
@@ -157,7 +161,23 @@ public class Presenter {
 
 	}
 
-	private void handleTermination() {
+	private void updateGroupCreation(Message message) {
+		
+		//GroupVO group = ByteToEntityConverter.getInstance().getUser(message.getData());
+		DatabaseConnecter dbConnector = new DatabaseConnecter();
+		conn = dbConnector.getConn();
+		try {
+			stat = conn.createStatement();
+			stat.execute("INSERT INTO User VALUES('" + user.getNinerId() + "','" + user.getFirstName() + "','"
+					+ user.getEmail() + "','" + "9999999999" + "','" + user.getPassword() + "')");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	public void handleTermination() {
 
 		try {
 			serverController.terminateConnection();
@@ -183,7 +203,7 @@ public class Presenter {
 	private void handleLogIn(Message message) {
 		// TODO Auto-generated method stub
 		try {
-			User user = ByteToEntityConverter.getInstance().getUser(message.getData());
+			this.user = ByteToEntityConverter.getInstance().getUser(message.getData());
 			chatPage.loadChatPage(this, user);
 		} catch (JsonParseException e) {
 			loginPage.loadLoginPage(this);
@@ -246,10 +266,10 @@ public class Presenter {
 		String receiver = new String(message.getReceiver());
 		String name = getReceiverName(receiver);
 		if (name != null) {
-			Message1 mess = new Message1(name, chatPage.user.getNinerId().trim(), messageBody);
+			MessageVO mess = new MessageVO(name, chatPage.user.getNinerId().trim(), messageBody);
 			chatPage.dataT.add(mess);
 		} else {
-			Message1 mess = new Message1(receiver, chatPage.user.getNinerId().trim(), messageBody);
+			MessageVO mess = new MessageVO(receiver, chatPage.user.getNinerId().trim(), messageBody);
 			chatPage.dataT.add(mess);
 		}
 		DatabaseConnecter dbConnector = new DatabaseConnecter();
@@ -291,6 +311,36 @@ public class Presenter {
 
 		return retVal;
 
+	}
+	
+	
+	
+	public void loadCreateGroup(){
+		try {
+			createGroup.loadCreateGroupPage(this);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void loadChatPage(){
+		try {
+			this.chatPage.loadChatPage(this, this.user);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void sendCreateGroupMessage(GroupVO groupObject) {
+		// TODO Auto-generated method stub
+		senderController.createGroupMessage(this.user.getNinerId(), groupObject);
+	}
+
+	public User getUser() {
+		return user;
 	}
 
 }
