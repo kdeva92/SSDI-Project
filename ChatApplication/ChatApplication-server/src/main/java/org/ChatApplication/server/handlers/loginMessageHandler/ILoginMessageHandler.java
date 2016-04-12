@@ -3,6 +3,8 @@
  */
 package org.ChatApplication.server.handlers.loginMessageHandler;
 
+import java.nio.channels.SelectionKey;
+
 import org.ChatApplication.data.entity.User;
 
 /**
@@ -18,5 +20,5 @@ import org.ChatApplication.data.entity.User;
  */
 public interface ILoginMessageHandler {
 
-	public User validateLogin(User user);
+	public void validateLogin(User user, SelectionKey userKey);
 }

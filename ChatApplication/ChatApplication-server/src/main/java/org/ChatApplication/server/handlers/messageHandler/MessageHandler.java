@@ -8,8 +8,12 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import javax.imageio.stream.IIOByteBuffer;
+
 import org.ChatApplication.server.handlers.dataMessageHandler.DataMessageHandler;
 import org.ChatApplication.server.handlers.dataMessageHandler.IDataMessageHandler;
+import org.ChatApplication.server.handlers.instructionHandler.IInstructionHandler;
+import org.ChatApplication.server.handlers.instructionHandler.InstructionHandler;
 import org.ChatApplication.server.handlers.loginMessageHandler.ILoginMessageHandler;
 import org.ChatApplication.server.message.Message;
 import org.ChatApplication.server.sender.ClientHolder;
@@ -61,6 +65,7 @@ public class MessageHandler implements IMessageHandler {
 	private class HandlerThread implements Runnable {
 
 		private IDataMessageHandler dataMessageHandler = DataMessageHandler.getDataMessageHandler();
+		private IInstructionHandler instructionMessageHandler = InstructionHandler.getInstructionHandler();
 
 		public void run() {
 			// TODO Auto-generated method stub
@@ -77,19 +82,19 @@ public class MessageHandler implements IMessageHandler {
 				}
 				// System.out.println("MessageHandler msg:" + new
 				// String(message.getData().array()));
-				dataMessageHandler.handleMessage(message);
+				// dataMessageHandler.handleMessage(message);
 
-				// switch (message.getType()) {
-				// case CHAT_MSG:
-				// System.out.println("Message type data");
-				// dataMessageHandler.handleMessage(message);
-				// break;
-				//
-				// default:
-				// System.out.println("Message type default!!!");
-				// dataMessageHandler.handleMessage(message);
-				// break;
-				// }
+				switch (message.getType()) {
+				case CHAT_MSG:
+					System.out.println("Message type data");
+					dataMessageHandler.handleMessage(message);
+					break;
+					//instruction message
+				default:
+					System.out.println("message sent to  Instruction handler");
+					instructionMessageHandler.handleMessage(message);
+					break;
+				}
 
 			}
 		}

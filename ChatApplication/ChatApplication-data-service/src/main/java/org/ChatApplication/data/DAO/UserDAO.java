@@ -1,5 +1,6 @@
 package org.ChatApplication.data.DAO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ChatApplication.data.entity.Group;
@@ -41,7 +42,7 @@ public class UserDAO {
 		logger.info("Entering getUser");
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 		Query query = sessionFactory.getCurrentSession()
-				.createQuery("from User where email =:email or ninerId=:ninerId and password =:password");
+				.createQuery("from User where email =:email or ninerId =:ninerId and password =:password");
 		query.setParameter("email", userName);
 		query.setParameter("ninerId", userName);
 		query.setParameter("password", password);
@@ -58,11 +59,14 @@ public class UserDAO {
 		logger.info("Entering getUser");
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 		Query query = sessionFactory.getCurrentSession()
-				.createQuery("from User where email = :email or ninerId =: ninerId or firstName =:firstname");
+				.createQuery("from User where email =:email or ninerId =:ninerId or firstName =:firstName");
 		query.setParameter("email", searchString);
 		query.setParameter("ninerId", searchString);
 		query.setParameter("firstName", searchString);
 		List<User> users = query.list();
+		if (users == null) {
+			users = new ArrayList<User>();
+		}
 		logger.info("Leaving getUser");
 		return users;
 	}

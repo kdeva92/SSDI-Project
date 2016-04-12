@@ -17,6 +17,7 @@ import org.ChatApplication.common.converter.EntityToByteConverter;
 import org.ChatApplication.common.util.MessageUtility;
 import org.ChatApplication.data.entity.User;
 import org.ChatApplication.server.handlers.loginMessageHandler.ILoginMessageHandler;
+import org.ChatApplication.server.handlers.loginMessageHandler.LoginHandlerFactory;
 import org.ChatApplication.server.handlers.loginMessageHandler.LoginMessageHandler;
 import org.ChatApplication.server.handlers.messageHandler.MessageHandler;
 import org.ChatApplication.server.message.Message;
@@ -35,7 +36,7 @@ import org.apache.log4j.Logger;
  */
 public class NioServerModule implements Runnable {
 
-	private ILoginMessageHandler loginHandler = LoginMessageHandler.getMessageHandler();
+	private ILoginMessageHandler loginHandler = LoginMessageHandler.getMessageHandler();//LoginHandlerFactory.getFactory().getLoginMessageandler();// 
 	private static final MessageHandler mssageHandler = MessageHandler.getMessageHandler();
 	private final static Logger logger = Logger.getLogger(NioServerModule.class);
 	private static NioServerModule module;
@@ -46,7 +47,7 @@ public class NioServerModule implements Runnable {
 		super();
 	}
 
-	static NioServerModule getNioServerModule() throws IOException {
+	public static NioServerModule getNioServerModule() throws IOException {
 		if (module != null) {
 			return module;
 		}
@@ -160,24 +161,7 @@ public class NioServerModule implements Runnable {
 						// Handle complete login messages here as special case
 						if (message.getType() == MessageTypeEnum.LOG_IN_MSG) {
 							System.out.println("Login message in nio module");
-							User user = loginHandler
-									.validateLogin(ByteToEntityConverter.getInstance().getUser(message.getData()));
-							// force terminate to invalid client
-							if (user == null) {
-								selectionKey.cancel();
-								client.close();
-								continue;
-							}
-							// for valid login request
-							addClientToClientHolder(user.getNinerId(), selectionKey, client);
-							message.setData(
-									MessageUtility
-											.packMessage(EntityToByteConverter.getInstance().getBytes(user),
-													message.getSender(), message.getReceiver(),
-													ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.LOG_IN_MSG)
-											.array());
-							ServerSender.getSender().sendMessage(client, message);
-							System.out.println("Login successful user added to client holder");
+							loginHandler.validateLogin(ByteToEntityConverter.getInstance().getUser(message.getData()), selectionKey);
 							continue;
 						}
 						if (message.getType() == MessageTypeEnum.CHAT_MSG) {

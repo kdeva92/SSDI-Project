@@ -3,16 +3,22 @@
  */
 package org.ChatApplication.server.handlers.loginMessageHandler;
 
+import java.nio.channels.SelectionKey;
+import java.nio.channels.SocketChannel;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.ChatApplication.data.DAO.UserDAO;
+import org.ChatApplication.common.converter.EntityToByteConverter;
+import org.ChatApplication.common.util.MessageUtility;
 import org.ChatApplication.data.entity.User;
 import org.ChatApplication.data.service.UserService;
 import org.ChatApplication.server.handlers.dataMessageHandler.DataMessageHandler;
 import org.ChatApplication.server.handlers.dataMessageHandler.IDataMessageHandler;
 import org.ChatApplication.server.message.Message;
+import org.ChatApplication.server.message.MessageTypeEnum;
+import org.ChatApplication.server.message.ReceiverTypeEnum;
+import org.ChatApplication.server.sender.ClientHolder;
+import org.ChatApplication.server.sender.ServerSender;
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 
 /**
  * @author Devdatta
@@ -20,15 +26,15 @@ import org.hibernate.HibernateException;
  */
 public class LoginMessageHandler implements ILoginMessageHandler {
 
-	//ConcurrentLinkedQueue<Message> messageQueue = new ConcurrentLinkedQueue<Message>();
+	ConcurrentLinkedQueue<UserDataHolder> messageQueue = new ConcurrentLinkedQueue<UserDataHolder>();
 	private final static Logger logger = Logger.getLogger(LoginMessageHandler.class);
-	//private HandlerThread handlerThread;
-	//private Thread thread;
+	private HandlerThread handlerThread;
+	private Thread thread;
 
 	private LoginMessageHandler() {
-//		handlerThread = new HandlerThread();
-//		thread = new Thread(handlerThread);
-//		thread.start();
+		handlerThread = new HandlerThread();
+		thread = new Thread(handlerThread);
+		thread.start();
 	}
 
 	private static LoginMessageHandler messageHandler;
@@ -40,51 +46,100 @@ public class LoginMessageHandler implements ILoginMessageHandler {
 		return messageHandler;
 	}
 
-	public User validateLogin(User user) {
-		// TODO Auto-generated method stub
-		try {
-			return UserService.getInstance().getUser(user.getNinerId(), user.getPassword());
-		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error("Error in getting user from db", e);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error("Error in getting user from db", e);
-		}
-		return null;
+	// public User validateLogin(User user) {
+	// // TODO Auto-generated method stub
+	// try {
+	// return UserService.getInstance().getUser(user.getNinerId(),
+	// user.getPassword());
+	// } catch (HibernateException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// logger.error("Error in getting user from db", e);
+	// } catch (Exception e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// logger.error("Error in getting user from db", e);
+	// }
+	// return null;
+	// }
+
+	/*
+	 * Validates the user and terminates the socket if invalid login request,
+	 * else adds client to holder.
+	 */
+	public void validateLogin(User user, SelectionKey userKey) {
+		messageQueue.add(new UserDataHolder(user, userKey));
+		System.out.println("User added to login queue");
 	}
 
-	
-//	public void handleMessage(Message message) {
-//		// TODO Auto-generated method stub
-//		messageQueue.add(message);
-//	}
-//
-//	private class HandlerThread implements Runnable {
-//
-//		private IDataMessageHandler dataMessageHandler = DataMessageHandler.getDataMessageHandler();
-//
-//		public void run() {
-//			// TODO Auto-generated method stub
-//			while (true) {
-//				Message message = messageQueue.poll();
-//				if (message == null) {
-//					try {
-//						Thread.sleep(50);
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//					continue;
-//				}
-//				//Handle login request
-//				UserDAO dao = UserDAO.getInstance();
-//				//dao.getUser(email, password)
-//			}
-//		}
-//
-//	}
+	private class UserDataHolder {
+		User user;
+		SelectionKey socketKey;
+
+		public UserDataHolder(User user, SelectionKey key) {
+			this.user = user;
+			socketKey = key;
+		}
+
+		public User getUser() {
+			return user;
+		}
+
+		public SelectionKey getSocketKey() {
+			return socketKey;
+		}
+	}
+
+	private class HandlerThread implements Runnable {
+
+		private IDataMessageHandler dataMessageHandler = DataMessageHandler.getDataMessageHandler();
+		private ClientHolder clientHolder = ClientHolder.getClientHolder();
+		private UserService userService = UserService.getInstance();
+		
+		public void run() {
+			// TODO Auto-generated method stub
+			while (true) {
+				UserDataHolder dataHolder = messageQueue.poll();
+				if (dataHolder == null) {
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					continue;
+				}
+				// Handle login request
+
+				User user = dataHolder.getUser();
+				try {
+					User u = userService.getUser(user.getNinerId(), user.getPassword());
+					if (u == null) {
+						((SocketChannel) dataHolder.getSocketKey().attachment()).close();
+						dataHolder.getSocketKey().cancel();
+						continue;
+					}
+					// for valid login request
+					clientHolder.addClient(user.getNinerId(), dataHolder.getSocketKey(),
+							((SocketChannel) dataHolder.getSocketKey().attachment()));
+					Message message = new Message();
+					message.setType(MessageTypeEnum.LOG_IN_MSG);
+					message.setReceiverType(ReceiverTypeEnum.INDIVIDUAL_MSG.getIntEquivalant());
+					message.setData(MessageUtility
+							.packMessage(EntityToByteConverter.getInstance().getBytes(u), "000000000",
+									"000000000", ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.LOG_IN_MSG)
+							.array());
+					ServerSender.getSender().sendMessage(((SocketChannel) dataHolder.getSocketKey().attachment()),
+							message);
+					System.out.println("Login successful user added to client holder");
+
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
 
 }

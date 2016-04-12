@@ -57,6 +57,7 @@ public class UserService {
 	}
 
 	public List<User> getUsers(String searchString) throws Exception {
+		SessionFactory sessionFactory = HibernateSessionUtil.getCurrentSessionTransaction();
 		logger.info("Entering createUser");
 		List<User> users = null;
 		try {
@@ -68,4 +69,7 @@ public class UserService {
 		return users;
 	}
 
+	public static void main(String[] args) throws Exception {
+		List<User> users = getInstance().getUsers("000000000");
+	}
 }
