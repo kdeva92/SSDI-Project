@@ -3,6 +3,7 @@ package org.ChatApplication.ui.service.utilities;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -235,8 +236,25 @@ public class Presenter {
 	public void updateChatUI(Message message) {
 		String messageBody = new String(message.getData());
 		String receiver = new String(message.getReceiver());
-		MessageVO mess = new MessageVO(messageBody, chatPage.user.getNinerId().trim(), messageBody);
+		String name = getReceiverName(receiver);
+		if (name != null) {
+		MessageVO mess = new MessageVO(name, chatPage.user.getNinerId().trim(), messageBody);
 		chatPage.dataT.add(mess);
+		} else {
+		MessageVO mess = new MessageVO(receiver, chatPage.user.getNinerId().trim(), messageBody);
+		chatPage.dataT.add(mess);
+		}
+//		DatabaseConnecter dbConnector = new DatabaseConnecter();
+//		conn = dbConnector.getConn();
+//		try {
+//		stat = conn.createStatement();
+//		stat.execute(
+//		"CREATE TABLE IF NOT EXISTS " + receiver + "Chat(sender varchar(10),messageBody varchar(500))");
+//		stat.execute("INSERT INTO " + receiver + "Chat VALUES('" + receiver + "','" + messageBody + "')");
+//		} catch (SQLException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//		}
 	}
 
 	private void updateGroupCreation(Message message) {
@@ -284,6 +302,34 @@ public class Presenter {
 
 	public void setUser(UserVO user) {
 		this.user = user;
+	}
+	
+	
+	private String getReceiverName(String ninerId) {
+		DatabaseConnecter dbConnector = new DatabaseConnecter();
+		conn = dbConnector.getConn();
+		try {
+			stat = conn.createStatement();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		ResultSet rs;
+		String retVal = null;
+		try {
+			rs = stat.executeQuery("SELECT studentName FROM User WHERE niner_id='" + ninerId + "'");
+
+			while (rs.next()) {
+				retVal = rs.getString(1);
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return retVal;
+
 	}
 
 }

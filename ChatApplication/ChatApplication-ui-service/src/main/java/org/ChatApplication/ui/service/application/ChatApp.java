@@ -53,12 +53,9 @@ public class ChatApp extends Application {
 		Statement st = conn.createStatement();
 		st.execute(
 				"CREATE TABLE IF NOT EXISTS User(niner_id varchar(10),studentName varchar(60),email varchar(60),contact varchar(10),password varchar(20))");
-				// st.execute("INSERT INTO User
-				// VALUES('800934991','Gaurav','g@uncc.edu','9999999999','abcd')");
-				// st.execute("INSERT INTO User
-				// VALUES('800934992','Devd','g@uncc.edu','9999999999','abcd')");
-				// st.execute("INSERT INTO User
-				// VALUES('800934993','Komal','g@uncc.edu','9999999999','abcd')");
+//				 st.execute("INSERT INTO User VALUES('800934991','Gaurav','g@uncc.edu','9999999999','abcd')");
+//				 st.execute("INSERT INTO User VALUES('000000002','Devd','g@uncc.edu','9999999999','abcd')");
+//				 st.execute("INSERT INTO User VALUES('800934993','Komal','g@uncc.edu','9999999999','abcd')");
 				// st.execute("INSERT INTO User
 				// VALUES('800934994','Hiten','g@uncc.edu','9999999999','abcd')");
 				// st.execute("INSERT INTO User VALUES('800934995','Honey
