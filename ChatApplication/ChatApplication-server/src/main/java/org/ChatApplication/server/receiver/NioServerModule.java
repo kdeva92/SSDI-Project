@@ -14,6 +14,8 @@ import java.util.Set;
 
 import org.ChatApplication.common.converter.ByteToEntityConverter;
 import org.ChatApplication.common.util.MessageUtility;
+import org.ChatApplication.data.entity.User;
+import org.ChatApplication.data.entity.UserVO;
 import org.ChatApplication.server.handlers.loginMessageHandler.ILoginMessageHandler;
 import org.ChatApplication.server.handlers.loginMessageHandler.LoginHandlerFactory;
 import org.ChatApplication.server.handlers.messageHandler.IMessageHandler;
@@ -157,7 +159,11 @@ public class NioServerModule implements Runnable {
 						// Handle complete login messages here as special case
 						if (message.getType() == MessageTypeEnum.LOG_IN_MSG) {
 							System.out.println("Login message in nio module");
-							loginHandler.validateLogin(ByteToEntityConverter.getInstance().getUser(message.getData()), selectionKey);
+							UserVO userVO = ByteToEntityConverter.getInstance().getUser(message.getData());
+							User user = new User();
+							user.setNinerId(userVO.getNinerId());
+							user.setPassword(userVO.getPassword());
+							loginHandler.validateLogin(user, selectionKey);
 							continue;
 						}
 						if (message.getType() == MessageTypeEnum.CHAT_MSG) {

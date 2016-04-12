@@ -1,7 +1,10 @@
 package org.ChatApplication.server;
 
+import java.util.List;
+
 import org.ChatApplication.data.DAO.UserDAO;
 import org.ChatApplication.data.entity.User;
+import org.ChatApplication.data.service.UserService;
 import org.ChatApplication.data.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
@@ -40,16 +43,15 @@ public class AppTest extends TestCase {
 	}
 
 	public void createUserTest() {
-		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 		User user = new User();
-		user.setEmail("kingale@uncc.edu");
+		user.setEmail("kingale1@uncc.edu");
 		user.setFirstName("Komal");
 		user.setLastName("Ingale");
 		user.setNinerId("800908989");
 		user.setPassword("demo123");
 
 		try {
-			User retrievedUser = UserDAO.getInstance().getUser("kingale@uncc.edu", "demo123");
+			User retrievedUser = UserService.getInstance().getUser("kingale1@uncc.edu", "demo123");
 			if (retrievedUser.getEmail().equals(user.getEmail())) {
 				assertTrue(false);
 			}
@@ -59,7 +61,7 @@ public class AppTest extends TestCase {
 			assertTrue(false);
 		}
 		try {
-			UserDAO.getInstance().createUser(user);
+			UserService.getInstance().createUser(user);
 		} catch (HibernateException e) {
 			assertTrue(false);
 		} catch (Exception e) {
@@ -68,4 +70,35 @@ public class AppTest extends TestCase {
 		assertTrue(true);
 	}
 
+	public void getUser() {
+		try {
+			User retrievedUser = UserService.getInstance().getUser("kingale1@uncc.edu", "demo123");
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void searchUser() {
+		try {
+			User retrievedUser = UserService.getInstance().getUser("kingale1@uncc.edu", "demo123");
+			if (retrievedUser != null) {
+				List<User> users = UserService.getInstance().getUsers(retrievedUser.getEmail());
+				if (users.get(0).equals(retrievedUser)) {
+					assertTrue(true);
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	public void createGroup(){
+		
+	}
 }

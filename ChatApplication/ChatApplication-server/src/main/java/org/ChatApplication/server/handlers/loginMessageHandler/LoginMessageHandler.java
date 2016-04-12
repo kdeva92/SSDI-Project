@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.ChatApplication.common.converter.EntityToByteConverter;
 import org.ChatApplication.common.util.MessageUtility;
 import org.ChatApplication.data.entity.User;
+import org.ChatApplication.data.entity.UserVO;
 import org.ChatApplication.data.service.UserService;
 import org.ChatApplication.server.handlers.dataMessageHandler.DataMessageHandler;
 import org.ChatApplication.server.handlers.dataMessageHandler.IDataMessageHandler;
@@ -125,8 +126,15 @@ public class LoginMessageHandler implements ILoginMessageHandler {
 					Message message = new Message();
 					message.setType(MessageTypeEnum.LOG_IN_MSG);
 					message.setReceiverType(ReceiverTypeEnum.INDIVIDUAL_MSG.getIntEquivalant());
+					UserVO userVO = new UserVO();
+					userVO.setEmail(u.getEmail());
+					userVO.setFirstName(u.getFirstName());
+					userVO.setId(u.getId());
+					userVO.setLastName(u.getLastName());
+					userVO.setNinerId(u.getNinerId());
+					userVO.setPassword(null);
 					message.setData(MessageUtility
-							.packMessage(EntityToByteConverter.getInstance().getBytes(u), "000000000",
+							.packMessage(EntityToByteConverter.getInstance().getBytes(userVO), "000000000",
 									"000000000", ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.LOG_IN_MSG)
 							.array());
 					ServerSender.getSender().sendMessage(((SocketChannel) dataHolder.getSocketKey().attachment()),

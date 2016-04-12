@@ -9,7 +9,7 @@ import java.nio.ByteBuffer;
 import org.ChatApplication.common.converter.EntityToByteConverter;
 import org.ChatApplication.common.util.MessageUtility;
 import org.ChatApplication.data.entity.GroupVO;
-import org.ChatApplication.data.entity.User;
+import org.ChatApplication.data.entity.UserVO;
 import org.ChatApplication.server.message.MessageTypeEnum;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
 
@@ -77,11 +77,11 @@ public class SenderController {
 	 * @param senderId
 	 */
 
-	public void logInMessage(User user) {
+	public void logInMessage(UserVO user) {
 		try {
 			byte[] user_byte = EntityToByteConverter.getInstance().getBytes(user);
 			dataOutputStream = new DataOutputStream(socket.getOutputStream());
-			ByteBuffer buff = MessageUtility.packMessage(user_byte, "000000000", "000000000",
+			ByteBuffer buff = MessageUtility.packMessage(user_byte, user.getNinerId(), "000000000",
 					ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.LOG_IN_MSG);
 			byte[] b = buff.array();
 
@@ -128,6 +128,25 @@ public class SenderController {
 		Socket socket = new Socket(HOST, PORT);
 		SenderController s = new SenderController(socket);
 		s.sendChatMessage("hello", "123456789", "123456745", ReceiverTypeEnum.INDIVIDUAL_MSG);
+
+	}
+
+	public void sendSearchContactString(String searchString, String senderId) {
+
+		try {
+			dataOutputStream = new DataOutputStream(socket.getOutputStream());
+			ByteBuffer buff = MessageUtility.packMessage(searchString.getBytes(), senderId, "000000000",
+					ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.SEARCH_USER);
+			byte[] b = buff.array();
+
+			dataOutputStream.write(b, 0, b.length);
+
+			System.out.println("written: " + new String(b, "UTF-8"));
+			dataOutputStream.flush();
+			// System.out.println("Sent: " + userName);
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}
 
 	}
 

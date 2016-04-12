@@ -7,8 +7,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
-import org.ChatApplication.data.entity.User;
+import org.ChatApplication.data.entity.UserVO;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.ChatApplication.ui.service.application.ChatApp;
 import org.ChatApplication.ui.service.connector.SenderController;
@@ -37,12 +39,15 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 
 public class ChatPage {
 	@SuppressWarnings("restriction")
 	public Presenter presenter;
 	TextArea messageBox;
-	public User user;
+	public UserVO user;
 	String user_name, id;
 	public TableView<MessageVO> chatString;
 	public TableView<Contact> savedContacts;
@@ -59,7 +64,7 @@ public class ChatPage {
 	HashMap<String, ArrayList<MessageVO>> chatsMap = new HashMap<String, ArrayList<MessageVO>>();
 
 	@SuppressWarnings("restriction")
-	public void loadChatPage(Presenter present, User user1) throws IOException {
+	public void loadChatPage(Presenter present, UserVO user1) throws IOException {
 		this.presenter = present;
 		this.user = user1;
 
@@ -165,7 +170,7 @@ public class ChatPage {
 
 			public void handle(ActionEvent event) {
 				// TODO Auto-generated method stub
-				
+
 				presenter.loadCreateGroup();
 			}
 		});
@@ -181,13 +186,12 @@ public class ChatPage {
 				presenter.searchContact(searchUserT.getText().trim());
 			}
 		});
-		
-		
+
 		logoutBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
 				presenter.handleTermination();
-				
+
 			}
 		});
 
@@ -312,4 +316,34 @@ public class ChatPage {
 
 	}
 
+	public void renderSearchAlert(List<UserVO> users) {
+		if (users != null && users.isEmpty()) {
+			Alerts.createInformationAlert("No Contact found", null, null);
+		} else {
+
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setTitle("User Found");
+			alert.setHeaderText("Do you want to add the User as your contact?");
+			ButtonType buttonYes = new ButtonType("Yes");
+			ButtonType buttonNo = new ButtonType("No");
+			alert.getButtonTypes().setAll(buttonYes, buttonNo);
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.get() == buttonYes) {
+				presenter.addToContact(users.get(0));
+			} else {
+				alert.close();
+			}
+
+		}
+
+		srchBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+			public void handle(ActionEvent event) {
+				if (searchUserT.getText() != null && !searchUserT.getText().isEmpty()) {
+					presenter.searchContact(searchUserT.getText().trim());
+				}
+			}
+		});
+
+	}
 }
