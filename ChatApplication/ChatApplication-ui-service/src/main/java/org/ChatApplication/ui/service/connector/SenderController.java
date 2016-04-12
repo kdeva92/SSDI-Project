@@ -8,10 +8,14 @@ import java.nio.ByteBuffer;
 
 import org.ChatApplication.common.converter.EntityToByteConverter;
 import org.ChatApplication.common.util.MessageUtility;
+import org.ChatApplication.data.entity.GroupVO;
 import org.ChatApplication.data.entity.User;
 import org.ChatApplication.server.message.MessageTypeEnum;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
+
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 
 /**
  * 
@@ -41,7 +45,8 @@ public class SenderController {
 			ReceiverTypeEnum receiverTypeEnum) {
 		try {
 
-			ByteBuffer buff = MessageUtility.packMessage(chatMessage.getBytes(), senderId, receiverId, receiverTypeEnum, MessageTypeEnum.CHAT_MSG);
+			ByteBuffer buff = MessageUtility.packMessage(chatMessage.getBytes(), senderId, receiverId, receiverTypeEnum,
+					MessageTypeEnum.CHAT_MSG);
 			byte[] b = buff.array();
 			dataOutputStream.write(b, 0, b.length);
 			System.out.println("written: " + new String(b, "UTF-8"));
@@ -76,18 +81,43 @@ public class SenderController {
 		try {
 			byte[] user_byte = EntityToByteConverter.getInstance().getBytes(user);
 			dataOutputStream = new DataOutputStream(socket.getOutputStream());
-			ByteBuffer buff = MessageUtility.packMessage(user_byte, "000000000", "000000000", ReceiverTypeEnum.INDIVIDUAL_MSG,MessageTypeEnum.LOG_IN_MSG);
+			ByteBuffer buff = MessageUtility.packMessage(user_byte, "000000000", "000000000",
+					ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.LOG_IN_MSG);
 			byte[] b = buff.array();
 
 			dataOutputStream.write(b, 0, b.length);
 
 			System.out.println("written: " + new String(b, "UTF-8"));
 			dataOutputStream.flush();
-			//System.out.println("Sent: " + userName);
+			// System.out.println("Sent: " + userName);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
-		} 
+		}
 
+	}
+
+	public void createGroupMessage(String sender, GroupVO groupObject) {
+		try {
+			byte[] group_byte = EntityToByteConverter.getInstance().getBytes(groupObject);
+			dataOutputStream = new DataOutputStream(socket.getOutputStream());
+			ByteBuffer buff = MessageUtility.packMessage(group_byte, sender, "000000000", ReceiverTypeEnum.GROUP_MSG,
+					MessageTypeEnum.CREATE_GROUP);
+			byte[] b = buff.array();
+
+			dataOutputStream.write(b, 0, b.length);
+
+			System.out.println("written: " + new String(b, "UTF-8"));
+			dataOutputStream.flush();
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void signUp() {
