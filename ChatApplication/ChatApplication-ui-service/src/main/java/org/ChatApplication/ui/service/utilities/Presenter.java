@@ -9,13 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ChatApplication.common.converter.ByteToEntityConverter;
+import org.ChatApplication.data.entity.GroupVO;
 import org.ChatApplication.data.entity.User;
 import org.ChatApplication.server.message.Message;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.ChatApplication.ui.service.connector.SenderController;
 import org.ChatApplication.ui.service.connector.ServerController;
 import org.ChatApplication.ui.service.database.DatabaseConnecter;
-import org.ChatApplication.ui.service.models.Message1;
+import org.ChatApplication.ui.service.models.MessageVO;
 import org.ChatApplication.ui.service.observer.MessageListener;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
@@ -34,6 +35,7 @@ public class Presenter {
 	private ContactsHandler contactsHandler;
 	private Connection conn;
 	private Statement stat;
+	private CreateGroup createGroup;
 	final static Logger logger = Logger.getLogger(Presenter.class);
 
 	public Presenter(Homepage homepage) throws UnknownHostException, IOException {
@@ -41,7 +43,7 @@ public class Presenter {
 		this.loginPage = new Login();
 		this.chatPage = new ChatPage();
 		this.contactsHandler = new ContactsHandler();
-
+		this.createGroup = new CreateGroup();
 		initializeClientDataBase();
 	}
 
@@ -222,8 +224,47 @@ public class Presenter {
 	public void updateChatUI(Message message) {
 		String messageBody = new String(message.getData());
 		String receiver = new String(message.getReceiver());
-		Message1 mess = new Message1(messageBody, chatPage.user.getNinerId().trim(), messageBody);
+		MessageVO mess = new MessageVO(messageBody, chatPage.user.getNinerId().trim(), messageBody);
 		chatPage.dataT.add(mess);
+	}
+
+	private void updateGroupCreation(Message message) {
+
+		// GroupVO group =
+		// ByteToEntityConverter.getInstance().getUser(message.getData());
+		DatabaseConnecter dbConnector = new DatabaseConnecter();
+		conn = dbConnector.getConn();
+		try {
+			stat = conn.createStatement();
+			stat.execute("INSERT INTO User VALUES('" + user.getNinerId() + "','" + user.getFirstName() + "','"
+					+ user.getEmail() + "','" + "9999999999" + "','" + user.getPassword() + "')");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public void loadCreateGroup() {
+		try {
+			createGroup.loadCreateGroupPage(this);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void loadChatPage() {
+		try {
+			this.chatPage.loadChatPage(this, this.user);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void sendCreateGroupMessage(GroupVO groupObject) {
+		senderController.createGroupMessage(this.user.getNinerId(), groupObject);
 	}
 
 	public User getUser() {

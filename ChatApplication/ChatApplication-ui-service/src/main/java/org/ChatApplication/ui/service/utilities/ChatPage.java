@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 import org.ChatApplication.data.entity.User;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
@@ -15,7 +17,7 @@ import org.ChatApplication.ui.service.connector.SenderController;
 import org.ChatApplication.ui.service.connector.ServerController;
 import org.ChatApplication.ui.service.database.DatabaseConnecter;
 import org.ChatApplication.ui.service.models.Contact;
-import org.ChatApplication.ui.service.models.Message1;
+import org.ChatApplication.ui.service.models.MessageVO;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,7 +27,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -44,10 +49,10 @@ public class ChatPage {
 	TextArea messageBox;
 	public User user;
 	String user_name, id;
-	public TableView<Message1> chatString;
+	public TableView<MessageVO> chatString;
 	public TableView<Contact> savedContacts;
 	public ObservableList<Contact> conT;
-	public ObservableList<Message1> dataT;
+	public ObservableList<MessageVO> dataT;
 	Button logoutBtn;
 	Button sendButton;
 	Button crtGrpBtn;
@@ -56,7 +61,7 @@ public class ChatPage {
 	private ServerController serverController;
 	private SenderController senderController;
 	TextField searchUserT;
-	HashMap<String, ArrayList<Message1>> chatsMap = new HashMap<String, ArrayList<Message1>>();
+	HashMap<String, ArrayList<MessageVO>> chatsMap = new HashMap<String, ArrayList<MessageVO>>();
 
 	@SuppressWarnings("restriction")
 	public void loadChatPage(Presenter present, User user1) throws IOException {
@@ -111,7 +116,7 @@ public class ChatPage {
 
 			public void handle(ActionEvent event) {
 				// String niner = user.getNinerId();
-				// Message1 mess = new Message1(niner, "000000001",
+				// MessageVO mess = new MessageVO(niner, "000000001",
 				// messageBox.getText().trim());
 				// dataT.add(mess);
 				// presenter.sendChatMessage(niner, "000000001",
@@ -138,7 +143,7 @@ public class ChatPage {
 				// TODO Auto-generated method stub
 				if (event.getCode() == KeyCode.ENTER) {
 					// String niner = user.getNinerId();
-					// Message1 mess = new Message1(niner, "000000001",
+					// MessageVO mess = new MessageVO(niner, "000000001",
 					// messageBox.getText().trim());
 					// dataT.add(mess);
 					// presenter.sendChatMessage(niner, "000000001",
@@ -176,8 +181,9 @@ public class ChatPage {
 		srchBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				// TODO Auto-generated method stub
-				presenter.searchContact(searchUserT.getText().trim());
+				if (searchUserT.getText() != null && !searchUserT.getText().isEmpty()) {
+					presenter.searchContact(searchUserT.getText().trim());
+				}
 			}
 		});
 
@@ -185,7 +191,7 @@ public class ChatPage {
 		 * Chat Area
 		 */
 
-		chatString = new TableView<Message1>();
+		chatString = new TableView<MessageVO>();
 
 		TableColumn messageCol = new TableColumn("Message");
 		TableColumn userCol = new TableColumn("User");
@@ -240,7 +246,7 @@ public class ChatPage {
 		Contact contact = (Contact) savedContacts.getSelectionModel().selectedItemProperty().get();
 		System.out.println("Sending to :" + contact.getNinerID() + "\t" + contact.getName());
 		String niner = user.getNinerId();
-		Message1 mess = new Message1(niner, contact.getNinerID(), messageBox.getText().trim());
+		MessageVO mess = new MessageVO(niner, contact.getNinerID(), messageBox.getText().trim());
 		dataT.add(mess);
 		presenter.sendChatMessage(niner, contact.getNinerID(), messageBox.getText().trim(),
 				ReceiverTypeEnum.INDIVIDUAL_MSG);
@@ -276,6 +282,27 @@ public class ChatPage {
 			e.printStackTrace();
 		}
 
+	}
+
+	public void renderSearchAlert(List<User> users) {
+		if (users != null && users.isEmpty()) {
+			Alerts.createInformationAlert("No Contact found", null, null);
+		} else {
+
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setTitle("User Found");
+			alert.setHeaderText("Do you want to add the User as your contact?");
+			ButtonType buttonYes = new ButtonType("Yes");
+			ButtonType buttonNo = new ButtonType("No");
+			alert.getButtonTypes().setAll(buttonYes, buttonNo);
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.get() == buttonYes) {
+				presenter.addToContact(users.get(0));
+			} else {
+				alert.close();
+			}
+
+		}
 	}
 
 }

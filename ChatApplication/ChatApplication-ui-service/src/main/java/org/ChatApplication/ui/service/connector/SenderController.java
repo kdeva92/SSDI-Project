@@ -8,10 +8,14 @@ import java.nio.ByteBuffer;
 
 import org.ChatApplication.common.converter.EntityToByteConverter;
 import org.ChatApplication.common.util.MessageUtility;
+import org.ChatApplication.data.entity.GroupVO;
 import org.ChatApplication.data.entity.User;
 import org.ChatApplication.server.message.MessageTypeEnum;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
+
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 
 /**
  * 
@@ -92,6 +96,41 @@ public class SenderController {
 
 	}
 
+	public void createGroupMessage(String sender, GroupVO groupObject) {
+		try {
+			byte[] group_byte = EntityToByteConverter.getInstance().getBytes(groupObject);
+			dataOutputStream = new DataOutputStream(socket.getOutputStream());
+			ByteBuffer buff = MessageUtility.packMessage(group_byte, sender, "000000000", ReceiverTypeEnum.GROUP_MSG,
+					MessageTypeEnum.CREATE_GROUP);
+			byte[] b = buff.array();
+
+			dataOutputStream.write(b, 0, b.length);
+
+			System.out.println("written: " + new String(b, "UTF-8"));
+			dataOutputStream.flush();
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void signUp() {
+
+	}
+
+	public static void main(String[] args) throws UnknownHostException, IOException {
+		Socket socket = new Socket(HOST, PORT);
+		SenderController s = new SenderController(socket);
+		s.sendChatMessage("hello", "123456789", "123456745", ReceiverTypeEnum.INDIVIDUAL_MSG);
+
+	}
+
 	public void sendSearchContactString(String searchString, String senderId) {
 
 		try {
@@ -108,17 +147,6 @@ public class SenderController {
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
-
-	}
-
-	public void signUp() {
-
-	}
-
-	public static void main(String[] args) throws UnknownHostException, IOException {
-		Socket socket = new Socket(HOST, PORT);
-		SenderController s = new SenderController(socket);
-		s.sendChatMessage("hello", "123456789", "123456745", ReceiverTypeEnum.INDIVIDUAL_MSG);
 
 	}
 
