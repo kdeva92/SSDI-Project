@@ -3,6 +3,7 @@ package org.ChatApplication.common.converter;
 import java.io.IOException;
 import java.util.List;
 
+import org.ChatApplication.data.entity.GroupVO;
 import org.ChatApplication.data.entity.User;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -39,6 +40,11 @@ public class ByteToEntityConverter {
 	public List<User> getUsers(byte[] users) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		return objectMapper.readValue(users, TypeFactory.collectionType(List.class, User.class));
+	}
+	
+	public GroupVO getGroupVO(byte[] group) throws JsonParseException, JsonMappingException, IOException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		return objectMapper.readValue(group, GroupVO.class);
 	}
 
 }

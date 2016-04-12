@@ -71,6 +71,21 @@ public class UserDAO {
 		return users;
 	}
 
+	public List<User> getUsers(List<String> ninerIds) throws HibernateException, Exception {
+		logger.info("Entering getUser");
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+
+		Query query = sessionFactory.getCurrentSession()
+				.createQuery("from User where ninerId IN(:ninerId)");
+		query.setParameterList("ninerId", ninerIds);
+		List<User> users = query.list();
+		if (users == null) {
+			users = new ArrayList<User>();
+		}
+		logger.info("Leaving getUser");
+		return users;
+	}
+
 	public void createGroup(Group group) {
 		logger.info("Entering createGroup");
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();

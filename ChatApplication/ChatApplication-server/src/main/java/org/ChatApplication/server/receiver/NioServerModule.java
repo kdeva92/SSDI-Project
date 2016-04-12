@@ -13,18 +13,14 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.ChatApplication.common.converter.ByteToEntityConverter;
-import org.ChatApplication.common.converter.EntityToByteConverter;
 import org.ChatApplication.common.util.MessageUtility;
-import org.ChatApplication.data.entity.User;
 import org.ChatApplication.server.handlers.loginMessageHandler.ILoginMessageHandler;
 import org.ChatApplication.server.handlers.loginMessageHandler.LoginHandlerFactory;
-import org.ChatApplication.server.handlers.loginMessageHandler.LoginMessageHandler;
-import org.ChatApplication.server.handlers.messageHandler.MessageHandler;
+import org.ChatApplication.server.handlers.messageHandler.IMessageHandler;
+import org.ChatApplication.server.handlers.messageHandler.MessageHandlerFactory;
 import org.ChatApplication.server.message.Message;
 import org.ChatApplication.server.message.MessageTypeEnum;
-import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.ChatApplication.server.sender.ClientHolder;
-import org.ChatApplication.server.sender.ServerSender;
 import org.apache.log4j.Logger;
 
 /**
@@ -36,8 +32,8 @@ import org.apache.log4j.Logger;
  */
 public class NioServerModule implements Runnable {
 
-	private ILoginMessageHandler loginHandler = LoginMessageHandler.getMessageHandler();//LoginHandlerFactory.getFactory().getLoginMessageandler();// 
-	private static final MessageHandler mssageHandler = MessageHandler.getMessageHandler();
+	private ILoginMessageHandler loginHandler = LoginHandlerFactory.getFactory().getLoginMessageandler();// 
+	private static final IMessageHandler mssageHandler = MessageHandlerFactory.getFactory().getMessageandler();// MessageHandler.getMessageHandler();
 	private final static Logger logger = Logger.getLogger(NioServerModule.class);
 	private static NioServerModule module;
 	Selector selector;

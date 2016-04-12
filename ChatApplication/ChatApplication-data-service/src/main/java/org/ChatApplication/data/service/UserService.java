@@ -1,8 +1,11 @@
 package org.ChatApplication.data.service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.ChatApplication.data.DAO.DAOObjectFactory;
+import org.ChatApplication.data.entity.Group;
 import org.ChatApplication.data.entity.User;
 import org.ChatApplication.data.util.HibernateSessionUtil;
 import org.apache.log4j.Logger;
@@ -68,8 +71,42 @@ public class UserService {
 		}
 		return users;
 	}
+	public List<User> getUsers(List<String> ninerIds) throws Exception {
+		SessionFactory sessionFactory = HibernateSessionUtil.getCurrentSessionTransaction();
+		logger.info("Entering createUser");
+		List<User> users = null;
+		try {
+			users = DAOObjectFactory.getUserDAO().getUsers(ninerIds);
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new Exception(e.getMessage());
+		}
+		return users;
+	}
+
+	public void createGroup(Group group) throws Exception {
+		logger.info("Entering createGroup");
+		SessionFactory sessionFactory = HibernateSessionUtil.getCurrentSessionTransaction();
+		try {
+			DAOObjectFactory.getUserDAO().createGroup(group);
+			sessionFactory.getCurrentSession().getTransaction().commit();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			sessionFactory.getCurrentSession().getTransaction().rollback();
+			throw new Exception(e.getMessage());
+		}
+
+	}
+
 
 	public static void main(String[] args) throws Exception {
-		List<User> users = getInstance().getUsers("000000000");
+		List<String> ninerids = new ArrayList<String>();
+		ninerids.add("000000000");
+		ninerids.add("000000001");
+		List<User> users = UserService.getInstance().getUsers(ninerids);
+		for (Iterator iterator = users.iterator(); iterator.hasNext();) {
+			User user = (User) iterator.next();
+			System.out.println(user.getEmail());
+		}
 	}
 }

@@ -6,6 +6,10 @@ public class GroupVO {
 	private String groupName;
 	private ArrayList<String> listOfMembers;
 
+	public GroupVO(){
+		
+	}
+	
 	public GroupVO(String groupName,ArrayList<String> listOfMembers) {
 		this.groupName = groupName;
 		this.listOfMembers = listOfMembers;
