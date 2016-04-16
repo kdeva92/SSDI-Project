@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.List;
 
 import org.ChatApplication.common.converter.EntityToByteConverter;
 import org.ChatApplication.common.util.MessageUtility;
@@ -45,12 +46,9 @@ public class SenderController {
 			ReceiverTypeEnum receiverTypeEnum) {
 		try {
 
-			ByteBuffer buff = MessageUtility.packMessage(chatMessage.getBytes(), senderId, receiverId, receiverTypeEnum,
-					MessageTypeEnum.CHAT_MSG);
-			byte[] b = buff.array();
-			dataOutputStream.write(b, 0, b.length);
-			System.out.println("written: " + new String(b, "UTF-8"));
-			dataOutputStream.flush();
+			List<ByteBuffer> buffArray = MessageUtility.packMessageToArray(chatMessage, senderId, receiverId,
+					receiverTypeEnum, MessageTypeEnum.CHAT_MSG);
+			writeTodataOutputStream(buffArray);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Sent: " + chatMessage);
 			}
@@ -79,17 +77,11 @@ public class SenderController {
 
 	public void logInMessage(UserVO user) {
 		try {
-			byte[] user_byte = EntityToByteConverter.getInstance().getBytes(user);
+			String userStr = EntityToByteConverter.getInstance().getJsonString(user);
 			dataOutputStream = new DataOutputStream(socket.getOutputStream());
-			ByteBuffer buff = MessageUtility.packMessage(user_byte, user.getNinerId(), "000000000",
+			List<ByteBuffer> buffArray = MessageUtility.packMessageToArray(userStr, user.getNinerId(), "000000000",
 					ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.LOG_IN_MSG);
-			byte[] b = buff.array();
-
-			dataOutputStream.write(b, 0, b.length);
-
-			System.out.println("written: " + new String(b, "UTF-8"));
-			dataOutputStream.flush();
-			// System.out.println("Sent: " + userName);
+			writeTodataOutputStream(buffArray);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
@@ -98,16 +90,11 @@ public class SenderController {
 
 	public void createGroupMessage(String sender, GroupVO groupObject) {
 		try {
-			byte[] group_byte = EntityToByteConverter.getInstance().getBytes(groupObject);
+			String groupStr = EntityToByteConverter.getInstance().getJsonString(groupObject);
 			dataOutputStream = new DataOutputStream(socket.getOutputStream());
-			ByteBuffer buff = MessageUtility.packMessage(group_byte, sender, "000000000", ReceiverTypeEnum.GROUP_MSG,
-					MessageTypeEnum.CREATE_GROUP);
-			byte[] b = buff.array();
-
-			dataOutputStream.write(b, 0, b.length);
-
-			System.out.println("written: " + new String(b, "UTF-8"));
-			dataOutputStream.flush();
+			List<ByteBuffer> buffArray = MessageUtility.packMessageToArray(groupStr, sender, "000000000",
+					ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.CREATE_GROUP);
+			writeTodataOutputStream(buffArray);
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -135,19 +122,22 @@ public class SenderController {
 
 		try {
 			dataOutputStream = new DataOutputStream(socket.getOutputStream());
-			ByteBuffer buff = MessageUtility.packMessage(searchString.getBytes(), senderId, "000000000",
+			List<ByteBuffer> buffArray = MessageUtility.packMessageToArray(searchString, senderId, "000000000",
 					ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.SEARCH_USER);
-			byte[] b = buff.array();
-
-			dataOutputStream.write(b, 0, b.length);
-
-			System.out.println("written: " + new String(b, "UTF-8"));
-			dataOutputStream.flush();
-			// System.out.println("Sent: " + userName);
+			writeTodataOutputStream(buffArray);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
 
+	}
+
+	private void writeTodataOutputStream(List<ByteBuffer> buffArray) throws IOException {
+		for (ByteBuffer buff : buffArray) {
+			byte[] b = buff.array();
+			dataOutputStream.write(b, 0, b.length);
+			System.out.println("written: " + new String(b, "UTF-8"));
+			dataOutputStream.flush();
+		}
 	}
 
 }

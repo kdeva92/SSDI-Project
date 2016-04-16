@@ -5,6 +5,10 @@ package org.ChatApplication.common.util;
 
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Spliterator;
 
 import org.ChatApplication.server.message.Message;
 import org.ChatApplication.server.message.MessageTypeEnum;
@@ -16,6 +20,7 @@ import org.ChatApplication.server.message.ReceiverTypeEnum;
  */
 public final class MessageUtility {
 
+	private static final int CHUNK_SIZE = 1300;
 	// constants
 	static int SENDER_SIZE = 9;
 	static int RECEIVER_SIZE = 9;
@@ -83,13 +88,37 @@ public final class MessageUtility {
 		byte[] data = new byte[msgSize];
 		buffer.get(data, 0, msgSize);
 		message.setData(data);
-		
-		System.out.println("getMessage "+ data.length);
+
+		System.out.println("getMessage " + data.length);
 		return message;
 	}
 
-	public static ByteBuffer packMessage(byte[] message, String senderID, String receiverID,
+	public static List<ByteBuffer> packMessageToArray(String message, String senderID, String receiverID,
 			ReceiverTypeEnum receiverTypeEnum, MessageTypeEnum messageType) {
+		List<ByteBuffer> byteBuffer = new ArrayList<ByteBuffer>();
+
+		List<String> splits = splitEqually(message, CHUNK_SIZE);
+		for (int i = 0; i < splits.size(); i++) {
+			packMessage(splits.get(i).getBytes(), senderID, receiverID, receiverTypeEnum, messageType, i,
+					splits.size());
+		}
+		return byteBuffer;
+	}
+
+	public static List<String> splitEqually(String text, int size) {
+		// Give the list the right capacity to start with. You could use an
+		// array
+		// instead if you wanted.
+		List<String> ret = new ArrayList<String>((text.length() + size - 1) / size);
+
+		for (int start = 0; start < text.length(); start += size) {
+			ret.add(text.substring(start, Math.min(text.length(), start + size)));
+		}
+		return ret;
+	}
+
+	public static ByteBuffer packMessage(byte[] message, String senderID, String receiverID,
+			ReceiverTypeEnum receiverTypeEnum, MessageTypeEnum messageType, int packetNumber, int numberOfPackets) {
 		// add loop here to return multiple buffers of packets
 
 		ByteBuffer buffer = ByteBuffer.allocate(Message.MAX_MESSAGE_SIZE);
@@ -101,7 +130,7 @@ public final class MessageUtility {
 
 		// put message type as chat message
 		buffer = buffer.put(messageType.getByteEquivalant());
-		System.out.println("MessageUtil packmsg type put: "+ messageType.getByteEquivalant());
+		System.out.println("MessageUtil packmsg type put: " + messageType.getByteEquivalant());
 
 		// keep index 2 as empty
 		buffer.put((byte) 0);
@@ -120,10 +149,10 @@ public final class MessageUtility {
 		buffer.put((byte) receiverTypeEnum.getMsgType());
 
 		// put # of packets
-		buffer.putInt(1);
+		buffer.putInt(numberOfPackets);
 
 		// put packet #
-		buffer.putInt(1);
+		buffer.putInt(packetNumber);
 
 		// put length of message
 		buffer.putShort((short) (message.length));

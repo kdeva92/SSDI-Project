@@ -4,6 +4,7 @@
 package org.ChatApplication.common.util;
 
 import java.nio.ByteBuffer;
+import java.util.List;
 
 import org.ChatApplication.server.message.Message;
 import org.ChatApplication.server.message.MessageTypeEnum;
@@ -22,16 +23,18 @@ public class MessagePackTest extends TestCase {
 		String sender = "000000000";
 		String receiver = "999999999";
 		ReceiverTypeEnum receiverTypeEnum = ReceiverTypeEnum.INDIVIDUAL_MSG;
-		MessageTypeEnum messageTypeEnum =MessageTypeEnum.CHAT_MSG;
-		
-		ByteBuffer message = MessageUtility.packMessage(messageData.getBytes(), sender, receiver, receiverTypeEnum, messageTypeEnum);
-		
-		message.flip();
-		Message msg = MessageUtility.getMessage(message);
+		MessageTypeEnum messageTypeEnum = MessageTypeEnum.CHAT_MSG;
 
-		if(msg.getType() == messageTypeEnum && msg.getSender().equals(sender) && msg.getReceiver().equals(receiver) && msg.getReceiverType() == receiverTypeEnum.getIntEquivalant())
+		List<ByteBuffer> message = MessageUtility.packMessageToArray(messageData, sender, receiver, receiverTypeEnum,
+				messageTypeEnum);
+		//
+		message.get(0).flip();
+		Message msg = MessageUtility.getMessage(message.get(0));
+
+		if (msg.getType() == messageTypeEnum && msg.getSender().equals(sender) && msg.getReceiver().equals(receiver)
+				&& msg.getReceiverType() == receiverTypeEnum.getIntEquivalant())
 			assertTrue(true);
-		else 
+		else
 			assertTrue(false);
 	}
 
@@ -40,20 +43,21 @@ public class MessagePackTest extends TestCase {
 		String sender = "000000000";
 		String receiver = "999999999";
 		ReceiverTypeEnum receiverTypeEnum = ReceiverTypeEnum.GROUP_MSG;
-		MessageTypeEnum messageTypeEnum =MessageTypeEnum.CREATE_GROUP;
-		
-		ByteBuffer message = MessageUtility.packMessage(messageData.getBytes(), sender, receiver, receiverTypeEnum, messageTypeEnum);
-		
-		message.flip();
-		Message msg = MessageUtility.getMessage(message);
+		MessageTypeEnum messageTypeEnum = MessageTypeEnum.CREATE_GROUP;
 
-		if(msg.getType() == messageTypeEnum && msg.getSender().equals(sender) && msg.getReceiver().equals(receiver) && msg.getReceiverType() == receiverTypeEnum.getIntEquivalant())
+		 List<ByteBuffer> message = MessageUtility.packMessageToArray(messageData, sender, receiver, receiverTypeEnum,
+				messageTypeEnum);
+
+		message.get(0).flip();
+		Message msg = MessageUtility.getMessage(message.get(0));
+
+		if (msg.getType() == messageTypeEnum && msg.getSender().equals(sender) && msg.getReceiver().equals(receiver)
+				&& msg.getReceiverType() == receiverTypeEnum.getIntEquivalant())
 			assertTrue(true);
-		else 
+		else
 			assertTrue(false);
 	}
 
-	
 	/**
 	 * @param args
 	 */
