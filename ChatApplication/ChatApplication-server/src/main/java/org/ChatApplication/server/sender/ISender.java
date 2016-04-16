@@ -13,5 +13,5 @@ import org.ChatApplication.server.message.Message;
  */
 public interface ISender {
 
-	public void sendMessage(SocketChannel client, Message message);
+	public void sendMessage(String client, Message message);
 }

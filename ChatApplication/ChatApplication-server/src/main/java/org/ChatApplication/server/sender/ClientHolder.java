@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 public class ClientHolder {
 
 	// map of channel to selectionkey - to be used by keep alive check
-	ConcurrentHashMap<String, ClientData> clientMap;
+	private ConcurrentHashMap<String, ClientData> clientMap;
 	static private ClientHolder holder = null;
 	private final static Logger logger = Logger.getLogger(ClientHolder.class);
 

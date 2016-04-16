@@ -11,8 +11,8 @@ import java.nio.channels.SocketChannel;
  *
  */
 public class ClientData {
-	SocketChannel socketChannel;
-	SelectionKey selectionKey;
+	private SocketChannel socketChannel;
+	private SelectionKey selectionKey;
 
 	ClientData(SocketChannel socketChannel, SelectionKey selectionKey) {
 		this.selectionKey = selectionKey;

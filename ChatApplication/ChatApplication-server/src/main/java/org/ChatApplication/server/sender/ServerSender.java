@@ -26,7 +26,8 @@ public class ServerSender implements ISender {
 	private final static Logger logger = Logger.getLogger(ServerSender.class);
 	private SenderThread senderThread;
 	private Thread thread;
-
+	private ClientHolder clientHolder = ClientHolder.getClientHolder();
+	
 	private ServerSender() {
 		// TODO Auto-generated constructor stub
 		senderThread = new SenderThread();
@@ -43,10 +44,15 @@ public class ServerSender implements ISender {
 		return serverSender;
 	}
 
-	public void sendMessage(SocketChannel client, Message message) {
-		// TODO Auto-generated method stub
-		messageQueue.add(new MessageData(message, client));
+	public void sendMessage(String clientId, Message message) {
+
+		//check if client is connected, if connected send message else add to database
+		ClientData clientData = clientHolder.getClientData(clientId);
+		if(clientData != null){
+			//add to process queue
+			messageQueue.add(new MessageData(message, clientData.getSocketChannel()));
 		//System.out.println("ServerSender.. message added to queue");
+		}
 	}
 
 	/**

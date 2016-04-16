@@ -86,7 +86,7 @@ public class DataMessageHandler implements IDataMessageHandler {
 						System.out.println("Client not connected..");
 						continue;
 					}
-					sender.sendMessage(clientHolder.getClientData(message.getReceiver()).getSocketChannel(), message); 
+					sender.sendMessage(message.getReceiver(), message); 
 				}else if(message.getReceiverType() == ReceiverTypeEnum.GROUP_MSG.getIntEquivalant()) {
 					 //operate on group - DB access and individual send to each receiver
 					try {
@@ -95,9 +95,7 @@ public class DataMessageHandler implements IDataMessageHandler {
 						List<User> members = group.getMembers();
 						for (Iterator iterator = members.iterator(); iterator.hasNext();) {
 							User user = (User) iterator.next();
-							cData = clientHolder.getClientData(user.getNinerId());
-							cSock = cData.getSocketChannel();
-							sender.sendMessage(cSock, message);
+							sender.sendMessage(user.getNinerId(), message);
 						}
 						
 					} catch (NumberFormatException e) {

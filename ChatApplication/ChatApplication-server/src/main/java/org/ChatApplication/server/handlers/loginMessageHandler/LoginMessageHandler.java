@@ -96,7 +96,8 @@ public class LoginMessageHandler implements ILoginMessageHandler {
 		private IDataMessageHandler dataMessageHandler = DataMessageHandler.getDataMessageHandler();
 		private ClientHolder clientHolder = ClientHolder.getClientHolder();
 		private UserService userService = UserService.getInstance();
-		
+		ServerSender serverSender = ServerSender.getSender();
+
 		public void run() {
 			// TODO Auto-generated method stub
 			while (true) {
@@ -126,6 +127,8 @@ public class LoginMessageHandler implements ILoginMessageHandler {
 					Message message = new Message();
 					message.setType(MessageTypeEnum.LOG_IN_MSG);
 					message.setReceiverType(ReceiverTypeEnum.INDIVIDUAL_MSG.getIntEquivalant());
+					message.setSender("000000000");
+					message.setReceiver(user.getNinerId());
 					UserVO userVO = new UserVO();
 					userVO.setEmail(u.getEmail());
 					userVO.setFirstName(u.getFirstName());
@@ -133,13 +136,15 @@ public class LoginMessageHandler implements ILoginMessageHandler {
 					userVO.setLastName(u.getLastName());
 					userVO.setNinerId(u.getNinerId());
 					userVO.setPassword(null);
-					message.setData(MessageUtility
-							.packMessage(EntityToByteConverter.getInstance().getBytes(userVO), "000000000",
-									"000000000", ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.LOG_IN_MSG)
-							.array());
-					ServerSender.getSender().sendMessage(((SocketChannel) dataHolder.getSocketKey().attachment()),
-							message);
+					message.setData(
+							MessageUtility
+									.packMessage(EntityToByteConverter.getInstance().getBytes(userVO), "000000000",
+											userVO.getNinerId(), ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.LOG_IN_MSG)
+									.array());
+					serverSender.sendMessage(message.getReceiver(), message);
 					System.out.println("Login successful user added to client holder");
+					//at this point send all pending messages to the client
+					
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
