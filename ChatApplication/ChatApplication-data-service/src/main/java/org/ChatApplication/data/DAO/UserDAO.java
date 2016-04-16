@@ -106,4 +106,12 @@ public class UserDAO {
 		return groups.get(0);
 
 	}
+
+	public Group updateGroup(Group group) {
+		logger.info("Entering createGroup");
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+		sessionFactory.getCurrentSession().update(group);
+		logger.info("Leaving createGroup");
+		return group;
+	}
 }

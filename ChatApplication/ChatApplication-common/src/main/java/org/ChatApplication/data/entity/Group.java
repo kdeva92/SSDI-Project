@@ -9,50 +9,53 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
-* 
-* @author Komal
-*
-*/
+ * 
+ * @author Komal
+ *
+ */
 @Entity
 @Table(name = "group1")
 public class Group {
 
-@Id
-@GeneratedValue
-@Column(name = "group_id")
-private int grpouId;
+	@Id
+	@Column(name = "group_id")
+	@SequenceGenerator(initialValue = 100000000, allocationSize = 1, name = "group_sequence", sequenceName = "group_sequence")
+	@GeneratedValue(generator = "group_sequence")
 
-@Column(name = "name")
-private String name;
+	private int groupId;
 
-@ManyToMany(fetch = FetchType.LAZY, mappedBy = "groups")
-private List<User> members = new ArrayList<User>();
+	@Column(name = "name")
+	private String name;
 
-public int getGrpouId() {
-return grpouId;
-}
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "groups")
+	private List<User> members = new ArrayList<User>();
 
-public void setGrpouId(int grpouId) {
-this.grpouId = grpouId;
-}
+	public int getGroupId() {
+		return groupId;
+	}
 
-public String getName() {
-return name;
-}
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
 
-public void setName(String name) {
-this.name = name;
-}
+	public String getName() {
+		return name;
+	}
 
-public List<User> getMembers() {
-return members;
-}
+	public void setName(String name) {
+		this.name = name;
+	}
 
-public void setMembers(List<User> members) {
-this.members = members;
-}
+	public List<User> getMembers() {
+		return members;
+	}
+
+	public void setMembers(List<User> members) {
+		this.members = members;
+	}
 
 }

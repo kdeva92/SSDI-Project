@@ -133,7 +133,7 @@ public class InstructionHandler implements IInstructionHandler {
 						group.setName(groupVO.getGroupName());
 						userService.createGroup(group);
 						System.out.println("Group created: "+ groupVO.getGroupName()+" #members: "+group.getMembers().size());
-						groupVO.setGroupId(group.getGrpouId());
+						groupVO.setGroupId(group.getGroupId());
 						
 						ByteBuffer mesg = MessageUtility.packMessage(EntityToByteConverter.getInstance().getBytes(groupVO), message.getSender(), message.getReceiver(), ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.CREATE_GROUP);
 						message.setData(mesg.array());

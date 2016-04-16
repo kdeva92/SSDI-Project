@@ -71,6 +71,7 @@ public class UserService {
 		}
 		return users;
 	}
+
 	public List<User> getUsers(List<String> ninerIds) throws Exception {
 		SessionFactory sessionFactory = HibernateSessionUtil.getCurrentSessionTransaction();
 		logger.info("Entering createUser");
@@ -97,7 +98,8 @@ public class UserService {
 		}
 
 	}
-	public Group getGroup(int groupId)throws Exception {
+
+	public Group getGroup(int groupId) throws Exception {
 
 		logger.info("Entering createUser");
 		Group group = null;
@@ -109,18 +111,34 @@ public class UserService {
 			throw new Exception(e.getMessage());
 		}
 		return group;
-	
+
 	}
 
+	public Group updateGroup(Group group) throws Exception {
+
+		logger.info("Entering updateGroup");
+		SessionFactory sessionFactory = HibernateSessionUtil.getCurrentSessionTransaction();
+		try {
+			group = DAOObjectFactory.getUserDAO().updateGroup(group);
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new Exception(e.getMessage());
+		}
+		return group;
+
+	}
 
 	public static void main(String[] args) throws Exception {
-		List<String> ninerids = new ArrayList<String>();
-		ninerids.add("000000000");
-		ninerids.add("000000001");
-		List<User> users = UserService.getInstance().getUsers(ninerids);
-		for (Iterator iterator = users.iterator(); iterator.hasNext();) {
-			User user = (User) iterator.next();
-			System.out.println(user.getEmail());
-		}
+//		List<String> ninerids = new ArrayList<String>();
+//		ninerids.add("000000000");
+//		ninerids.add("000000001");
+//		List<User> users = UserService.getInstance().getUsers(ninerids);
+//		for (Iterator iterator = users.iterator(); iterator.hasNext();) {
+//			User user = (User) iterator.next();
+//			System.out.println(user.getEmail());
+//		}
+		Group group = new Group();
+		group.setName("group1");
+		getInstance().createGroup(group);
 	}
 }
