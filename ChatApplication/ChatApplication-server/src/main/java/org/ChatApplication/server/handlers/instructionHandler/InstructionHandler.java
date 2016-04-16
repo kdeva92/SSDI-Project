@@ -68,10 +68,7 @@ public class InstructionHandler implements IInstructionHandler {
 	private class HandlerThread implements Runnable {
 		private UserService userService = UserService.getInstance();
 		private ISender sender = ServerSender.getSender();
-		ClientHolder clientHolder = ClientHolder.getClientHolder();
-		ClientData cData;
-		SocketChannel cSock;
-		
+
 		public void run() {
 			while (true) {
 				Message message = messageQueue.poll();
@@ -95,10 +92,18 @@ public class InstructionHandler implements IInstructionHandler {
 					}
 
 					try {
-						message.setData(MessageUtility.packMessage(EntityToByteConverter.getInstance().getBytes(EntityToVoMapper.userToUserVo(users)),
-								message.getReceiver(), message.getSender(), ReceiverTypeEnum.INDIVIDUAL_MSG,
-								MessageTypeEnum.SEARCH_USER).array());
-						System.out.println("search user reply data: " + new String(message.getData()));
+						List<ByteBuffer> buffArray = MessageUtility
+								.packMessageToArray(
+										EntityToByteConverter.getInstance().getJsonString(
+												EntityToVoMapper.userToUserVo(users)),
+										message.getReceiver(), message.getSender(), ReceiverTypeEnum.INDIVIDUAL_MSG,
+										MessageTypeEnum.SEARCH_USER);
+						for (ByteBuffer buff : buffArray) {
+							System.out.println("Sending to: ");
+							sender.sendMessage(message.getSender(), buff);
+							System.out.println("search user reply data: " + new String(message.getData()));
+
+						}
 					} catch (JsonGenerationException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -111,17 +116,11 @@ public class InstructionHandler implements IInstructionHandler {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 						message.setData(null);
-					}
-					try {
-						System.out.println("Sending to: ");
-						
-						cData = clientHolder.getClientData(message.getSender());
-						cSock = cData.getSocketChannel();
-						sender.sendMessage(cSock, message);
 					} catch (NullPointerException e) {
 						System.out.println("nullpointer!!");
 						e.printStackTrace();
 					}
+
 					break;
 
 				case CREATE_GROUP:
@@ -132,20 +131,26 @@ public class InstructionHandler implements IInstructionHandler {
 						group.setMembers(usersForGrp);
 						group.setName(groupVO.getGroupName());
 						userService.createGroup(group);
-						System.out.println("Group created: "+ groupVO.getGroupName()+" #members: "+group.getMembers().size());
+						System.out.println(
+								"Group created: " + groupVO.getGroupName() + " #members: " + group.getMembers().size());
 						groupVO.setGroupId(group.getGroupId());
-						
-						ByteBuffer mesg = MessageUtility.packMessage(EntityToByteConverter.getInstance().getBytes(groupVO), message.getSender(), message.getReceiver(), ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.CREATE_GROUP);
-						message.setData(mesg.array());
-						//notify each member about group
-						List<User> members = group.getMembers();
-						for (Iterator iterator = members.iterator(); iterator.hasNext();) {
-							User user = (User) iterator.next();
-							cData = clientHolder.getClientData(user.getNinerId());
-							cSock = cData.getSocketChannel();
-							sender.sendMessage(cSock, message);
+
+						List<ByteBuffer> buffArray = MessageUtility.packMessageToArray(
+								EntityToByteConverter.getInstance().getJsonString(groupVO), message.getSender(),
+								message.getReceiver(), ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.CREATE_GROUP);
+						for (ByteBuffer byteBuffer : buffArray) {
+							List<User> members = group.getMembers();
+							for (Iterator iterator = members.iterator(); iterator.hasNext();) {
+								try {
+									User user = (User) iterator.next();
+									sender.sendMessage(user.getNinerId(), byteBuffer);
+								} catch (NullPointerException e) {
+
+								}
+							}
+
 						}
-						
+
 					} catch (JsonParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -168,6 +173,13 @@ public class InstructionHandler implements IInstructionHandler {
 			}
 		}
 
+	}
+
+	public static void main(String[] args) throws Exception {
+		UserService userService = UserService.getInstance();
+		Group group = userService.getGroup(100000000);
+		for (int i = 0; i < 100000000; i++)
+			userService.createGroup(group);
 	}
 
 }

@@ -5,6 +5,7 @@
 package org.ChatApplication.server.handlers.dataMessageHandler;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.List;
@@ -79,27 +80,26 @@ public class DataMessageHandler implements IDataMessageHandler {
 					continue;
 				}
 
-				//Handle the client not connected situation here..
+				// Handle the client not connected situation here..
 				if (message.getReceiverType() == ReceiverTypeEnum.INDIVIDUAL_MSG.getIntEquivalant()) {
 					System.out.println("DataMessageHandler sending to: " + message.getReceiver());
-					if(clientHolder.getClientData(message.getReceiver()) == null){
+					if (clientHolder.getClientData(message.getReceiver()) == null) {
 						System.out.println("Client not connected..");
 						continue;
 					}
-					sender.sendMessage(clientHolder.getClientData(message.getReceiver()).getSocketChannel(), message); 
-				}else if(message.getReceiverType() == ReceiverTypeEnum.GROUP_MSG.getIntEquivalant()) {
-					 //operate on group - DB access and individual send to each receiver
+					sender.sendMessage(message.getReceiver(), ByteBuffer.wrap(message.getData()));
+				} else if (message.getReceiverType() == ReceiverTypeEnum.GROUP_MSG.getIntEquivalant()) {
+					// operate on group - DB access and individual send to each
+					// receiver
 					try {
-						Group group = userService.getGroup(Integer.parseInt( message.getReceiver()));
-						
+						Group group = userService.getGroup(Integer.parseInt(message.getReceiver()));
+
 						List<User> members = group.getMembers();
 						for (Iterator iterator = members.iterator(); iterator.hasNext();) {
 							User user = (User) iterator.next();
-							cData = clientHolder.getClientData(user.getNinerId());
-							cSock = cData.getSocketChannel();
-							sender.sendMessage(cSock, message);
+							sender.sendMessage(user.getNinerId(), ByteBuffer.wrap(message.getData()));
 						}
-						
+
 					} catch (NumberFormatException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -108,11 +108,9 @@ public class DataMessageHandler implements IDataMessageHandler {
 						e.printStackTrace();
 					}
 				}
-				
+
 				System.out.println("DataMessageHandler complete");
-				
-				
-				
+
 				// change when login implemented
 				// ClientData clientData =
 				// clientHolder.getClientData(message.getReceiver());

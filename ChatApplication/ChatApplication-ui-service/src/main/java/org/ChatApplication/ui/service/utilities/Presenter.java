@@ -286,7 +286,6 @@ public class Presenter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		loadChatPage();
 
 	}
 

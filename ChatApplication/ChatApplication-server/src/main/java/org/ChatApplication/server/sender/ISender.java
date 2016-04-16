@@ -3,6 +3,7 @@
  */
 package org.ChatApplication.server.sender;
 
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
 import org.ChatApplication.server.message.Message;
@@ -13,5 +14,5 @@ import org.ChatApplication.server.message.Message;
  */
 public interface ISender {
 
-	public void sendMessage(SocketChannel client, Message message);
+	public void sendMessage(String client, ByteBuffer byteBuffer );
 }
