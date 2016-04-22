@@ -42,30 +42,16 @@ public final class MessageUtility {
 	public static Message getMessage(ByteBuffer buffer) throws BufferUnderflowException {
 
 		Message message = new Message();
-//		System.out.println("Reading buffer: " + new String(buffer.array()));
+		// System.out.println("Reading buffer: " + new String(buffer.array()));
 
 		// pop start of message
 		System.out.println("Empty pop:" + buffer.get());
 
 		// message type
 		int i = buffer.get();
-//		System.out.println("Messageutil type: " + i);
+		// System.out.println("Messageutil type: " + i);
 		message.setType(MessageTypeEnum.getMessageTypeEnumByIntValue(i));
-		// switch (i) {
-		// case 1:
-		// message.setType(MessageTypeEnum.CHAT_MSG);
-		// System.out.println("type = chat message");
-		// break;
-		// case 2:
-		// message.setType(MessageTypeEnum.LOG_IN_MSG);
-		// System.out.println("type = chat message");
-		// break;
-		// default:
-		// // System.out.println("default type");
-		// message.setType(null);
-		// break;
-		// }
-
+	
 		// empty byte
 		buffer.get();
 
@@ -88,7 +74,7 @@ public final class MessageUtility {
 		byte[] data = new byte[msgSize];
 		buffer.get(data, 0, msgSize);
 		message.setData(data);
-//		System.out.println("getMessage "+ data.length);
+		// System.out.println("getMessage "+ data.length);
 		return message;
 	}
 
@@ -129,7 +115,8 @@ public final class MessageUtility {
 
 		// put message type as chat message
 		buffer = buffer.put(messageType.getByteEquivalant());
-//		System.out.println("MessageUtil packmsg type put: "+ messageType.getByteEquivalant());
+		// System.out.println("MessageUtil packmsg type put: "+
+		// messageType.getByteEquivalant());
 
 		// keep index 2 as empty
 		buffer.put((byte) 0);
@@ -159,7 +146,7 @@ public final class MessageUtility {
 		// put message
 		buffer.put(message, 0, message.length);
 		buffer.put(Message.END_OF_MESSAGE);
-		//		System.out.println("Buffer put end of message");
+		// System.out.println("Buffer put end of message");
 		return buffer;
 	}
 	/*

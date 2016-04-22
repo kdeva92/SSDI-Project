@@ -7,7 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ChatApplication.common.converter.ByteToEntityConverter;
 import org.ChatApplication.data.entity.GroupVO;
@@ -40,6 +43,7 @@ public class Presenter {
 	private Statement stat;
 	private CreateGroup createGroup;
 	final static Logger logger = Logger.getLogger(Presenter.class);
+	private Map<String, ArrayList<Message>> messageParts;
 
 	public Presenter(Homepage homepage) throws UnknownHostException, IOException {
 		this.homePage = homepage;
@@ -47,6 +51,7 @@ public class Presenter {
 		this.chatPage = new ChatPage();
 		this.contactsHandler = new ContactsHandler();
 		this.createGroup = new CreateGroup();
+		messageParts = new HashMap<String, ArrayList<Message>>();
 		initializeClientDataBase();
 	}
 
@@ -235,15 +240,43 @@ public class Presenter {
 	}
 
 	public void updateChatUI(Message message) {
-		String messageBody = new String(message.getData());
+		String messageBody = "";
 		String receiver = new String(message.getSender());
 		String name = getReceiverName(receiver);
-		if (name != null) {
-			MessageVO mess = new MessageVO(name, chatPage.user.getNinerId().trim(), messageBody);
-			chatPage.dataT.add(mess);
+		if (message.getNoOfPackets() > 1) {
+			if (messageParts.containsKey(message.getSender())) {
+				ArrayList<Message> arrayList = messageParts.get(message.getSender());
+				arrayList.add(message);
+				if (message.getNoOfPackets() == arrayList.size()) {
+					arrayList.sort(new Comparator<Message>() {
+
+						public int compare(Message o1, Message o2) {
+
+							return o1.getPacketNo() - o2.getPacketNo();
+						}
+					});
+
+					for (Message m : arrayList) {
+						messageBody += new String(m.getData());
+					}
+					messageParts.remove(message.getSender());
+				}
+			} else {
+				ArrayList<Message> messageArray = new ArrayList<Message>();
+				messageArray.add(message);
+				messageParts.put(message.getSender(), messageArray);
+			}
 		} else {
-			MessageVO mess = new MessageVO(receiver, chatPage.user.getNinerId().trim(), messageBody);
-			chatPage.dataT.add(mess);
+			messageBody = new String(message.getData());
+		}
+		if (!messageBody.isEmpty()) {
+			if (name != null) {
+				MessageVO mess = new MessageVO(name, chatPage.user.getNinerId().trim(), messageBody);
+				chatPage.dataT.add(mess);
+			} else {
+				MessageVO mess = new MessageVO(receiver, chatPage.user.getNinerId().trim(), messageBody);
+				chatPage.dataT.add(mess);
+			}
 		}
 		// DatabaseConnecter dbConnector = new DatabaseConnecter();
 		// conn = dbConnector.getConn();
