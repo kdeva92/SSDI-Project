@@ -203,13 +203,6 @@ public class Presenter {
 	}
 
 	/*
-	 * Create Group
-	 */
-
-	public void createGrp(String groupName, ArrayList<User> userList) {
-
-	}
-	/*
 	 * Handle Add Contact
 	 */
 
