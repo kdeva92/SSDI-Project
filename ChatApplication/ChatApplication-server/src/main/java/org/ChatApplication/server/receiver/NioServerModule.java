@@ -127,7 +127,7 @@ public class NioServerModule implements Runnable {
 						if (size == -1) {
 							removeClient(client);
 							selectionKey.cancel();
-						}
+						} 
 						// System.out.println("read size: " + size);
 					} catch (IOException e) {
 						System.out.println("Client disconnect.. removing " + client.getRemoteAddress());
