@@ -51,7 +51,9 @@ public class ServerSender implements ISender {
 		ClientData clientData = clientHolder.getClientData(clientId);
 		if (clientData != null) {
 			// add to process queue
+			byteBuffer.flip();
 			messageQueue.add(new MessageData(byteBuffer, clientData.getSocketChannel()));
+			System.out.println("added message: "+new String(byteBuffer.array()).trim());
 			// System.out.println("ServerSender.. message added to queue");
 		}
 	}
@@ -146,6 +148,7 @@ public class ServerSender implements ISender {
 				System.out.println("Server Sender Sending.. Client: " + messageData.getClient().getRemoteAddress()
 						+ " Written object: " + new String(messageData.getByteBuffer().array()).trim());
 				messageData.getClient().write(messageData.getByteBuffer());
+				//messageData.getClient().close();
 				// messageData.getClient().write((ByteBuffer.wrap(new
 				// Date().toString().getBytes())));
 

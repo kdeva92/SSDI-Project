@@ -140,6 +140,7 @@ public class LoginMessageHandler implements ILoginMessageHandler {
 					ByteBuffer byteBuffer = MessageUtility.packMessage(
 							EntityToByteConverter.getInstance().getBytes(userVO), "000000000", userVO.getNinerId(),
 							ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.LOG_IN_MSG, 1, 1);
+					//byteBuffer.flip();
 					serverSender.sendMessage(message.getReceiver(), byteBuffer);
 					System.out.println("Login successful user added to client holder");
 					// at this point send all pending messages to the client

@@ -98,8 +98,8 @@ public final class MessageUtility {
 
 		List<String> splits = splitEqually(message, CHUNK_SIZE);
 		for (int i = 0; i < splits.size(); i++) {
-			packMessage(splits.get(i).getBytes(), senderID, receiverID, receiverTypeEnum, messageType, i,
-					splits.size());
+			byteBuffer.add(packMessage(splits.get(i).getBytes(), senderID, receiverID, receiverTypeEnum, messageType, i,
+					splits.size()));
 		}
 		return byteBuffer;
 	}
