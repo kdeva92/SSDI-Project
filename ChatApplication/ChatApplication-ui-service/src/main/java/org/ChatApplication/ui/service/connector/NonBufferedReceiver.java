@@ -29,7 +29,7 @@ public class NonBufferedReceiver {
 		System.out.println("In Non buffered recvr constrctor");
 		this.messageListener = ml;
 		streamreader = new InputStreamReader(socket.getInputStream());
-		new Thread(new ReceiverPoller(),"ReceiverThread").start();
+		new Thread(new ReceiverPoller(), "ReceiverThread").start();
 	}
 
 	class ReceiverPoller implements Runnable {
@@ -45,10 +45,10 @@ public class NonBufferedReceiver {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-//					System.exit(0);
+					// System.exit(0);
 					continue;
 				}
-				if(read == 0 && endZeroTrimFlag)
+				if (read == 0 && endZeroTrimFlag)
 					continue;
 				if (read == -1) {
 					Message terminationMessage = new Message();
@@ -63,22 +63,27 @@ public class NonBufferedReceiver {
 					break;
 				}
 
-				if (((byte)read) == Message.START_OF_MESSAGE) {
+				if (((byte) read) == Message.START_OF_MESSAGE) {
 					data = new byte[Message.MAX_MESSAGE_SIZE];
 					endZeroTrimFlag = false;
 					data[size++] = (byte) read;
 				} else if (read == Message.END_OF_MESSAGE) {
-					Message message = MessageUtility.getMessage(ByteBuffer.wrap(data));
-					// uncomment below for test
-//					NonBufferedReceiverTest.showReceivedMessage(message);
-					System.out.println(new String(message.getData()));
-					ChatApp.messageQueue.add(message);
-					data = new byte[Message.MAX_MESSAGE_SIZE];
 					size = 0;
 					endZeroTrimFlag = true;
+					try {
+						Message message = MessageUtility.getMessage(ByteBuffer.wrap(data));
+						System.out.println(new String(message.getData()));
+						ChatApp.messageQueue.add(message);
+						data = new byte[Message.MAX_MESSAGE_SIZE];
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					// uncomment below for test
+					// NonBufferedReceiverTest.showReceivedMessage(message);
+
 				} else {
 					data[size++] = (byte) read;
-					System.out.println(size+" "+(byte)read);
 				}
 
 			}

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.List;
 
 import org.ChatApplication.common.util.MessageUtility;
 import org.ChatApplication.server.message.Message;
@@ -31,10 +32,10 @@ public class NonBufferedReceiverTest {
 		// NonBufferedReceiver receiver = new NonBufferedReceiver(socket);
 		System.out.println("Started receiver");
 
-		ByteBuffer message = MessageUtility.packMessage("DemoMessage Hi ".getBytes(), "123456789", "987654321",
-				ReceiverTypeEnum.INDIVIDUAL_MSG,MessageTypeEnum.CHAT_MSG);
-		System.out.println("Message before send: " + new String(message.array()).trim());
-		socket.getOutputStream().write(message.array());
+		List<ByteBuffer> message = MessageUtility.packMessageToArray("DemoMessage Hi ", "123456789", "987654321",
+				ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.CHAT_MSG);
+		System.out.println("Message before send: " + new String(message.get(0).array()).trim());
+		socket.getOutputStream().write(message.get(0).array());
 		socket.getOutputStream().flush();
 		System.out.println("Message sent to server");
 

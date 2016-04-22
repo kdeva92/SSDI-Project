@@ -26,6 +26,7 @@ public class ServerSender implements ISender {
 	private final static Logger logger = Logger.getLogger(ServerSender.class);
 	private SenderThread senderThread;
 	private Thread thread;
+	private ClientHolder clientHolder = ClientHolder.getClientHolder();
 
 	private ServerSender() {
 		// TODO Auto-generated constructor stub
@@ -43,10 +44,18 @@ public class ServerSender implements ISender {
 		return serverSender;
 	}
 
-	public void sendMessage(SocketChannel client, Message message) {
-		// TODO Auto-generated method stub
-		messageQueue.add(new MessageData(message, client));
-		//System.out.println("ServerSender.. message added to queue");
+	public void sendMessage(String clientId, ByteBuffer byteBuffer) {
+
+		// check if client is connected, if connected send message else add to
+		// database
+		ClientData clientData = clientHolder.getClientData(clientId);
+		if (clientData != null) {
+			// add to process queue
+			byteBuffer.flip();
+			messageQueue.add(new MessageData(byteBuffer, clientData.getSocketChannel()));
+			System.out.println("added message: "+new String(byteBuffer.array()).trim());
+			// System.out.println("ServerSender.. message added to queue");
+		}
 	}
 
 	/**
@@ -56,21 +65,20 @@ public class ServerSender implements ISender {
 	 *
 	 */
 	private class MessageData {
-		Message message;
+		ByteBuffer byteBuffer;
 		SocketChannel client;
 
-		public MessageData(Message message, SocketChannel channel) {
-			// TODO Auto-generated constructor stub
-			this.message = message;
+		public MessageData(ByteBuffer byteBuffer, SocketChannel channel) {
+			this.byteBuffer = byteBuffer;
 			client = channel;
 		}
 
-		public Message getMessage() {
-			return message;
+		public ByteBuffer getByteBuffer() {
+			return byteBuffer;
 		}
 
-		public void setMessage(Message message) {
-			this.message = message;
+		public void setByteBuffer(ByteBuffer byteBuffer) {
+			this.byteBuffer = byteBuffer;
 		}
 
 		public SocketChannel getClient() {
@@ -138,10 +146,12 @@ public class ServerSender implements ISender {
 				// ObjectOutputStream oos = new
 				// ObjectOutputStream(messageData.getClient().socket().getOutputStream());
 				System.out.println("Server Sender Sending.. Client: " + messageData.getClient().getRemoteAddress()
-						+ " Written object: " + new String(messageData.getMessage().getData()).trim());
-				messageData.getClient().write(ByteBuffer.wrap(messageData.getMessage().getData()));
-				//messageData.getClient().write((ByteBuffer.wrap(new Date().toString().getBytes())));
-				
+						+ " Written object: " + new String(messageData.getByteBuffer().array()).trim());
+				messageData.getClient().write(messageData.getByteBuffer());
+				//messageData.getClient().close();
+				// messageData.getClient().write((ByteBuffer.wrap(new
+				// Date().toString().getBytes())));
+
 				// oos.writeObject(messageData.message);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

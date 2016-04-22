@@ -127,7 +127,7 @@ public class NioServerModule implements Runnable {
 						if (size == -1) {
 							removeClient(client);
 							selectionKey.cancel();
-						}
+						} 
 						// System.out.println("read size: " + size);
 					} catch (IOException e) {
 						System.out.println("Client disconnect.. removing " + client.getRemoteAddress());
@@ -168,8 +168,17 @@ public class NioServerModule implements Runnable {
 						}
 						if (message.getType() == MessageTypeEnum.CHAT_MSG) {
 							System.out.println("NIO chat message");
+//							//--working
 							buff.flip();
-							message.setData(buff.array());
+//							//message.setData(buff.array());
+							
+							//---test
+//							System.out.println("no flip array: "+new String( buff.array()));
+//							buff.flip();
+//							System.out.println("setting data: "+new String( buff.array()));
+//							message.setData(buff.array());
+					
+							
 						}
 					} catch (BufferUnderflowException e) {
 						iterator.remove();

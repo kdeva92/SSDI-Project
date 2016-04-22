@@ -10,6 +10,7 @@
 		<property name="hibernate.connection.url">
 			jdbc:mysql://localhost/ChatServerDatabase
 		</property>
+		<property name="hibernate.id.new_generator_mappings">true</property>
 		<property name="hibernate.connection.username">
 			root
 		</property>
