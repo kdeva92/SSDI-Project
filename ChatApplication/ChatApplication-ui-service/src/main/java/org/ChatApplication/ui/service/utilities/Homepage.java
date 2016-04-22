@@ -96,7 +96,12 @@ public Presenter presenter;
 			public void handle(ActionEvent event) {
 				// TODO Auto-generated method stub
 				UserRegisteration userRegister = new UserRegisteration();
-				userRegister.loadSignupPage();
+				try {
+					userRegister.loadSignupPage(presenter);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		

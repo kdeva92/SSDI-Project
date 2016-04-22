@@ -313,6 +313,7 @@ public class Presenter {
 				addMessageToDB(receiver, receiverName, messageBody);
 				ObservableList<MessageVO> chatArray = this.chatPage.userChats.get(receiver);
 				chatArray.add(new MessageVO(receiver, receiverName, messageBody));
+				this.chatPage.chatString.scrollTo(chatArray.size()-1);
 			}
 			break;
 
@@ -404,6 +405,17 @@ public class Presenter {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	public void sendSignUpMessage(){
+		
+	}
+	
+	
+	public void loadHomepage(){
+		this.homePage.loadHomepage(this);
+	}
+	
 
 	public void sendCreateGroupMessage(GroupVO groupObject) {
 		senderController.createGroupMessage(this.user.getNinerId(), groupObject);

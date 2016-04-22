@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -23,12 +22,16 @@ import org.ChatApplication.ui.service.models.MessageVO;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -40,9 +43,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 
 public class ChatPage {
 	@SuppressWarnings("restriction")
@@ -256,6 +256,17 @@ public class ChatPage {
 		loadContacts();
 
 		
+		//Handling Auto Scroll
+		chatString.getItems().addListener(new ListChangeListener<MessageVO>() {
+
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends MessageVO> c) {
+				System.out.println("Scrolling");
+				chatString.scrollTo(c.getList().size()-1);
+				
+			}
+
+			
+		});
 		
 		
 	// Handling user to Chat binding	

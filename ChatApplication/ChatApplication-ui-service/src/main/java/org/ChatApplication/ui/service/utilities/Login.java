@@ -32,7 +32,8 @@ public class Login {
 	PasswordField password_text;
 	TextField userName_text;
 	public Presenter presenter;
-	
+	Button backBtn;
+	Button loginBtn;
 	
 	public void loadLoginPage(Presenter present)
 	{
@@ -46,10 +47,10 @@ try {
 	e.printStackTrace();
 }
 	
-	Button loginBtn = (Button) loginContainer.lookup("#loginBtn");
+	loginBtn = (Button) loginContainer.lookup("#loginBtn");
 	userName_text = (TextField) loginContainer.lookup("#userNameF");
 	password_text = (PasswordField) loginContainer.lookup("#passwordF");
-	
+	backBtn = (Button) loginContainer.lookup("#backBtn");
 	
 	
 	//Button sample = new Button("Sample");
@@ -67,14 +68,12 @@ try {
 	
 	
 	//Back Button Listener
-//	backBtn.setOnAction(new EventHandler<ActionEvent>() {
-//		
-//		public void handle(ActionEvent event) {
-//			// TODO Auto-generated method stub
-//			Homepage homepage = new Homepage();
-//			homepage.loadHomepage();
-//		}
-//	});
+	backBtn.setOnAction(new EventHandler<ActionEvent>() {
+		
+		public void handle(ActionEvent event) {
+			presenter.loadHomepage();
+		}
+	});
 	
 	
 	
