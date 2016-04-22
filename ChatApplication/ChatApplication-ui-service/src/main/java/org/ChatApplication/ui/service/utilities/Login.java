@@ -23,6 +23,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 
 
@@ -76,16 +78,48 @@ try {
 	
 	
 	
-	//Login Button Listener
+	//Login Button Listeners
+	
+	userName_text.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+		public void handle(KeyEvent event) {
+			if (event.getCode() == KeyCode.ENTER){
+				sendLoginMessage();
+			}
+			
+		}
+	});
+	
+	password_text.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+		public void handle(KeyEvent event) {
+			if (event.getCode() == KeyCode.ENTER){
+				sendLoginMessage();
+			}
+			
+		}
+	});
+	
 	
 	loginBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 		public void handle(ActionEvent arg0) {
-			presenter.sendLoginMessage(userName_text.getText().trim(), password_text.getText().trim());
+			//presenter.sendLoginMessage(userName_text.getText().trim(), password_text.getText().trim());
+			sendLoginMessage();
+			
 		}
 	});
 	
 	
 	
+	
+	
+	}
+	void sendLoginMessage(){
+		if(!userName_text.getText().trim().equals("") & !password_text.getText().trim().equals(""))
+			presenter.sendLoginMessage(userName_text.getText().trim(), password_text.getText().trim());
+		else
+			Alerts.createInformationAlert("All fields must be completed", null, null);
+		
 	}
 }

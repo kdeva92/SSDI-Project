@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.ChatApplication.common.converter.ByteToEntityConverter;
@@ -18,12 +19,16 @@ import org.ChatApplication.ui.service.connector.SenderController;
 import org.ChatApplication.ui.service.connector.ServerController;
 import org.ChatApplication.ui.service.database.DatabaseConnecter;
 import org.ChatApplication.ui.service.models.Contact;
+import org.ChatApplication.ui.service.models.GroupTableObject;
 import org.ChatApplication.ui.service.models.MessageVO;
 import org.ChatApplication.ui.service.models.User;
 import org.ChatApplication.ui.service.observer.MessageListener;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class Presenter {
 
@@ -47,7 +52,7 @@ public class Presenter {
 		this.chatPage = new ChatPage();
 		this.contactsHandler = new ContactsHandler();
 		this.createGroup = new CreateGroup();
-		initializeClientDataBase();
+	//	initializeClientDataBase();
 	}
 
 	private void initConnection() throws UnknownHostException, IOException {
@@ -57,18 +62,18 @@ public class Presenter {
 		startListening();
 	}
 
-	private void initializeClientDataBase() {
-		DatabaseConnecter dbConnector = new DatabaseConnecter();
-		conn = dbConnector.getConn();
-		stat = null;
-		try {
-			stat = conn.createStatement();
-			stat.execute(
-					"CREATE TABLE IF NOT EXISTS User(niner_id varchar(10) primary key,studentName varchar(60),email varchar(60),contact varchar(10),password varchar(20))");
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
-		}
-	}
+//	private void initializeClientDataBase() {
+//		DatabaseConnecter dbConnector = new DatabaseConnecter();
+//		conn = dbConnector.getConn();
+//		stat = null;
+//		try {
+//			stat = conn.createStatement();
+//			stat.execute(
+//					"CREATE TABLE IF NOT EXISTS User(niner_id varchar(10) primary key,studentName varchar(60),email varchar(60),contact varchar(10),password varchar(20))");
+//		} catch (SQLException e) {
+//			logger.error(e.getMessage());
+//		}
+//	}
 
 	public void startListening() {
 		messageListener.startListening();
@@ -201,21 +206,37 @@ public class Presenter {
 	 * Handle Add Contact
 	 */
 
-	public void addToContact(UserVO user) {
+	public void addToContact(UserVO recieved_user) {
+//		if(user.getNinerId().equals(recieved_user.getNinerId())){
+//			Alerts.createInformationAlert("Cannot add yourself", null, null);
+//		}
+//		else{
 		DatabaseConnecter dbConnector = new DatabaseConnecter();
 		conn = dbConnector.getConn();
 		try {
 			stat = conn.createStatement();
-			stat.execute("INSERT INTO User VALUES('" + user.getNinerId() + "','" + user.getFirstName() + "','"
-					+ user.getEmail() + "','" + "9999999999" + "','" + user.getPassword() + "')");
+			ResultSet rs = stat.executeQuery("SELECT niner_id FROM Contacts_"+user.getNinerId()+" WHERE niner_id='"+recieved_user.getNinerId()+"'");
+			int flag = 0;
+			while(rs.next()){
+				flag++;
+			}
+			if(flag==0){
+			stat.execute("INSERT INTO Contacts_"+user.getNinerId()+" VALUES('" + recieved_user.getNinerId() + "','" + recieved_user.getFirstName() + "','"
+					+ recieved_user.getLastName() + "','" + recieved_user.getEmail() + "')");
 			System.out.println("Contact Inserted to DB: " + user.getNinerId());
-			chatPage.conT.add(new Contact(user.getNinerId(), user.getFirstName(), user.getEmail()));
+			
+			ObservableList<MessageVO> newContactChat= FXCollections.observableArrayList();
+			this.chatPage.userChats.put(recieved_user.getNinerId(), newContactChat);
+			chatPage.conT.add(new Contact(recieved_user.getNinerId(), recieved_user.getFirstName(),recieved_user.getLastName(), recieved_user.getEmail()));
 			System.out.println("Contact Inserted UI: " + user.getNinerId());
+			stat.execute("CREATE TABLE IF NOT EXISTS Chat_" + user.getNinerId()+ "_"+recieved_user.getNinerId() + "(sender varchar(10),senderName varchar(50),messageBody varchar(500))");
+			System.out.println("Table created as:\nCREATE TABLE IF NOT EXISTS Chat_" + user.getNinerId()+ "_"+recieved_user.getNinerId() + "(sender varchar(10),senderName varchar(50),messageBody varchar(500))");
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+//	}
 	}
 
 	/**
@@ -237,35 +258,67 @@ public class Presenter {
 	public void updateChatUI(Message message) {
 		String messageBody = new String(message.getData());
 		String receiver = new String(message.getSender());
-		String name = getReceiverName(receiver);
-		if (name != null) {
-			MessageVO mess = new MessageVO(name, chatPage.user.getNinerId().trim(), messageBody);
-			chatPage.dataT.add(mess);
-		} else {
-			MessageVO mess = new MessageVO(receiver, chatPage.user.getNinerId().trim(), messageBody);
-			chatPage.dataT.add(mess);
+		String receiverName = receiver;
+		for(Contact con : this.chatPage.conT){
+			 if(con.getNinerID().equals(receiver))
+				 receiverName = con.getFirstName();
 		}
-		// DatabaseConnecter dbConnector = new DatabaseConnecter();
-		// conn = dbConnector.getConn();
-		// try {
-		// stat = conn.createStatement();
-		// stat.execute(
-		// "CREATE TABLE IF NOT EXISTS " + receiver + "Chat(sender
-		// varchar(10),messageBody varchar(500))");
-		// stat.execute("INSERT INTO " + receiver + "Chat VALUES('" + receiver +
-		// "','" + messageBody + "')");
-		// } catch (SQLException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+		String group = new String(message.getReceiver());
+		
+		
+		
+		
+		switch(message.getReceiverType()){
+
+	
+		case 0:// Individual Message
+			 DatabaseConnecter dbConnector = new DatabaseConnecter();
+			 conn = dbConnector.getConn();
+			 try {
+			 stat = conn.createStatement();
+			 stat.execute("CREATE TABLE IF NOT EXISTS Chat_" + user.getNinerId()+ "_"+receiver + "(sender varchar(10),senderName varchar(50),messageBody varchar(500))");
+			 for(Contact con : this.chatPage.conT){
+				 if(con.getNinerID().equals(receiver))
+					 stat.execute("INSERT INTO Chat_"  + user.getNinerId()+ "_"+receiver + " VALUES('" + receiver +"','"+receiverName+"','" + messageBody + "')");
+			 }
+			 } catch (SQLException e) {
+			 // TODO Auto-generated catch block
+			 e.printStackTrace();
+			 }
+			 
+			ObservableList<MessageVO> chatArray = this.chatPage.userChats.get(receiver);
+			chatArray.add(new MessageVO(receiver, receiverName, messageBody));
+			
+			break;
+			
+		case 1:// Group Message
+			
+			break;
+		}
+		
+
 	}
 
 	private void updateGroupCreation(Message message) {
 
+		String membersList = null;
 		GroupVO group = null;
 		try {
 			group = ByteToEntityConverter.getInstance().getGroupVO(message.getData());
-			chatPage.conT.add(new Contact(group.getGroupId() + "", group.getGroupName(), ""));
+			
+			membersList = "";
+			for(String member : group.getListOfMembers())
+			{
+				if(membersList.equals(""))
+				{
+					membersList += member.trim();
+				}
+				else
+				{
+					membersList += ","+member.trim();
+				}
+			}
+			
 		} catch (JsonParseException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -280,13 +333,16 @@ public class Presenter {
 		conn = dbConnector.getConn();
 		try {
 			stat = conn.createStatement();
-			stat.execute("INSERT INTO User VALUES('" + group.getGroupId() + "" + "','" + group.getGroupName() + "','"
-					+ "" + "','" + "9999999999" + "','" + "" + "')");
+			stat.execute("INSERT INTO Groups_"+user.getNinerId()+" VALUES(" + group.getGroupId() + ",'" + group.getGroupName() + "','"+ membersList + "')");
+			System.out.println("INSERT INTO Groups_"+user.getNinerId()+" VALUES(" + group.getGroupId() + ",'" + group.getGroupName() + "','"+ membersList + "')");
+			stat.execute("CREATE TABLE IF NOT EXISTS Grp_"+user.getNinerId()+"_"+group.getGroupId()+"(sender varchar(10),senderName varchar(50),messageBody varchar(500))");
+			System.out.println("CREATE TABLE IF NOT EXISTS Grp_"+user.getNinerId()+"_"+group.getGroupId()+"(sender varchar(10),senderName varchar(50),messageBody varchar(500))");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		loadChatPage();
+	//	chatPage.groupT.add(new GroupTableObject(group));
 
 	}
 
@@ -310,6 +366,7 @@ public class Presenter {
 
 	public void sendCreateGroupMessage(GroupVO groupObject) {
 		senderController.createGroupMessage(this.user.getNinerId(), groupObject);
+		loadChatPage();
 	}
 
 	public UserVO getUser() {
@@ -332,7 +389,7 @@ public class Presenter {
 		ResultSet rs;
 		String retVal = null;
 		try {
-			rs = stat.executeQuery("SELECT studentName FROM User WHERE niner_id='" + ninerId + "'");
+			rs = stat.executeQuery("SELECT first_name FROM Contacts_"+user.getNinerId()+" WHERE niner_id='" + ninerId.trim() + "'");
 
 			while (rs.next()) {
 				retVal = rs.getString(1);
