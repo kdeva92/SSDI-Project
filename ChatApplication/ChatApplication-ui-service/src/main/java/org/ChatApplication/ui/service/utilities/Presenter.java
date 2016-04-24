@@ -21,9 +21,7 @@ import org.ChatApplication.ui.service.connector.SenderController;
 import org.ChatApplication.ui.service.connector.ServerController;
 import org.ChatApplication.ui.service.database.DatabaseConnecter;
 import org.ChatApplication.ui.service.models.Contact;
-import org.ChatApplication.ui.service.models.GroupTableObject;
 import org.ChatApplication.ui.service.models.MessageVO;
-import org.ChatApplication.ui.service.models.User;
 import org.ChatApplication.ui.service.observer.MessageListener;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
@@ -37,12 +35,10 @@ public class Presenter {
 	private UserVO user;
 	private Homepage homePage;
 	private ChatPage chatPage;
-	private UserRegisteration signUpPage;
 	private Login loginPage;
 	private ServerController serverController;
 	private SenderController senderController;
 	private MessageListener messageListener;
-	private ContactsHandler contactsHandler;
 	private Connection conn;
 	private Statement stat;
 	private CreateGroup createGroup;
@@ -53,7 +49,6 @@ public class Presenter {
 		this.homePage = homepage;
 		this.loginPage = new Login();
 		this.chatPage = new ChatPage();
-		this.contactsHandler = new ContactsHandler();
 		this.createGroup = new CreateGroup();
 
 		messageParts = new HashMap<String, ArrayList<Message>>();
@@ -202,13 +197,6 @@ public class Presenter {
 		}
 	}
 
-	/*
-	 * Create Group
-	 */
-
-	public void createGrp(String groupName, ArrayList<User> userList) {
-
-	}
 	/*
 	 * Handle Add Contact
 	 */
