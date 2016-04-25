@@ -39,7 +39,7 @@ public class CreateGroup {
 	Button removeMemberButton;
 	Button cancelBtn;
 	Button createBtn;
-	private Presenter presenter;
+	public Presenter presenter;
 	ArrayList<String> listOfMembers;
 
 	public void loadCreateGroupPage(Presenter present) throws IOException {
@@ -68,9 +68,9 @@ public class CreateGroup {
 		Connection conn = dbConnector.getConn();
 		try {
 			Statement stat = conn.createStatement();
-			ResultSet rs = stat.executeQuery("SELECT * from User");
+			ResultSet rs = stat.executeQuery("SELECT * from Contacts_"+this.presenter.getUser().getNinerId());
 			while (rs.next()) {
-				memberPicker.getItems().add(new Contact(rs.getString(1), rs.getString(2), rs.getString(2)));
+				memberPicker.getItems().add(new Contact(rs.getString(1), rs.getString(2), rs.getString(3),rs.getString(4)));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -132,12 +132,14 @@ public class CreateGroup {
 
 			public void handle(ActionEvent event) {
 				listOfMembers.clear();
+				listOfMembers.add(presenter.getUser().getNinerId());
 				String groupName = groupNameText.getText();
 				for (Contact con : contactList) {
 					listOfMembers.add(con.getNinerID());
 				}
 
 				presenter.sendCreateGroupMessage(new GroupVO(groupNameText.getText().trim(), listOfMembers));
+				
 			}
 		});
 

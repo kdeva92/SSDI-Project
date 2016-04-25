@@ -5,12 +5,13 @@ import javafx.beans.property.SimpleStringProperty;
 public class MessageVO {
 
 	SimpleStringProperty sender;
-	SimpleStringProperty reciever;
+	SimpleStringProperty senderName;
+	
 	SimpleStringProperty messageBody;
 
-	public MessageVO(String sender, String reciever, String messageBody) {
+	public MessageVO(String sender, String senderName, String messageBody) {
 		this.sender = new SimpleStringProperty(sender);
-		this.reciever = new SimpleStringProperty(reciever);
+		this.senderName = new SimpleStringProperty(senderName);
 		this.messageBody = new SimpleStringProperty(messageBody);
 	}
 
@@ -22,12 +23,12 @@ public class MessageVO {
 		this.sender.set(sender);
 	}
 
-	public String getReciever() {
-		return this.reciever.get();
+	public String getSenderName() {
+		return this.senderName.get();
 	}
 
-	public void setReciever(String reciever) {
-		this.reciever.set(reciever);
+	public void setSenderName(String senderName) {
+		this.senderName.set(senderName);
 	}
 
 	public String getMessageBody() {

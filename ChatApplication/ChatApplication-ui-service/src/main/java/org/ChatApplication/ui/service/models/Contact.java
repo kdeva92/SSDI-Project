@@ -5,18 +5,24 @@ import javafx.beans.property.SimpleStringProperty;
 public class Contact {
 
 	SimpleStringProperty ninerID;
-	SimpleStringProperty name;
+	SimpleStringProperty firstName;
 	SimpleStringProperty email;
+	SimpleStringProperty lastName;
+	
+	
+	
 
-	public Contact(String ninerID, String name, String email) {
+	public Contact(String ninerID, String firstName, String lastName, String email) {
 		this.ninerID = new SimpleStringProperty(ninerID);
-		this.name = new SimpleStringProperty(name);
+		this.firstName = new SimpleStringProperty(firstName);
 		this.email = new SimpleStringProperty(email);
+		this.lastName = new SimpleStringProperty(lastName);
 	}
 
 	public Contact() {
 		this.ninerID = null;
-		this.name = null;
+		this.firstName = null;
+		this.lastName = lastName;
 		this.email = null;
 	}
 
@@ -28,12 +34,20 @@ public class Contact {
 		this.ninerID.set(sender);
 	}
 
-	public String getName() {
-		return this.name.get();
+	public String getLastName() {
+		return this.lastName.get();
 	}
 
-	public void setName(String sender) {
-		this.name.set(sender);
+	public void setLastName(String sender) {
+		this.lastName.set(sender);
+	}
+	
+	public String getFirstName() {
+		return this.firstName.get();
+	}
+
+	public void setFirstName(String sender) {
+		this.firstName.set(sender);
 	}
 
 	public String getEmail() {
@@ -46,6 +60,6 @@ public class Contact {
 
 	@Override
 	public String toString() {
-		return name.get();
+		return firstName.get();
 	}
 }
