@@ -35,7 +35,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
@@ -149,7 +151,9 @@ public class ChatPage {
 				// messageBox.setText("");
 				// messageBox.positionCaret(0);
 
-				sendingModule();
+				if(savedContacts.getSelectionModel().selectedItemProperty().get() != null || savedGroups.getSelectionModel().selectedItemProperty().get() != null)
+					if(!messageBox.getText().isEmpty())
+						sendingModule();
 
 			}
 		});
@@ -173,7 +177,9 @@ public class ChatPage {
 					// // listener.updateUI(id, messageBox.getText().trim());
 					// messageBox.setText("");
 					// messageBox.positionCaret(0);
-					sendingModule();
+					if(savedContacts.getSelectionModel().selectedItemProperty().get() != null || savedGroups.getSelectionModel().selectedItemProperty().get() != null)
+						if(!messageBox.getText().isEmpty())
+							sendingModule();
 				}
 			}
 
@@ -223,7 +229,7 @@ public class ChatPage {
 		logoutBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				presenter.handleTermination();
+				presenter.loadHomepage();
 
 			}
 		});
@@ -232,14 +238,14 @@ public class ChatPage {
 		 * Chat Area
 		 */
 
-		class XCell extends TableCell<String, String> {
-			@Override
-			protected void updateItem(String item, boolean empty) {
-				super.updateItem(item, empty);
-				this.setText(item);
-				this.setTooltip((empty || item == null) ? null : new Tooltip(item));
-			}
-		}
+//		class XCell extends TableCell<String, String> {
+//			@Override
+//			protected void updateItem(String item, boolean empty) {
+//				super.updateItem(item, empty);
+//				this.setText(item);
+//				this.setTooltip((empty || item == null) ? null : new Tooltip(item));
+//			}
+//		}
 
 		chatString = new TableView<MessageVO>();
 
@@ -254,21 +260,21 @@ public class ChatPage {
 
 		chatString.getColumns().addAll(userCol, messageCol);
 
-		messageCol.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<String, String>, ObservableValue<String>>() {
-
-					public ObservableValue<String> call(CellDataFeatures<String, String> arg0) {
-
-						return new ReadOnlyStringWrapper(arg0.getValue());
-					}
-				});
-
-		messageCol.setCellFactory(new Callback<TableColumn<String, String>, TableCell<String, String>>() {
-			public TableCell<String, String> call(TableColumn<String, String> param) {
-				return new XCell();
-			}
-		});
-
+//		messageCol.setCellValueFactory(
+//				new Callback<TableColumn.CellDataFeatures<String, String>, ObservableValue<MessageVO>>() {
+//
+//					public ObservableValue<MessageVO> call(CellDataFeatures<String, String> arg0) {
+//
+//						return new ReadOnlyStringWrapper(arg0.getValue());
+//					}
+//				});
+//
+//		messageCol.setCellFactory(new Callback<TableColumn<String, String>, TableCell<String, String>>() {
+//			public TableCell<String, String> call(TableColumn<String, String> param) {
+//				return new XCell();
+//			}
+//		});
+		chatTableBox.getChildren().add(chatString);
 		chatTableBox.setVgrow(chatString, Priority.ALWAYS);
 		ChatPane.setHgrow(chatBox, Priority.ALWAYS);
 
@@ -344,6 +350,25 @@ public class ChatPage {
 
 			}
 		});
+		
+		/*
+		 * Edit Group
+		 */
+		ContextMenu menu = new ContextMenu();
+		MenuItem editGroupItem = new MenuItem("Edit Group");
+		menu.getItems().add(editGroupItem);
+		savedGroups.setContextMenu(menu);
+		editGroupItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			public void handle(ActionEvent event) {
+				GroupTableObject group = savedGroups.getSelectionModel().selectedItemProperty().get();
+				System.out.println("Editing Group: "+group.getGroupName());
+				presenter.loadEditGroup(group,conT);
+			}
+		});
+		
+		
+		
 
 		Scene scene = new Scene(ChatPane, ChatApp.stage.getWidth(), ChatApp.stage.getHeight());
 		scene.getStylesheets().add(ChatApp.class
@@ -451,9 +476,9 @@ public class ChatPage {
 				while (rs2.next()) {
 					messages.add(new MessageVO(rs2.getString(1), rs2.getString(2), rs2.getString(3)));
 				}
-				for (MessageVO me : messages) {
-					System.out.println(me.getSender() + " " + me.getSenderName() + " " + me.getMessageBody());
-				}
+//				for (MessageVO me : messages) {
+//					System.out.println(me.getSender() + " " + me.getSenderName() + " " + me.getMessageBody());
+//				}
 				userChats.put(rs.getString(1), messages);
 				conT.add(new Contact(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)));
 
@@ -468,9 +493,9 @@ public class ChatPage {
 				while (rs3.next()) {
 					messages.add(new MessageVO(rs3.getString(1), rs3.getString(2), rs3.getString(3)));
 				}
-				for (MessageVO me : messages) {
-					System.out.println(me.getSender() + " " + me.getSenderName() + " " + me.getMessageBody());
-				}
+//				for (MessageVO me : messages) {
+//					System.out.println(me.getSender() + " " + me.getSenderName() + " " + me.getMessageBody());
+//				}
 				userChats.put(rs1.getInt(1) + "", messages);
 				groupT.add(new GroupTableObject(rs1.getInt(1), rs1.getString(2), rs1.getString(3)));
 			}
@@ -519,11 +544,8 @@ public class ChatPage {
 	}
 
 	private void openFile(File file) {
-		try {
-			desktop.open(file);
-		} catch (IOException ex) {
-
-		}
+		String fileName = file.getName();
+		System.out.println(fileName);
 	}
 
 }

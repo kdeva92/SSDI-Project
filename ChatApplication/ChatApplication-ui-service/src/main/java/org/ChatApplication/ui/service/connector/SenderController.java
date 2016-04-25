@@ -106,6 +106,44 @@ public class SenderController {
 			e.printStackTrace();
 		}
 	}
+	
+	public void editGroupMessage(String sender, GroupVO groupObject) {
+		try {
+			String groupStr = EntityToByteConverter.getInstance().getJsonString(groupObject);
+			dataOutputStream = new DataOutputStream(socket.getOutputStream());
+			List<ByteBuffer> buffArray = MessageUtility.packMessageToArray(groupStr, sender, "000000000",
+					ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.EDIT_GROUP);
+			writeTodataOutputStream(buffArray);
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void signUpMessage(String sender,UserVO user) {
+		try {
+			String userStr = EntityToByteConverter.getInstance().getJsonString(user);
+			dataOutputStream = new DataOutputStream(socket.getOutputStream());
+			List<ByteBuffer> buffArray = MessageUtility.packMessageToArray(userStr, sender, "000000000",
+					ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.CHAT_MSG);
+			writeTodataOutputStream(buffArray);
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public void signUp() {
 

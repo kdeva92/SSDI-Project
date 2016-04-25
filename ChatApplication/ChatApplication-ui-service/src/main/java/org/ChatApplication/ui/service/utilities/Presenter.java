@@ -21,6 +21,7 @@ import org.ChatApplication.ui.service.connector.SenderController;
 import org.ChatApplication.ui.service.connector.ServerController;
 import org.ChatApplication.ui.service.database.DatabaseConnecter;
 import org.ChatApplication.ui.service.models.Contact;
+import org.ChatApplication.ui.service.models.GroupTableObject;
 import org.ChatApplication.ui.service.models.MessageVO;
 import org.ChatApplication.ui.service.observer.MessageListener;
 import org.apache.log4j.Logger;
@@ -42,6 +43,7 @@ public class Presenter {
 	private Connection conn;
 	private Statement stat;
 	private CreateGroup createGroup;
+	private EditGroup editGroup;
 	final static Logger logger = Logger.getLogger(Presenter.class);
 	private Map<String, ArrayList<Message>> messageParts;
 
@@ -50,6 +52,7 @@ public class Presenter {
 		this.loginPage = new Login();
 		this.chatPage = new ChatPage();
 		this.createGroup = new CreateGroup();
+		this.editGroup = new EditGroup();
 
 		messageParts = new HashMap<String, ArrayList<Message>>();
 		// initializeClientDataBase();
@@ -122,6 +125,7 @@ public class Presenter {
 				updateGroupCreation(message);
 				break;
 			case EDIT_GROUP:
+				updateEditGroup(message);
 				break;
 			case EDIT_PROFILE:
 				break;
@@ -145,6 +149,8 @@ public class Presenter {
 		}
 
 	}
+
+	
 
 	private void handleSearchUser(Message message) {
 
@@ -202,10 +208,10 @@ public class Presenter {
 	 */
 
 	public void addToContact(UserVO recieved_user) {
-		// if(user.getNinerId().equals(recieved_user.getNinerId())){
-		// Alerts.createInformationAlert("Cannot add yourself", null, null);
-		// }
-		// else{
+		 if(user.getNinerId().equals(recieved_user.getNinerId())){
+		 Alerts.createInformationAlert("Cannot add yourself", null, null);
+		 }
+		 else{
 		DatabaseConnecter dbConnector = new DatabaseConnecter();
 		conn = dbConnector.getConn();
 		try {
@@ -237,7 +243,7 @@ public class Presenter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// }
+		 }
 	}
 
 	/**
@@ -395,9 +401,7 @@ public class Presenter {
 	}
 	
 	
-	public void sendSignUpMessage(){
-		
-	}
+
 	
 	
 	public void loadHomepage(){
@@ -407,7 +411,7 @@ public class Presenter {
 
 	public void sendCreateGroupMessage(GroupVO groupObject) {
 		senderController.createGroupMessage(this.user.getNinerId(), groupObject);
-		loadChatPage();
+		//loadChatPage();
 	}
 
 	public UserVO getUser() {
@@ -444,6 +448,71 @@ public class Presenter {
 
 		return retVal;
 
+	}
+	
+	
+	public void loadEditGroup(GroupTableObject group, ObservableList<Contact> conT){
+		try {
+			this.editGroup.loadEditGroup(group, this, conT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void sendSignUpMessage(UserVO user){
+		senderController.signUpMessage(this.user.getNinerId(),user);
+	}
+	
+	public void sendEditGroupMessage(GroupVO groupVO){
+		senderController.editGroupMessage(this.user.getNinerId(), groupVO);
+		
+	}
+	
+	
+	
+	
+	private void updateEditGroup(Message message) {
+		
+		String membersList = null;
+		GroupVO group = null;
+		try {
+			group = ByteToEntityConverter.getInstance().getGroupVO(message.getData());
+
+			membersList = "";
+			for (String member : group.getListOfMembers()) {
+				if (membersList.equals("")) {
+					membersList += member.trim();
+				} else {
+					membersList += "," + member.trim();
+				}
+			}
+
+		} catch (JsonParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JsonMappingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println("Group Edited as : "+group.getGroupId()+" "+group.getGroupName()+" "+membersList);
+		DatabaseConnecter dbConnector = new DatabaseConnecter();
+		conn = dbConnector.getConn();
+		try {
+			stat = conn.createStatement();
+			stat.execute("UPDATE Groups_"+this.getUser().getNinerId()+" SET group_name='"+group.getGroupName().trim()+"' WHERE group_id="+group.getGroupId());
+			stat.execute("UPDATE Groups_"+this.getUser().getNinerId()+" SET members='"+membersList+"' WHERE group_id="+group.getGroupId());
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.chatPage.conT.clear();
+		loadChatPage();
+		
 	}
 
 }

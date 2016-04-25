@@ -45,20 +45,15 @@ public class Alerts {
 			error.setContentText("You can register only with UNCC Email ID.\n\nExample: abc@uncc.edu");
 			break;
 
-		case 4:
-			error.setHeaderText("Invalid Contact");
-			error.setContentText("Contact must be of xxx-xxxxxxx format. Example: 999-0000000");
-			break;
 
-		case 5:
+		case 4:
 			error.setHeaderText("Paswords do not match");
 			error.setContentText("Passwords entered in Password and Confirm Password fields must match");
 			break;
 
-		case 6:
+		case 5:
 			error.setHeaderText("Password does not satisfy the given requirements:");
-			error.setContentText(
-					"1.Must contain one digit from 0-9\n2.Must contain one lowercase characters\n3.Must contain one uppercase characters\n4.Must contain one special symbol out of @ # $ %\n5.Length at least 8 characters and maximum of 20");
+			error.setContentText("1.Must contain one digit from 0-9\n2.Must contain one lowercase characters\n3.Must contain one uppercase characters\n4.Must contain one special symbol out of @ # $ %\n5.Length at least 8 characters and maximum of 20");
 			break;
 		}
 

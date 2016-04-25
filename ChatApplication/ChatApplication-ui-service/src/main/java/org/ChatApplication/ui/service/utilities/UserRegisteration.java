@@ -60,10 +60,22 @@ public class UserRegisteration {
 				user.setNinerId(idField.getText().toString());
 				user.setEmail(emailField.getText().toString());
 				user.setPassword(passwd1Field.getText().toString());
-
-				System.out.println("Sign Up Pressed");
-				System.out.println(user.getNinerId() + " " + user.getFirstName() + " " + user.getLastName() + " "
-						+ user.getEmail() + " " + user.getPassword());
+				
+				UserRegisterationClient signUpClient = new UserRegisterationClient();
+				int status = signUpClient.validate(user, passwd2Field.getText().trim());
+				if(status==1){
+					System.out.println("Validations Successful");
+					System.out.println("Sign Up Pressed");
+					System.out.println(user.getNinerId() + " " + user.getFirstName() + " " + user.getLastName() + " "
+							+ user.getEmail() + " " + user.getPassword());
+					presenter.sendSignUpMessage(user);
+				}
+				else{
+					Alerts.validations(status);
+					System.out.println("Validations Error");
+				}
+				
+			
 			}
 		});
 
@@ -75,12 +87,14 @@ public class UserRegisteration {
 				presenter.loadHomepage();
 			}
 		});
-
+		
+		
 		Scene scene = new Scene(signUpBox, ChatApp.stage.getWidth(), ChatApp.stage.getHeight());
 		scene.getStylesheets().add(ChatApp.class
 				.getResource("/org/ChatApplication/ui/service/stylesheets/Basic_Style.css").toExternalForm());
 
 		ChatApp.stage.setScene(scene);
+		cancelBtn.requestFocus();
 
 	}
 

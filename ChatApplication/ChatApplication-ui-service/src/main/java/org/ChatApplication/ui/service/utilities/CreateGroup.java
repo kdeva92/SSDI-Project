@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.ChatApplication.data.entity.GroupVO;
 import org.ChatApplication.data.entity.UserVO;
@@ -40,10 +42,10 @@ public class CreateGroup {
 	Button cancelBtn;
 	Button createBtn;
 	public Presenter presenter;
-	ArrayList<String> listOfMembers;
+	Set<String> listOfMembers;
 
 	public void loadCreateGroupPage(Presenter present) throws IOException {
-		listOfMembers = new ArrayList<String>();
+		listOfMembers = new HashSet<String>();
 		this.presenter = present;
 		groupContainer = (VBox) FXMLLoader
 				.load(Login.class.getResource("/org/ChatApplication/ui/service/stylesheets/CreateGroupWindow.fxml"));
@@ -83,22 +85,19 @@ public class CreateGroup {
 
 		selectedContacts = new TableView<UserVO>();
 
-		TableColumn ninerIDCol = new TableColumn("Niner ID");
-		TableColumn nameCol = new TableColumn("User");
-		TableColumn emailCol = new TableColumn("Email ID");
-
-		ninerIDCol.prefWidthProperty().bind(selectedContacts.widthProperty().multiply(0.20));
-		emailCol.prefWidthProperty().bind(selectedContacts.widthProperty().multiply(0.40));
-		nameCol.prefWidthProperty().bind(selectedContacts.widthProperty().multiply(0.40));
+		TableColumn lastnameCol = new TableColumn("Last Name");
+		TableColumn firstnameCol = new TableColumn("First Name");
+		
+		lastnameCol.prefWidthProperty().bind(selectedContacts.widthProperty().multiply(0.70));
+		firstnameCol.prefWidthProperty().bind(selectedContacts.widthProperty().multiply(0.30));
 
 		contactList = FXCollections.observableArrayList();
 		selectedContacts.setItems(contactList);
 
-		ninerIDCol.setCellValueFactory(new PropertyValueFactory("ninerId"));
-		emailCol.setCellValueFactory(new PropertyValueFactory("email"));
-		nameCol.setCellValueFactory(new PropertyValueFactory("firstName"));
+		lastnameCol.setCellValueFactory(new PropertyValueFactory("lastName"));
+		firstnameCol.setCellValueFactory(new PropertyValueFactory("firstName"));
 
-		selectedContacts.getColumns().addAll(ninerIDCol, emailCol, nameCol);
+		selectedContacts.getColumns().addAll(firstnameCol,lastnameCol);
 		selectResultBox.getChildren().add(selectedContacts);
 
 		/*
@@ -137,8 +136,8 @@ public class CreateGroup {
 				for (Contact con : contactList) {
 					listOfMembers.add(con.getNinerID());
 				}
-
-				presenter.sendCreateGroupMessage(new GroupVO(groupNameText.getText().trim(), listOfMembers));
+				ArrayList<String> membersList = new ArrayList<String>(listOfMembers);
+				presenter.sendCreateGroupMessage(new GroupVO(groupNameText.getText().trim(), membersList));
 				
 			}
 		});
