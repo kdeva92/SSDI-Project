@@ -105,5 +105,13 @@ public class User {
 	public void setNinerId(String ninerId) {
 		this.ninerId = ninerId;
 	}
+	
+	@Override
+	public boolean equals(Object arg0) {
+		// TODO Auto-generated method stub
+		if(!(arg0 instanceof User))
+			return false;
+		return getNinerId().equals(((User)arg0).getNinerId());
+	}
 
 }

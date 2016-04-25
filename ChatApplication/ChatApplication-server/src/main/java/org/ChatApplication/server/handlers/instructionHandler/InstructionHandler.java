@@ -15,10 +15,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.ChatApplication.common.converter.ByteToEntityConverter;
 import org.ChatApplication.common.converter.EntityToByteConverter;
 import org.ChatApplication.common.converter.EntityToVoMapper;
+import org.ChatApplication.common.converter.VoToEntitiyMapper;
 import org.ChatApplication.common.util.MessageUtility;
 import org.ChatApplication.data.entity.Group;
 import org.ChatApplication.data.entity.GroupVO;
 import org.ChatApplication.data.entity.User;
+import org.ChatApplication.data.entity.UserVO;
 import org.ChatApplication.data.service.UserService;
 import org.ChatApplication.server.handlers.dataMessageHandler.DataMessageHandler;
 import org.ChatApplication.server.handlers.messageHandler.MessageHandler;
@@ -41,6 +43,7 @@ import org.hibernate.mapping.Collection;
  */
 public class InstructionHandler implements IInstructionHandler {
 
+	private static final String LOGIN_SUCCESS_RPLY = "success";
 	ConcurrentLinkedQueue<Message> messageQueue = new ConcurrentLinkedQueue<Message>();
 	private final static Logger logger = Logger.getLogger(InstructionHandler.class);
 	private HandlerThread handlerThread;
@@ -143,12 +146,41 @@ public class InstructionHandler implements IInstructionHandler {
 							for (Iterator iterator = members.iterator(); iterator.hasNext();) {
 								try {
 									User user = (User) iterator.next();
-									sender.sendMessage(user.getNinerId(), byteBuffer);
+									sender.sendMessage(user.getNinerId(), byteBuffer.duplicate());
 								} catch (NullPointerException e) {
-
+									e.printStackTrace();
 								}
 							}
+						}
 
+					} catch (JsonParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (JsonMappingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+
+				case SIGNUP:
+					try {
+						UserVO userVo = ByteToEntityConverter.getInstance().getUser(message.getData());
+						User user = VoToEntitiyMapper.userToUserVo(userVo);
+						userService.createUser(user);
+
+						List<ByteBuffer> buffArray = MessageUtility.packMessageToArray(LOGIN_SUCCESS_RPLY,
+								message.getReceiver(), message.getSender(), ReceiverTypeEnum.INDIVIDUAL_MSG,
+								MessageTypeEnum.SIGNUP);
+						for (ByteBuffer buff : buffArray) {
+							System.out.println("Sending to: ");
+							sender.sendMessage(message.getSender(), buff);
+							System.out.println("search user reply data: " + new String(message.getData()));
 						}
 
 					} catch (JsonParseException e) {
@@ -165,6 +197,74 @@ public class InstructionHandler implements IInstructionHandler {
 						e.printStackTrace();
 					}
 
+					break;
+
+				case EDIT_GROUP:
+
+					try {
+						// get existing group
+						Group egroup = userService.getGroup(Integer.parseInt(message.getReceiver()));
+						List<User> emembers = egroup.getMembers();
+
+						// update group
+						GroupVO groupVO = ByteToEntityConverter.getInstance().getGroupVO(message.getData());
+						List<User> usersForGrp = UserService.getInstance().getUsers(groupVO.getListOfMembers());
+						Group group = new Group();
+						group.setMembers(usersForGrp);
+						group.setName(groupVO.getGroupName());
+						group.setGroupId(groupVO.getGroupId());
+						userService.updateGroup(group);
+						System.out.println(
+								"Group updated: " + groupVO.getGroupName() + " #members: " + group.getMembers().size());
+						groupVO.setGroupId(group.getGroupId());
+
+						List<User> members = group.getMembers();
+						List<ByteBuffer> buffArray = MessageUtility.packMessageToArray(
+								EntityToByteConverter.getInstance().getJsonString(groupVO), message.getSender(),
+								message.getReceiver(), ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.CREATE_GROUP);
+						for (ByteBuffer byteBuffer : buffArray) {
+							for (Iterator iterator = members.iterator(); iterator.hasNext();) {
+								try {
+									User user = (User) iterator.next();
+									sender.sendMessage(user.getNinerId(), byteBuffer.duplicate());
+								} catch (NullPointerException e) {
+									e.printStackTrace();
+								}
+							}
+						}
+
+						buffArray = MessageUtility.packMessageToArray(
+								EntityToByteConverter.getInstance().getJsonString(groupVO), message.getSender(),
+								message.getReceiver(), ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.GROUP_REMOVE);
+						for (ByteBuffer byteBuffer : buffArray) {
+							for (Iterator iterator = emembers.iterator(); iterator.hasNext();) {
+								try {
+									User user = (User) iterator.next();
+									if(members.contains(user)){
+										continue;
+									}
+									sender.sendMessage(user.getNinerId(), byteBuffer.duplicate());
+								} catch (NullPointerException e) {
+									e.printStackTrace();
+								}
+							}
+						}
+
+					} catch (JsonParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (JsonMappingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					break;
 				default:
 					System.out.println("Default of inst handler");
 					break;

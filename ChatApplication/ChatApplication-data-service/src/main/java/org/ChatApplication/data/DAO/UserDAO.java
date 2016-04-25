@@ -96,8 +96,8 @@ public class UserDAO {
 
 		logger.info("Entering getGroup");
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-		Query query = sessionFactory.getCurrentSession().createQuery("from Group where grpouId =:grpouId");
-		query.setParameter("grpouId", groupId);
+		Query query = sessionFactory.getCurrentSession().createQuery("from Group where groupId =:groupId");
+		query.setParameter("groupId", groupId);
 		List<Group> groups = query.list();
 		if (groups == null || groups.size() <= 0) {
 			return null;

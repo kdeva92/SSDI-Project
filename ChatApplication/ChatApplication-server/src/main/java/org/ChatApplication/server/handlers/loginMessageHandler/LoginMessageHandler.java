@@ -144,6 +144,8 @@ public class LoginMessageHandler implements ILoginMessageHandler {
 					serverSender.sendMessage(message.getReceiver(), byteBuffer);
 					System.out.println("Login successful user added to client holder");
 					// at this point send all pending messages to the client
+					System.out.println("Sending offine messages");
+					serverSender.sendOfflineQueueMessages(message.getReceiver());
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
