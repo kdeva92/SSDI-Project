@@ -1,5 +1,7 @@
 package org.ChatApplication.server.message;
 
+import java.util.HashMap;
+
 /**
  * 
  * @author Komal
@@ -11,6 +13,14 @@ public enum ReceiverTypeEnum {
 
 	private int msgType;
 
+	private static HashMap<Integer, ReceiverTypeEnum> valueMap = new HashMap<Integer, ReceiverTypeEnum>();
+
+	static {
+		for (ReceiverTypeEnum e : ReceiverTypeEnum.values()) {
+			valueMap.put(e.getIntEquivalant(), e);
+		}
+	}
+	
 	private ReceiverTypeEnum(int msgType) {
 		this.setMsgType(msgType);
 	}
@@ -25,5 +35,9 @@ public enum ReceiverTypeEnum {
 	
 	public int getIntEquivalant() {
 		return msgType;
+	}
+	
+	public static ReceiverTypeEnum getReceiverTypeEnumByIntValue(int value) {
+		return valueMap.get(value);
 	}
 }

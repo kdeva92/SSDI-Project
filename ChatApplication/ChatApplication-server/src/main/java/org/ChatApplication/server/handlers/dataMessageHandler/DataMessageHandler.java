@@ -85,15 +85,15 @@ public class DataMessageHandler implements IDataMessageHandler {
 				// Handle the client not connected situation here..
 				if (message.getReceiverType() == ReceiverTypeEnum.INDIVIDUAL_MSG.getIntEquivalant()) {
 					System.out.println("DataMessageHandler sending to: " + message.getReceiver());
-					if (clientHolder.getClientData(message.getReceiver()) == null) {
-						System.out.println("Client not connected..");
-						continue;
-					}
+//					if (clientHolder.getClientData(message.getReceiver()) == null) {
+//						System.out.println("Client not connected..");
+//						continue;
+//					}
 //					//--working
 					ByteBuffer byteBuffer = MessageUtility.packMessage(
 							new String( message.getData()).trim().getBytes(), message.getSender(), message.getReceiver(),
 							ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.CHAT_MSG, message.getPacketNo(), message.getNoOfPackets());
-					sender.sendMessage(message.getReceiver(), byteBuffer );
+					sender.sendMessage(message.getReceiver(), byteBuffer.duplicate() );
 
 //					ByteBuffer b = ByteBuffer.wrap(message.getData());
 //					System.out.println("asd");
@@ -105,10 +105,14 @@ public class DataMessageHandler implements IDataMessageHandler {
 					try {
 						Group group = userService.getGroup(Integer.parseInt(message.getReceiver()));
 
+						ByteBuffer byteBuffer = MessageUtility.packMessage(
+								new String( message.getData()).trim().getBytes(), message.getSender(), message.getReceiver(),
+								ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.CHAT_MSG, message.getPacketNo(), message.getNoOfPackets());
+						
 						List<User> members = group.getMembers();
 						for (Iterator iterator = members.iterator(); iterator.hasNext();) {
 							User user = (User) iterator.next();
-							sender.sendMessage(user.getNinerId(), ByteBuffer.wrap(message.getData()));
+							sender.sendMessage(user.getNinerId(), byteBuffer.duplicate());
 						}
 
 					} catch (NumberFormatException e) {
