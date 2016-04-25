@@ -90,6 +90,9 @@ public class MessageHandler implements IMessageHandler {
 					dataMessageHandler.handleMessage(message);
 					break;
 					//instruction message
+				case FILE_MSG:
+					dataMessageHandler.handleMessage(message);
+					break;
 				default:
 					System.out.println("message sent to  Instruction handler");
 					instructionMessageHandler.handleMessage(message);

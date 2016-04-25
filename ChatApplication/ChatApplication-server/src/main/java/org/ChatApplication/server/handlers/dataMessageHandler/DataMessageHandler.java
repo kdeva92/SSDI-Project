@@ -42,7 +42,7 @@ public class DataMessageHandler implements IDataMessageHandler {
 
 	private DataMessageHandler() {
 		handlerThread = new HandlerThread();
-		thread = new Thread(handlerThread,"HandlerThread");
+		thread = new Thread(handlerThread, "HandlerThread");
 		thread.start();
 	}
 
@@ -81,7 +81,6 @@ public class DataMessageHandler implements IDataMessageHandler {
 					}
 					continue;
 				}
-
 				// Handle the client not connected situation here..
 				if (message.getReceiverType() == ReceiverTypeEnum.INDIVIDUAL_MSG.getIntEquivalant()) {
 					System.out.println("DataMessageHandler sending to: " + message.getReceiver());
@@ -89,16 +88,16 @@ public class DataMessageHandler implements IDataMessageHandler {
 						System.out.println("Client not connected..");
 						continue;
 					}
-//					//--working
-					ByteBuffer byteBuffer = MessageUtility.packMessage(
-							new String( message.getData()).trim().getBytes(), message.getSender(), message.getReceiver(),
-							ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.CHAT_MSG, message.getPacketNo(), message.getNoOfPackets());
-					sender.sendMessage(message.getReceiver(), byteBuffer );
+					// //--working
+					ByteBuffer byteBuffer = MessageUtility.packMessage(new String(message.getData()).trim().getBytes(),
+							message.getSender(), message.getReceiver(), ReceiverTypeEnum.INDIVIDUAL_MSG,
+							MessageTypeEnum.CHAT_MSG, message.getPacketNo(), message.getNoOfPackets());
+					sender.sendMessage(message.getReceiver(), byteBuffer);
 
-//					ByteBuffer b = ByteBuffer.wrap(message.getData());
-//					System.out.println("asd");
-//					b.flip();
-//					sender.sendMessage(message.getReceiver(), b );
+					// ByteBuffer b = ByteBuffer.wrap(message.getData());
+					// System.out.println("asd");
+					// b.flip();
+					// sender.sendMessage(message.getReceiver(), b );
 				} else if (message.getReceiverType() == ReceiverTypeEnum.GROUP_MSG.getIntEquivalant()) {
 					// operate on group - DB access and individual send to each
 					// receiver

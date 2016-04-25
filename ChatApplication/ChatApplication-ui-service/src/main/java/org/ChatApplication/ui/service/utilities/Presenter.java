@@ -1,5 +1,6 @@
 package org.ChatApplication.ui.service.utilities;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.Connection;
@@ -301,7 +302,7 @@ public class Presenter {
 				addMessageToDB(receiver, receiverName, messageBody);
 				ObservableList<MessageVO> chatArray = this.chatPage.userChats.get(receiver);
 				chatArray.add(new MessageVO(receiver, receiverName, messageBody));
-				this.chatPage.chatString.scrollTo(chatArray.size()-1);
+				this.chatPage.chatString.scrollTo(chatArray.size() - 1);
 			}
 			break;
 
@@ -393,17 +394,14 @@ public class Presenter {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	public void sendSignUpMessage(){
-		
+
+	public void sendSignUpMessage() {
+
 	}
-	
-	
-	public void loadHomepage(){
+
+	public void loadHomepage() {
 		this.homePage.loadHomepage(this);
 	}
-	
 
 	public void sendCreateGroupMessage(GroupVO groupObject) {
 		senderController.createGroupMessage(this.user.getNinerId(), groupObject);
@@ -443,6 +441,11 @@ public class Presenter {
 		}
 
 		return retVal;
+
+	}
+
+	public void sendFile(File file, String senderId, ReceiverTypeEnum receiverTypeEnum, String receiverId) {
+		senderController.sendFile(file, senderId, receiverTypeEnum, receiverId);
 
 	}
 

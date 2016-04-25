@@ -20,7 +20,7 @@ import org.ChatApplication.server.message.ReceiverTypeEnum;
  */
 public final class MessageUtility {
 
-	private static final int CHUNK_SIZE = 1300;
+	public static final int CHUNK_SIZE = 1300;
 	// constants
 	static int SENDER_SIZE = 9;
 	static int RECEIVER_SIZE = 9;
