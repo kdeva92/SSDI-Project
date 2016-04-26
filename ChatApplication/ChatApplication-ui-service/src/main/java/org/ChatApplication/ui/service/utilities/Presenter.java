@@ -299,15 +299,15 @@ public class Presenter {
 						try {
 							// File file= new File("C:"+ File.separator +
 							// messageBody);
-							FileOutputStream stream = new FileOutputStream(
-									"C:/Users/Komal/Desktop/New folder" + File.separator + messageBody);
+							String filePath = System.getProperty("user.home") + File.separator + File.separator
+									+ messageBody;
+							FileOutputStream stream = new FileOutputStream(filePath);
 							for (int i = 1; i < arrayList.size(); i++) {
 
 								stream.write(arrayList.get(i).getData());
 							}
 							stream.close();
-							Desktop.getDesktop()
-									.open(new File("C:/Users/Komal/Desktop/New folder" + File.separator + messageBody));
+							Desktop.getDesktop().open(new File(filePath));
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
