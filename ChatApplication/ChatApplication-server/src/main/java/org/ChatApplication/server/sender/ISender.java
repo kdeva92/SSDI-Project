@@ -15,4 +15,5 @@ import org.ChatApplication.server.message.Message;
 public interface ISender {
 
 	public void sendMessage(String client, ByteBuffer byteBuffer );
+	public boolean sendImmediateMessage(SocketChannel channel, ByteBuffer message);
 }

@@ -7,7 +7,6 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
 import org.ChatApplication.server.handlers.loginMessageHandler.ILoginMessageHandler;
-import org.ChatApplication.server.handlers.loginMessageHandler.LoginMessageHandler;
 import org.apache.log4j.Logger;
 
 /**

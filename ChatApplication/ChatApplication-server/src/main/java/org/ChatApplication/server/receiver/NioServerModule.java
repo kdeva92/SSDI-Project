@@ -20,6 +20,8 @@ import org.ChatApplication.server.handlers.loginMessageHandler.ILoginMessageHand
 import org.ChatApplication.server.handlers.loginMessageHandler.LoginHandlerFactory;
 import org.ChatApplication.server.handlers.messageHandler.IMessageHandler;
 import org.ChatApplication.server.handlers.messageHandler.MessageHandlerFactory;
+import org.ChatApplication.server.handlers.signupMessageHandler.ISignupMessageHandler;
+import org.ChatApplication.server.handlers.signupMessageHandler.SignupMessageHandler;
 import org.ChatApplication.server.message.Message;
 import org.ChatApplication.server.message.MessageTypeEnum;
 import org.ChatApplication.server.sender.ClientHolder;
@@ -34,7 +36,8 @@ import org.apache.log4j.Logger;
  */
 public class NioServerModule implements Runnable {
 
-	private ILoginMessageHandler loginHandler = LoginHandlerFactory.getFactory().getLoginMessageandler();// 
+	private ILoginMessageHandler loginHandler = LoginHandlerFactory.getFactory().getLoginMessageandler();//
+	private ISignupMessageHandler signupHandler = SignupMessageHandler.getMessageHandler();
 	private static final IMessageHandler mssageHandler = MessageHandlerFactory.getFactory().getMessageandler();// MessageHandler.getMessageHandler();
 	private final static Logger logger = Logger.getLogger(NioServerModule.class);
 	private static NioServerModule module;
@@ -177,12 +180,16 @@ public class NioServerModule implements Runnable {
 //							buff.flip();
 //							System.out.println("setting data: "+new String( buff.array()));
 //							message.setData(buff.array());
-					
-							
+							continue;
+						}
+						if(message.getType() == MessageTypeEnum.SIGNUP){
+							signupHandler.doSignup(selectionKey, message);
+							continue;
 						}
 					} catch (BufferUnderflowException e) {
 						iterator.remove();
 						continue;
+
 					}
 
 					mssageHandler.handleMessage(message);
