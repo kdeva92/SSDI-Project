@@ -181,7 +181,7 @@ public class NioServerModule implements Runnable {
 //							buff.flip();
 //							System.out.println("setting data: "+new String( buff.array()));
 //							message.setData(buff.array());
-							continue;
+							//continue;
 						}
 						if(message.getType() == MessageTypeEnum.SIGNUP){
 							signupHandler.doSignup(selectionKey, message);

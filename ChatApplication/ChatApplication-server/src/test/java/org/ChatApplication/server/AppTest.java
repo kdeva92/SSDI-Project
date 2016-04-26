@@ -1,8 +1,10 @@
 package org.ChatApplication.server;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ChatApplication.data.DAO.UserDAO;
+import org.ChatApplication.data.entity.Group;
 import org.ChatApplication.data.entity.User;
 import org.ChatApplication.data.service.UserService;
 import org.ChatApplication.data.util.HibernateUtil;
@@ -36,9 +38,11 @@ public class AppTest extends TestCase {
 
 	/**
 	 * Rigourous Test :-)
+	 * @throws Exception 
 	 */
-	public void testApp() {
+	public void testApp() throws Exception {
 		assertTrue(true);
+		createGroup();
 		createUserTest();
 	}
 
@@ -97,8 +101,17 @@ public class AppTest extends TestCase {
 		}
 
 	}
-	
-	public void createGroup(){
-		
+
+	public void createGroup() throws Exception {
+		Group group = new Group();
+		group.setName("grp1");
+		List<User> users = new ArrayList<User>();
+
+		users.addAll(UserService.getInstance().getUsers("000000000"));
+		group.setMembers(users);
+		UserService.getInstance().createGroup(group);
+
+		Group g = UserService.getInstance().getGroup(group.getGroupId());
+
 	}
 }
