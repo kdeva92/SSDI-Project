@@ -55,14 +55,16 @@ public class ServerSender implements ISender {
 	public void sendOfflineQueueMessages(String client) {
 		try {
 			List<ByteBuffer> msgs = LightweightDatabaseManager.getAllMessagesForUser(client);
-			if(msgs!= null){
+			if (msgs != null) {
 				for (Iterator iterator = msgs.iterator(); iterator.hasNext();) {
 					ByteBuffer byteBuffer = (ByteBuffer) iterator.next();
-					//byteBuffer.flip();
+					// byteBuffer.flip();
 					Message m = MessageUtility.getMessage(byteBuffer);
-					byteBuffer = MessageUtility.packMessage(m.getData(), m.getSender(), m.getReceiver(), ReceiverTypeEnum.getReceiverTypeEnumByIntValue(m.getReceiverType()) ,m.getType(), m.getPacketNo(), m.getNoOfPackets());
+					byteBuffer = MessageUtility.packMessage(m.getData(), m.getSender(), m.getReceiver(),
+							ReceiverTypeEnum.getReceiverTypeEnumByIntValue(m.getReceiverType()), m.getType(),
+							m.getPacketNo(), m.getNoOfPackets());
 					sendMessage(client, byteBuffer);
-					System.out.println("processing offline msg: "+new String(byteBuffer.array()).trim());
+					System.out.println("processing offline msg: " + new String(byteBuffer.array()).trim());
 				}
 			}
 		} catch (SQLException e) {
@@ -73,7 +75,21 @@ public class ServerSender implements ISender {
 			logger.error("Failed to store to lightweight database", e);
 		}
 	}
-	
+
+	public boolean sendImmediateMessage(SocketChannel channel, ByteBuffer message) {
+
+		try {
+			System.out.println("Server Sender Sending.. Client: " + channel.getLocalAddress() + " Written object: "
+					+ new String(message.array()).trim());
+			message.flip();
+			channel.write(message);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
 	public void sendMessage(String clientId, ByteBuffer byteBuffer) {
 
 		// check if client is connected, if connected send message else add to
@@ -84,11 +100,10 @@ public class ServerSender implements ISender {
 			byteBuffer.flip();
 			messageQueue.add(new MessageData(byteBuffer, clientData.getSocketChannel()));
 			// System.out.println("ServerSender.. message added to queue");
-		}
-		else {
+		} else {
 			try {
 				LightweightDatabaseManager.storeMessage(clientId, byteBuffer);
-				System.out.println("message added to offline queue: "+new String(byteBuffer.array()).trim());
+				System.out.println("message added to offline queue: " + new String(byteBuffer.array()).trim());
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -187,7 +202,7 @@ public class ServerSender implements ISender {
 				System.out.println("Server Sender Sending.. Client: " + messageData.getClient().getRemoteAddress()
 						+ " Written object: " + new String(messageData.getByteBuffer().array()).trim());
 				messageData.getClient().write(messageData.getByteBuffer());
-				//messageData.getClient().close();
+				// messageData.getClient().close();
 				// messageData.getClient().write((ByteBuffer.wrap(new
 				// Date().toString().getBytes())));
 

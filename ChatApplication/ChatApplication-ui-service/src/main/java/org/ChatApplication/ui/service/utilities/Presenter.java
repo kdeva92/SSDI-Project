@@ -1,5 +1,8 @@
 package org.ChatApplication.ui.service.utilities;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.Connection;
@@ -16,6 +19,7 @@ import org.ChatApplication.common.converter.ByteToEntityConverter;
 import org.ChatApplication.data.entity.GroupVO;
 import org.ChatApplication.data.entity.UserVO;
 import org.ChatApplication.server.message.Message;
+import org.ChatApplication.server.message.MessageTypeEnum;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.ChatApplication.ui.service.connector.SenderController;
 import org.ChatApplication.ui.service.connector.ServerController;
@@ -120,7 +124,7 @@ public class Presenter {
 			case ADD_CONTACT:
 				break;
 			case CHAT_MSG:
-				updateChatUI(message);
+				handleChatMessage(message);
 				break;
 			case CREATE_GROUP:
 				updateGroupCreation(message);
@@ -147,6 +151,9 @@ public class Presenter {
 				handleSignUP(message);
 				System.out.println("At Handle Signup");
 				break;
+			case FILE_MSG:
+				handleFileMessage(message);
+				break;
 			default:
 				break;
 
@@ -155,9 +162,10 @@ public class Presenter {
 
 	}
 
-	
+	private void handleFileMessage(Message message) {
+		handleChatMessage(message);
 
-
+	}
 
 	private void handleSignUP(Message message) {
 		try {
@@ -166,18 +174,16 @@ public class Presenter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//loadHomepage();
+		// loadHomepage();
 		String status1 = new String(message.getData());
-		if(status1.equals("success")){
+		if (status1.equals("success")) {
 			System.out.println("Signup Successful");
 			Alerts.createInformationAlert("Signup is Successful", null, null);
-		}
-		else
-		{
+		} else {
 			System.out.println("Signup Unsuccessful !!!!!!!!!!!!!");
 			Alerts.createInformationAlert(status1, null, null);
 		}
-		
+
 	}
 
 	private void handleSearchUser(Message message) {
@@ -203,7 +209,7 @@ public class Presenter {
 			logger.error(e.getMessage());
 		}
 
-		//loginPage.loadLoginPage(this);
+		// loginPage.loadLoginPage(this);
 		loadHomepage();
 
 		try {
@@ -237,42 +243,42 @@ public class Presenter {
 	 */
 
 	public void addToContact(UserVO recieved_user) {
-		 if(user.getNinerId().equals(recieved_user.getNinerId())){
-		 Alerts.createInformationAlert("Cannot add yourself", null, null);
-		 }
-		 else{
-		DatabaseConnecter dbConnector = new DatabaseConnecter();
-		conn = dbConnector.getConn();
-		try {
-			stat = conn.createStatement();
-			ResultSet rs = stat.executeQuery("SELECT niner_id FROM Contacts_" + user.getNinerId() + " WHERE niner_id='"
-					+ recieved_user.getNinerId() + "'");
-			int flag = 0;
-			while (rs.next()) {
-				flag++;
-			}
-			if (flag == 0) {
-				stat.execute("INSERT INTO Contacts_" + user.getNinerId() + " VALUES('" + recieved_user.getNinerId()
-						+ "','" + recieved_user.getFirstName() + "','" + recieved_user.getLastName() + "','"
-						+ recieved_user.getEmail() + "')");
-				System.out.println("Contact Inserted to DB: " + user.getNinerId());
+		if (user.getNinerId().equals(recieved_user.getNinerId())) {
+			Alerts.createInformationAlert("Cannot add yourself", null, null);
+		} else {
+			DatabaseConnecter dbConnector = new DatabaseConnecter();
+			conn = dbConnector.getConn();
+			try {
+				stat = conn.createStatement();
+				ResultSet rs = stat.executeQuery("SELECT niner_id FROM Contacts_" + user.getNinerId()
+						+ " WHERE niner_id='" + recieved_user.getNinerId() + "'");
+				int flag = 0;
+				while (rs.next()) {
+					flag++;
+				}
+				if (flag == 0) {
+					stat.execute("INSERT INTO Contacts_" + user.getNinerId() + " VALUES('" + recieved_user.getNinerId()
+							+ "','" + recieved_user.getFirstName() + "','" + recieved_user.getLastName() + "','"
+							+ recieved_user.getEmail() + "')");
+					System.out.println("Contact Inserted to DB: " + user.getNinerId());
 
-				ObservableList<MessageVO> newContactChat = FXCollections.observableArrayList();
-				this.chatPage.userChats.put(recieved_user.getNinerId(), newContactChat);
-				chatPage.conT.add(new Contact(recieved_user.getNinerId(), recieved_user.getFirstName(),
-						recieved_user.getLastName(), recieved_user.getEmail()));
-				System.out.println("Contact Inserted UI: " + user.getNinerId());
-				stat.execute("CREATE TABLE IF NOT EXISTS Chat_" + user.getNinerId() + "_" + recieved_user.getNinerId()
-						+ "(sender varchar(10),senderName varchar(50),messageBody varchar(500))");
-				System.out.println("Table created as:\nCREATE TABLE IF NOT EXISTS Chat_" + user.getNinerId() + "_"
-						+ recieved_user.getNinerId()
-						+ "(sender varchar(10),senderName varchar(50),messageBody varchar(500))");
+					ObservableList<MessageVO> newContactChat = FXCollections.observableArrayList();
+					this.chatPage.userChats.put(recieved_user.getNinerId(), newContactChat);
+					chatPage.conT.add(new Contact(recieved_user.getNinerId(), recieved_user.getFirstName(),
+							recieved_user.getLastName(), recieved_user.getEmail()));
+					System.out.println("Contact Inserted UI: " + user.getNinerId());
+					stat.execute(
+							"CREATE TABLE IF NOT EXISTS Chat_" + user.getNinerId() + "_" + recieved_user.getNinerId()
+									+ "(sender varchar(10),senderName varchar(50),messageBody varchar(500))");
+					System.out.println("Table created as:\nCREATE TABLE IF NOT EXISTS Chat_" + user.getNinerId() + "_"
+							+ recieved_user.getNinerId()
+							+ "(sender varchar(10),senderName varchar(50),messageBody varchar(500))");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		 }
 	}
 
 	/**
@@ -291,7 +297,7 @@ public class Presenter {
 		senderController.sendChatMessage(senderId, receiverId, chatMessage, receiverTypeEnum);
 	}
 
-	public void updateChatUI(Message message) {
+	public void handleChatMessage(Message message) {
 		String messageBody = "";
 		String receiver = new String(message.getSender());
 		String receiverName = receiver;
@@ -313,8 +319,28 @@ public class Presenter {
 						}
 					});
 
-					for (Message m : arrayList) {
-						messageBody += new String(m.getData());
+					if (message.getType() == MessageTypeEnum.CHAT_MSG) {
+						for (Message m : arrayList) {
+							messageBody += new String(m.getData());
+						}
+					} else {
+						messageBody = new String(arrayList.get(0).getData());
+						try {
+							// File file= new File("C:"+ File.separator +
+							// messageBody);
+							String filePath = System.getProperty("user.home") + File.separator + File.separator
+									+ messageBody;
+							FileOutputStream stream = new FileOutputStream(filePath);
+							for (int i = 1; i < arrayList.size(); i++) {
+
+								stream.write(arrayList.get(i).getData());
+							}
+							stream.close();
+							Desktop.getDesktop().open(new File(filePath));
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 					messageParts.remove(message.getSender());
 				}
@@ -336,7 +362,7 @@ public class Presenter {
 				addMessageToDB(receiver, receiverName, messageBody);
 				ObservableList<MessageVO> chatArray = this.chatPage.userChats.get(receiver);
 				chatArray.add(new MessageVO(receiver, receiverName, messageBody));
-				this.chatPage.chatString.scrollTo(chatArray.size()-1);
+				this.chatPage.chatString.scrollTo(chatArray.size() - 1);
 			}
 			break;
 
@@ -428,19 +454,14 @@ public class Presenter {
 			e.printStackTrace();
 		}
 	}
-	
-	
 
-	
-	
-	public void loadHomepage(){
+	public void loadHomepage() {
 		this.homePage.loadHomepage(this);
 	}
-	
 
 	public void sendCreateGroupMessage(GroupVO groupObject) {
 		senderController.createGroupMessage(this.user.getNinerId(), groupObject);
-		//loadChatPage();
+		// loadChatPage();
 	}
 
 	public UserVO getUser() {
@@ -478,9 +499,8 @@ public class Presenter {
 		return retVal;
 
 	}
-	
-	
-	public void loadEditGroup(GroupTableObject group, ObservableList<Contact> conT){
+
+	public void loadEditGroup(GroupTableObject group, ObservableList<Contact> conT) {
 		try {
 			this.editGroup.loadEditGroup(group, this, conT);
 		} catch (IOException e) {
@@ -488,11 +508,11 @@ public class Presenter {
 			e.printStackTrace();
 		}
 	}
-	
-	public void sendSignUpMessage(UserVO userVO){
-		
+
+	public void sendSignUpMessage(UserVO userVO) {
+
 		try {
-			
+
 			initConnection();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -501,21 +521,16 @@ public class Presenter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		senderController.signUpMessage(userVO.getNinerId(),userVO);
+		senderController.signUpMessage(userVO.getNinerId(), userVO);
 	}
-	
-	
-	
-	public void sendEditGroupMessage(GroupVO groupVO){
+
+	public void sendEditGroupMessage(GroupVO groupVO) {
 		senderController.editGroupMessage(this.user.getNinerId(), groupVO);
-		
+
 	}
-	
-	
-	
-	
+
 	private void updateEditGroup(Message message) {
-		
+
 		String membersList = null;
 		GroupVO group = null;
 		try {
@@ -540,13 +555,15 @@ public class Presenter {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		System.out.println("Group Edited as : "+group.getGroupId()+" "+group.getGroupName()+" "+membersList);
+		System.out.println("Group Edited as : " + group.getGroupId() + " " + group.getGroupName() + " " + membersList);
 		DatabaseConnecter dbConnector = new DatabaseConnecter();
 		conn = dbConnector.getConn();
 		try {
 			stat = conn.createStatement();
-			stat.execute("UPDATE Groups_"+this.getUser().getNinerId()+" SET group_name='"+group.getGroupName().trim()+"' WHERE group_id="+group.getGroupId());
-			stat.execute("UPDATE Groups_"+this.getUser().getNinerId()+" SET members='"+membersList+"' WHERE group_id="+group.getGroupId());
+			stat.execute("UPDATE Groups_" + this.getUser().getNinerId() + " SET group_name='"
+					+ group.getGroupName().trim() + "' WHERE group_id=" + group.getGroupId());
+			stat.execute("UPDATE Groups_" + this.getUser().getNinerId() + " SET members='" + membersList
+					+ "' WHERE group_id=" + group.getGroupId());
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -554,7 +571,12 @@ public class Presenter {
 		}
 		this.chatPage.conT.clear();
 		loadChatPage();
-		
+
+	}
+
+	public void sendFile(File file, String senderId, ReceiverTypeEnum receiverTypeEnum, String receiverId) {
+		senderController.sendFile(file, senderId, receiverTypeEnum, receiverId);
+
 	}
 
 }

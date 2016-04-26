@@ -4,22 +4,18 @@
  */
 package org.ChatApplication.server.handlers.dataMessageHandler;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.ChatApplication.common.converter.EntityToByteConverter;
 import org.ChatApplication.common.util.MessageUtility;
 import org.ChatApplication.data.entity.Group;
 import org.ChatApplication.data.entity.User;
 import org.ChatApplication.data.service.UserService;
 import org.ChatApplication.server.handlers.messageHandler.MessageHandler;
 import org.ChatApplication.server.message.Message;
-import org.ChatApplication.server.message.MessageTypeEnum;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.ChatApplication.server.sender.ClientData;
 import org.ChatApplication.server.sender.ClientHolder;
@@ -42,7 +38,7 @@ public class DataMessageHandler implements IDataMessageHandler {
 
 	private DataMessageHandler() {
 		handlerThread = new HandlerThread();
-		thread = new Thread(handlerThread,"HandlerThread");
+		thread = new Thread(handlerThread, "HandlerThread");
 		thread.start();
 	}
 
@@ -82,47 +78,7 @@ public class DataMessageHandler implements IDataMessageHandler {
 					continue;
 				}
 
-				// Handle the client not connected situation here..
-				if (message.getReceiverType() == ReceiverTypeEnum.INDIVIDUAL_MSG.getIntEquivalant()) {
-					System.out.println("DataMessageHandler sending to: " + message.getReceiver());
-//					if (clientHolder.getClientData(message.getReceiver()) == null) {
-//						System.out.println("Client not connected..");
-//						continue;
-//					}
-//					//--working
-					ByteBuffer byteBuffer = MessageUtility.packMessage(
-							new String( message.getData()).trim().getBytes(), message.getSender(), message.getReceiver(),
-							ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.CHAT_MSG, message.getPacketNo(), message.getNoOfPackets());
-					sender.sendMessage(message.getReceiver(), byteBuffer.duplicate() );
-
-//					ByteBuffer b = ByteBuffer.wrap(message.getData());
-//					System.out.println("asd");
-//					b.flip();
-//					sender.sendMessage(message.getReceiver(), b );
-				} else if (message.getReceiverType() == ReceiverTypeEnum.GROUP_MSG.getIntEquivalant()) {
-					// operate on group - DB access and individual send to each
-					// receiver
-					try {
-						Group group = userService.getGroup(Integer.parseInt(message.getReceiver()));
-
-						ByteBuffer byteBuffer = MessageUtility.packMessage(
-								new String( message.getData()).trim().getBytes(), message.getSender(), message.getReceiver(),
-								ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.CHAT_MSG, message.getPacketNo(), message.getNoOfPackets());
-						
-						List<User> members = group.getMembers();
-						for (Iterator iterator = members.iterator(); iterator.hasNext();) {
-							User user = (User) iterator.next();
-							sender.sendMessage(user.getNinerId(), byteBuffer.duplicate());
-						}
-
-					} catch (NumberFormatException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
+				handleMessage(message);
 
 				System.out.println("DataMessageHandler complete");
 
@@ -148,6 +104,51 @@ public class DataMessageHandler implements IDataMessageHandler {
 				// // }
 				// }
 
+			}
+		}
+
+		private void handleMessage(Message message) {
+			// Handle the client not connected situation here..
+			if (message.getReceiverType() == ReceiverTypeEnum.INDIVIDUAL_MSG.getIntEquivalant()) {
+				System.out.println("DataMessageHandler sending to: " + message.getReceiver());
+				// if (clientHolder.getClientData(message.getReceiver()) ==
+				// null) {
+				// System.out.println("Client not connected..");
+				// continue;
+				// }
+				// //--working
+				ByteBuffer byteBuffer = MessageUtility.packMessage(new String(message.getData()).trim().getBytes(),
+						message.getSender(), message.getReceiver(), ReceiverTypeEnum.INDIVIDUAL_MSG, message.getType(),
+						message.getPacketNo(), message.getNoOfPackets());
+				sender.sendMessage(message.getReceiver(), byteBuffer.duplicate());
+
+				// ByteBuffer b = ByteBuffer.wrap(message.getData());
+				// System.out.println("asd");
+				// b.flip();
+				// sender.sendMessage(message.getReceiver(), b );
+			} else if (message.getReceiverType() == ReceiverTypeEnum.GROUP_MSG.getIntEquivalant()) {
+				// operate on group - DB access and individual send to each
+				// receiver
+				try {
+					Group group = userService.getGroup(Integer.parseInt(message.getReceiver()));
+
+					ByteBuffer byteBuffer = MessageUtility.packMessage(new String(message.getData()).trim().getBytes(),
+							message.getSender(), message.getReceiver(), ReceiverTypeEnum.GROUP_MSG, message.getType(),
+							message.getPacketNo(), message.getNoOfPackets());
+
+					List<User> members = group.getMembers();
+					for (Iterator iterator = members.iterator(); iterator.hasNext();) {
+						User user = (User) iterator.next();
+						sender.sendMessage(user.getNinerId(), byteBuffer.duplicate());
+					}
+
+				} catch (NumberFormatException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 
