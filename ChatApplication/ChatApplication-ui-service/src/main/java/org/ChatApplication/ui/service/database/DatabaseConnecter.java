@@ -6,12 +6,13 @@ import java.sql.SQLException;
 
 public class DatabaseConnecter {
 
+	public static String URL = "jdbc:h2:./src/main/java/org/ChatApplication/ui/service/utilities/ChatClient";
+
 	public Connection getConn() {
 		Connection conn = null;
 		try {
 			Class.forName("org.h2.Driver");
-			conn = DriverManager
-					.getConnection("jdbc:h2:./src/main/java/org/ChatApplication/ui/service/utilities/ChatClient");
+			conn = DriverManager.getConnection(URL);
 
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block

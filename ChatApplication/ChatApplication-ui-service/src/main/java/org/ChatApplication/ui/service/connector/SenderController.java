@@ -134,8 +134,8 @@ public class SenderController {
 
 			List<ByteBuffer> buffArray = new ArrayList<ByteBuffer>();
 			int size = bytes.length / MessageUtility.CHUNK_SIZE + 1;
+			FileInputStream in = new FileInputStream(file);
 			for (int i = 0; i < size; i++) {
-				FileInputStream in = new FileInputStream(file);
 				byte[] data = new byte[MessageUtility.CHUNK_SIZE];
 				int bytesAct = in.read(data, 0, MessageUtility.CHUNK_SIZE);
 				if (bytesAct != MessageUtility.CHUNK_SIZE) { // to make sure
@@ -147,6 +147,9 @@ public class SenderController {
 					}
 					buffArray.add(MessageUtility.packMessage(toReturn, senderId, receiverId, receiverTypeEnum,
 							MessageTypeEnum.FILE_MSG, i + 1, size + 1));
+				} else {
+					buffArray.add(MessageUtility.packMessage(data, senderId, receiverId, receiverTypeEnum,
+							MessageTypeEnum.FILE_MSG, i + 1, size + 1));
 				}
 			}
 
@@ -154,6 +157,7 @@ public class SenderController {
 					MessageTypeEnum.FILE_MSG, 0, size + 1));
 
 			writeTodataOutputStream(buffArray);
+//			in.close();
 		} catch (IOException e) {
 
 		}

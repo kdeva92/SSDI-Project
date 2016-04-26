@@ -6,13 +6,21 @@ package org.ChatApplication.server.sender;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.sql.SQLException;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.ChatApplication.common.util.MessageUtility;
 import org.ChatApplication.server.message.Message;
+import org.ChatApplication.server.message.MessageTypeEnum;
+import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.apache.log4j.Logger;
+
+import lightweightDatabase.LightweightDatabaseManager;
 
 /**
  * @author Devdatta
@@ -44,6 +52,28 @@ public class ServerSender implements ISender {
 		return serverSender;
 	}
 
+	public void sendOfflineQueueMessages(String client) {
+		try {
+			List<ByteBuffer> msgs = LightweightDatabaseManager.getAllMessagesForUser(client);
+			if(msgs!= null){
+				for (Iterator iterator = msgs.iterator(); iterator.hasNext();) {
+					ByteBuffer byteBuffer = (ByteBuffer) iterator.next();
+					//byteBuffer.flip();
+					Message m = MessageUtility.getMessage(byteBuffer);
+					byteBuffer = MessageUtility.packMessage(m.getData(), m.getSender(), m.getReceiver(), ReceiverTypeEnum.getReceiverTypeEnumByIntValue(m.getReceiverType()) ,m.getType(), m.getPacketNo(), m.getNoOfPackets());
+					sendMessage(client, byteBuffer);
+					System.out.println("processing offline msg: "+new String(byteBuffer.array()).trim());
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			logger.error("Failed to store to lightweight database", e);
+		} catch (IOException e) {
+			e.printStackTrace();
+			logger.error("Failed to store to lightweight database", e);
+		}
+	}
+	
 	public void sendMessage(String clientId, ByteBuffer byteBuffer) {
 
 		// check if client is connected, if connected send message else add to
@@ -53,8 +83,17 @@ public class ServerSender implements ISender {
 			// add to process queue
 			byteBuffer.flip();
 			messageQueue.add(new MessageData(byteBuffer, clientData.getSocketChannel()));
-			System.out.println("added message: "+new String(byteBuffer.array()).trim());
 			// System.out.println("ServerSender.. message added to queue");
+		}
+		else {
+			try {
+				LightweightDatabaseManager.storeMessage(clientId, byteBuffer);
+				System.out.println("message added to offline queue: "+new String(byteBuffer.array()).trim());
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logger.error("Failed to store to lightweight database", e);
+			}
 		}
 	}
 
