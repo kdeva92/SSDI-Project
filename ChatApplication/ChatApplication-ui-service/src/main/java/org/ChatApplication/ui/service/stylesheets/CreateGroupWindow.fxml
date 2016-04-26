@@ -41,7 +41,7 @@
             <Insets bottom="10.0" left="20.0" right="10.0" top="20.0" />
           </padding>
         </VBox>
-        <VBox id="selectResultBox" prefHeight="362.0" prefWidth="397.0" style="-fx-background-color: #60f8ff" />
+        <VBox id="selectResultBox" prefHeight="362.0" prefWidth="397.0" style="-fx-background-color: #60f8ff" HBox.hgrow="ALWAYS" />
       </children>
     </HBox>
     <HBox id="buttonBox" alignment="TOP_CENTER" prefHeight="71.0" prefWidth="794.0" spacing="20.0" VBox.vgrow="ALWAYS">

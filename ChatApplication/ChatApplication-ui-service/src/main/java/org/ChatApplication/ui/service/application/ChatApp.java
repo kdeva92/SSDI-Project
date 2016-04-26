@@ -82,9 +82,11 @@ public class ChatApp extends Application {
 
 					public void run() {
 						if (ChatApp.messageQueue != null && ChatApp.messageQueue.size() > 0) {
-
-							presenter.handleUI(ChatApp.messageQueue.get(0));
+							System.out.println("Queue size "+ChatApp.messageQueue.size());
+							Message msg = ChatApp.messageQueue.get(0);
+							//presenter.handleUI(ChatApp.messageQueue.get(0));
 							ChatApp.messageQueue.remove(0);
+							presenter.handleUI(msg);
 						}
 
 					}

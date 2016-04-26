@@ -46,7 +46,7 @@ public class NonBufferedReceiver {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					// System.exit(0);
-					continue;
+					break;
 				}
 				if (read == 0 && endZeroTrimFlag)
 					continue;
@@ -87,7 +87,9 @@ public class NonBufferedReceiver {
 				}
 
 			}
+			System.out.println("Exiting While true");
 		}
+		
 
 	}
 

@@ -131,7 +131,7 @@ public class SenderController {
 			String userStr = EntityToByteConverter.getInstance().getJsonString(user);
 			dataOutputStream = new DataOutputStream(socket.getOutputStream());
 			List<ByteBuffer> buffArray = MessageUtility.packMessageToArray(userStr, sender, "000000000",
-					ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.CHAT_MSG);
+					ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.SIGNUP);
 			writeTodataOutputStream(buffArray);
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
@@ -143,6 +143,7 @@ public class SenderController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 
 	public void signUp() {

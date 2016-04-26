@@ -34,24 +34,30 @@ public class Alerts {
 		error.setTitle("Registration Error!!!");
 
 		switch (status) {
-
+		
+		
 		case 2:
 			error.setHeaderText("All Compulsory fields must be filled");
 			error.setContentText("Compulsory Fields are ones markked by Asteriks (*)");
 			break;
-
+			
 		case 3:
+			error.setHeaderText("Niner ID Invalid");
+			error.setContentText("Niner ID must be 9 digits starting with '800'");
+			break;	
+
+		case 4:
 			error.setHeaderText("Invalid Email ID");
 			error.setContentText("You can register only with UNCC Email ID.\n\nExample: abc@uncc.edu");
 			break;
 
 
-		case 4:
+		case 5:
 			error.setHeaderText("Paswords do not match");
 			error.setContentText("Passwords entered in Password and Confirm Password fields must match");
 			break;
 
-		case 5:
+		case 6:
 			error.setHeaderText("Password does not satisfy the given requirements:");
 			error.setContentText("1.Must contain one digit from 0-9\n2.Must contain one lowercase characters\n3.Must contain one uppercase characters\n4.Must contain one special symbol out of @ # $ %\n5.Length at least 8 characters and maximum of 20");
 			break;

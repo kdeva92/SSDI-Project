@@ -63,6 +63,7 @@ public class UserRegisteration {
 				
 				UserRegisterationClient signUpClient = new UserRegisterationClient();
 				int status = signUpClient.validate(user, passwd2Field.getText().trim());
+				status=1;
 				if(status==1){
 					System.out.println("Validations Successful");
 					System.out.println("Sign Up Pressed");
@@ -83,7 +84,7 @@ public class UserRegisteration {
 		cancelBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-
+				//presenter.serverController.terminateConnection();
 				presenter.loadHomepage();
 			}
 		});

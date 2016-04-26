@@ -115,6 +115,7 @@ public class Presenter {
 	 */
 	public void handleUI(Message message) {
 		if (message != null && message.getType() != null) {
+			System.out.println("Before switch case");
 			switch (message.getType()) {
 			case ADD_CONTACT:
 				break;
@@ -142,6 +143,10 @@ public class Presenter {
 			case TERMINATE:
 				handleTermination();
 				break;
+			case SIGNUP:
+				handleSignUP(message);
+				System.out.println("At Handle Signup");
+				break;
 			default:
 				break;
 
@@ -151,6 +156,29 @@ public class Presenter {
 	}
 
 	
+
+
+
+	private void handleSignUP(Message message) {
+		try {
+			serverController.terminateConnection();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//loadHomepage();
+		String status1 = new String(message.getData());
+		if(status1.equals("success")){
+			System.out.println("Signup Successful");
+			Alerts.createInformationAlert("Signup is Successful", null, null);
+		}
+		else
+		{
+			System.out.println("Signup Unsuccessful !!!!!!!!!!!!!");
+			Alerts.createInformationAlert(status1, null, null);
+		}
+		
+	}
 
 	private void handleSearchUser(Message message) {
 
@@ -175,7 +203,8 @@ public class Presenter {
 			logger.error(e.getMessage());
 		}
 
-		loginPage.loadLoginPage(this);
+		//loginPage.loadLoginPage(this);
+		loadHomepage();
 
 		try {
 			initConnection();
@@ -460,9 +489,22 @@ public class Presenter {
 		}
 	}
 	
-	public void sendSignUpMessage(UserVO user){
-		senderController.signUpMessage(this.user.getNinerId(),user);
+	public void sendSignUpMessage(UserVO userVO){
+		
+		try {
+			
+			initConnection();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		senderController.signUpMessage(userVO.getNinerId(),userVO);
 	}
+	
+	
 	
 	public void sendEditGroupMessage(GroupVO groupVO){
 		senderController.editGroupMessage(this.user.getNinerId(), groupVO);
