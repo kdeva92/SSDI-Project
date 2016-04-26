@@ -232,14 +232,14 @@ public class ChatPage {
 		 * Chat Area
 		 */
 
-		class XCell extends TableCell<String, String> {
-			@Override
-			protected void updateItem(String item, boolean empty) {
-				super.updateItem(item, empty);
-				this.setText(item);
-				this.setTooltip((empty || item == null) ? null : new Tooltip(item));
-			}
-		}
+		// class XCell extends TableCell<String, String> {
+		// @Override
+		// protected void updateItem(String item, boolean empty) {
+		// super.updateItem(item, empty);
+		// this.setText(item);
+		// this.setTooltip((empty || item == null) ? null : new Tooltip(item));
+		// }
+		// }
 
 		chatString = new TableView<MessageVO>();
 
@@ -254,21 +254,26 @@ public class ChatPage {
 
 		chatString.getColumns().addAll(userCol, messageCol);
 
-		messageCol.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<String, String>, ObservableValue<String>>() {
+		// messageCol.setCellValueFactory(
+		// new Callback<TableColumn.CellDataFeatures<String, String>,
+		// ObservableValue<String>>() {
+		//
+		// public ObservableValue<String> call(CellDataFeatures<String, String>
+		// arg0) {
+		//
+		// return new ReadOnlyStringWrapper(arg0.getValue());
+		// }
+		// });
+		//
+		// messageCol.setCellFactory(new Callback<TableColumn<String, String>,
+		// TableCell<String, String>>() {
+		// public TableCell<String, String> call(TableColumn<String, String>
+		// param) {
+		// return new XCell();
+		// }
+		// });
 
-					public ObservableValue<String> call(CellDataFeatures<String, String> arg0) {
-
-						return new ReadOnlyStringWrapper(arg0.getValue());
-					}
-				});
-
-		messageCol.setCellFactory(new Callback<TableColumn<String, String>, TableCell<String, String>>() {
-			public TableCell<String, String> call(TableColumn<String, String> param) {
-				return new XCell();
-			}
-		});
-
+		chatTableBox.getChildren().add(chatString);
 		chatTableBox.setVgrow(chatString, Priority.ALWAYS);
 		ChatPane.setHgrow(chatBox, Priority.ALWAYS);
 
@@ -516,14 +521,16 @@ public class ChatPage {
 	private static void configureFileChooser(final FileChooser fileChooser) {
 		fileChooser.setTitle("View Pictures");
 		fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
 	}
 
 	private void openFile(File file) {
-		try {
-			desktop.open(file);
-		} catch (IOException ex) {
-
-		}
+		Contact contact = (Contact) savedContacts.getSelectionModel().selectedItemProperty().get();
+		MessageVO mess = new MessageVO(user.getNinerId(), user.getFirstName(), file.getAbsolutePath());
+		ObservableList<MessageVO> chatList = userChats.get(contact.getNinerID().trim());
+		chatList.add(mess);
+		chatString.scrollTo(chatList.size() - 1);
+		presenter.sendFile(file, user.getNinerId(), ReceiverTypeEnum.INDIVIDUAL_MSG, contact.getNinerID());
 	}
 
 }

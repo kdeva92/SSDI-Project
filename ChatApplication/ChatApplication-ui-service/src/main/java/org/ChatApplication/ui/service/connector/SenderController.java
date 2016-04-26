@@ -1,10 +1,17 @@
 package org.ChatApplication.ui.service.connector;
 
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ChatApplication.common.converter.EntityToByteConverter;
@@ -13,7 +20,6 @@ import org.ChatApplication.data.entity.GroupVO;
 import org.ChatApplication.data.entity.UserVO;
 import org.ChatApplication.server.message.MessageTypeEnum;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
-
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -78,7 +84,6 @@ public class SenderController {
 	public void logInMessage(UserVO user) {
 		try {
 			String userStr = EntityToByteConverter.getInstance().getJsonString(user);
-			dataOutputStream = new DataOutputStream(socket.getOutputStream());
 			List<ByteBuffer> buffArray = MessageUtility.packMessageToArray(userStr, user.getNinerId(), "000000000",
 					ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.LOG_IN_MSG);
 			writeTodataOutputStream(buffArray);
@@ -91,7 +96,6 @@ public class SenderController {
 	public void createGroupMessage(String sender, GroupVO groupObject) {
 		try {
 			String groupStr = EntityToByteConverter.getInstance().getJsonString(groupObject);
-			dataOutputStream = new DataOutputStream(socket.getOutputStream());
 			List<ByteBuffer> buffArray = MessageUtility.packMessageToArray(groupStr, sender, "000000000",
 					ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.CREATE_GROUP);
 			writeTodataOutputStream(buffArray);
@@ -111,17 +115,9 @@ public class SenderController {
 
 	}
 
-	public static void main(String[] args) throws UnknownHostException, IOException {
-		Socket socket = new Socket(HOST, PORT);
-		SenderController s = new SenderController(socket);
-		s.sendChatMessage("hello", "123456789", "123456745", ReceiverTypeEnum.INDIVIDUAL_MSG);
-
-	}
-
 	public void sendSearchContactString(String searchString, String senderId) {
 
 		try {
-			dataOutputStream = new DataOutputStream(socket.getOutputStream());
 			List<ByteBuffer> buffArray = MessageUtility.packMessageToArray(searchString, senderId, "000000000",
 					ReceiverTypeEnum.INDIVIDUAL_MSG, MessageTypeEnum.SEARCH_USER);
 			writeTodataOutputStream(buffArray);
@@ -129,6 +125,42 @@ public class SenderController {
 			logger.error(e.getMessage());
 		}
 
+	}
+
+	public void sendFile(File file, String senderId, ReceiverTypeEnum receiverTypeEnum, String receiverId) {
+		try {
+			Path path = Paths.get(file.getAbsolutePath());
+			byte[] bytes = Files.readAllBytes(path);
+
+			List<ByteBuffer> buffArray = new ArrayList<ByteBuffer>();
+			int size = bytes.length / MessageUtility.CHUNK_SIZE + 1;
+			FileInputStream in = new FileInputStream(file);
+			for (int i = 0; i < size; i++) {
+				byte[] data = new byte[MessageUtility.CHUNK_SIZE];
+				int bytesAct = in.read(data, 0, MessageUtility.CHUNK_SIZE);
+				if (bytesAct != MessageUtility.CHUNK_SIZE) { // to make sure
+																// there is no
+																// empty spaces
+					byte[] toReturn = new byte[bytesAct];
+					for (int j = 0; j < toReturn.length; j++) {
+						toReturn[j] = data[j];
+					}
+					buffArray.add(MessageUtility.packMessage(toReturn, senderId, receiverId, receiverTypeEnum,
+							MessageTypeEnum.FILE_MSG, i + 1, size + 1));
+				} else {
+					buffArray.add(MessageUtility.packMessage(data, senderId, receiverId, receiverTypeEnum,
+							MessageTypeEnum.FILE_MSG, i + 1, size + 1));
+				}
+			}
+
+			buffArray.add(MessageUtility.packMessage(file.getName().getBytes(), senderId, receiverId, receiverTypeEnum,
+					MessageTypeEnum.FILE_MSG, 0, size + 1));
+
+			writeTodataOutputStream(buffArray);
+//			in.close();
+		} catch (IOException e) {
+
+		}
 	}
 
 	private void writeTodataOutputStream(List<ByteBuffer> buffArray) throws IOException {

@@ -1,3 +1,4 @@
+
 /**
  * 
  */
@@ -169,7 +170,7 @@ public class NioServerModule implements Runnable {
 							loginHandler.validateLogin(user, selectionKey);
 							continue;
 						}
-						if (message.getType() == MessageTypeEnum.CHAT_MSG) {
+						if (message.getType() == MessageTypeEnum.CHAT_MSG || message.getType()==MessageTypeEnum.FILE_MSG) {
 							System.out.println("NIO chat message");
 //							//--working
 							buff.flip();

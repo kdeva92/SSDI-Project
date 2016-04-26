@@ -1,5 +1,8 @@
 package org.ChatApplication.ui.service.utilities;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.Connection;
@@ -16,6 +19,7 @@ import org.ChatApplication.common.converter.ByteToEntityConverter;
 import org.ChatApplication.data.entity.GroupVO;
 import org.ChatApplication.data.entity.UserVO;
 import org.ChatApplication.server.message.Message;
+import org.ChatApplication.server.message.MessageTypeEnum;
 import org.ChatApplication.server.message.ReceiverTypeEnum;
 import org.ChatApplication.ui.service.connector.SenderController;
 import org.ChatApplication.ui.service.connector.ServerController;
@@ -116,7 +120,7 @@ public class Presenter {
 			case ADD_CONTACT:
 				break;
 			case CHAT_MSG:
-				updateChatUI(message);
+				handleChatMessage(message);
 				break;
 			case CREATE_GROUP:
 				updateGroupCreation(message);
@@ -138,11 +142,19 @@ public class Presenter {
 			case TERMINATE:
 				handleTermination();
 				break;
+			case FILE_MSG:
+				handleFileMessage(message);
+				break;
 			default:
 				break;
 
 			}
 		}
+
+	}
+
+	private void handleFileMessage(Message message) {
+		handleChatMessage(message);
 
 	}
 
@@ -256,7 +268,7 @@ public class Presenter {
 		senderController.sendChatMessage(senderId, receiverId, chatMessage, receiverTypeEnum);
 	}
 
-	public void updateChatUI(Message message) {
+	public void handleChatMessage(Message message) {
 		String messageBody = "";
 		String receiver = new String(message.getSender());
 		String receiverName = receiver;
@@ -278,8 +290,28 @@ public class Presenter {
 						}
 					});
 
-					for (Message m : arrayList) {
-						messageBody += new String(m.getData());
+					if (message.getType() == MessageTypeEnum.CHAT_MSG) {
+						for (Message m : arrayList) {
+							messageBody += new String(m.getData());
+						}
+					} else {
+						messageBody = new String(arrayList.get(0).getData());
+						try {
+							// File file= new File("C:"+ File.separator +
+							// messageBody);
+							String filePath = System.getProperty("user.home") + File.separator + File.separator
+									+ messageBody;
+							FileOutputStream stream = new FileOutputStream(filePath);
+							for (int i = 1; i < arrayList.size(); i++) {
+
+								stream.write(arrayList.get(i).getData());
+							}
+							stream.close();
+							Desktop.getDesktop().open(new File(filePath));
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 					messageParts.remove(message.getSender());
 				}
@@ -301,7 +333,7 @@ public class Presenter {
 				addMessageToDB(receiver, receiverName, messageBody);
 				ObservableList<MessageVO> chatArray = this.chatPage.userChats.get(receiver);
 				chatArray.add(new MessageVO(receiver, receiverName, messageBody));
-				this.chatPage.chatString.scrollTo(chatArray.size()-1);
+				this.chatPage.chatString.scrollTo(chatArray.size() - 1);
 			}
 			break;
 
@@ -393,17 +425,14 @@ public class Presenter {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	public void sendSignUpMessage(){
-		
+
+	public void sendSignUpMessage() {
+
 	}
-	
-	
-	public void loadHomepage(){
+
+	public void loadHomepage() {
 		this.homePage.loadHomepage(this);
 	}
-	
 
 	public void sendCreateGroupMessage(GroupVO groupObject) {
 		senderController.createGroupMessage(this.user.getNinerId(), groupObject);
@@ -443,6 +472,11 @@ public class Presenter {
 		}
 
 		return retVal;
+
+	}
+
+	public void sendFile(File file, String senderId, ReceiverTypeEnum receiverTypeEnum, String receiverId) {
+		senderController.sendFile(file, senderId, receiverTypeEnum, receiverId);
 
 	}
 
