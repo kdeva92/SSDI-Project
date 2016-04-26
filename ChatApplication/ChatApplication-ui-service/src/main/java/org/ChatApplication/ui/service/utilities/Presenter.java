@@ -353,7 +353,7 @@ public class Presenter {
 			messageBody = new String(message.getData());
 		}
 
-		String group = new String(message.getReceiver());
+		//String group = new String(message.getReceiver());
 
 		switch (message.getReceiverType()) {
 
@@ -367,7 +367,14 @@ public class Presenter {
 			break;
 
 		case 1:// Group Message
-
+			if (!messageBody.isEmpty()){
+			addGroupMessageToDB(message.getReceiver(), receiver, receiverName, messageBody);
+			ObservableList<MessageVO> chatArray = this.chatPage.userChats.get(message.getReceiver());
+			chatArray.add(new MessageVO(receiver, receiverName, messageBody));
+			this.chatPage.chatString.scrollTo(chatArray.size() - 1);
+			
+			
+			}
 			break;
 		}
 
@@ -384,6 +391,23 @@ public class Presenter {
 				if (contact.getNinerID().equals(receiver))
 					stat.execute("INSERT INTO Chat_" + user.getNinerId() + "_" + receiver + " VALUES('" + receiver
 							+ "','" + receiverName + "','" + messageBody + "')");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void addGroupMessageToDB(String groupID,String receiver, String receiverName, String messageBody) {
+		DatabaseConnecter dbConnector = new DatabaseConnecter();
+		conn = dbConnector.getConn();
+		try {
+			stat = conn.createStatement();
+			stat.execute("CREATE TABLE IF NOT EXISTS Grp_" + user.getNinerId() + "_" + groupID+ "(sender varchar(10),senderName varchar(50),messageBody varchar(500))");
+			for (GroupTableObject group : this.chatPage.groupT) {
+				if ((group.getGroupID()+"").equals(groupID))
+					stat.execute("INSERT INTO Grp_" + user.getNinerId() + "_" + groupID + " VALUES('"
+							+ receiver + "','" + receiverName + "','" + messageBody.trim() + "')");
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

@@ -198,7 +198,7 @@ public class SenderController {
 			writeTodataOutputStream(buffArray);
 //			in.close();
 		} catch (IOException e) {
-
+				return;
 		}
 	}
 
