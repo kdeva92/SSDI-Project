@@ -551,13 +551,47 @@ public class ChatPage {
 	}
 
 	private void openFile(File file) {
-
 		Contact contact = (Contact) savedContacts.getSelectionModel().selectedItemProperty().get();
-		MessageVO mess = new MessageVO(user.getNinerId(), user.getFirstName(), file.getAbsolutePath());
-		ObservableList<MessageVO> chatList = userChats.get(contact.getNinerID().trim());
-		chatList.add(mess);
-		chatString.scrollTo(chatList.size() - 1);
-		presenter.sendFile(file, user.getNinerId(), ReceiverTypeEnum.INDIVIDUAL_MSG, contact.getNinerID());
+		if (contact != null) {
+			MessageVO mess = new MessageVO(user.getNinerId(), user.getFirstName(), file.getAbsolutePath());
+			ObservableList<MessageVO> chatList = userChats.get(contact.getNinerID().trim());
+			chatString.scrollTo(chatList.size() - 1);
+			chatList.add(mess);
+			presenter.sendFile(file, user.getNinerId(), ReceiverTypeEnum.INDIVIDUAL_MSG, contact.getNinerID());
+
+			DatabaseConnecter dbConnector = new DatabaseConnecter();
+			Connection conn = dbConnector.getConn();
+			try {
+				Statement stat = conn.createStatement();
+				stat.execute("CREATE TABLE IF NOT EXISTS Chat_" + user.getNinerId() + "_" + contact.getNinerID()
+						+ "(sender varchar(10),messageBody varchar(500))");
+				stat.execute("INSERT INTO Chat_" + user.getNinerId() + "_" + contact.getNinerID() + " VALUES('"
+						+ user.getNinerId() + "','" + user.getFirstName() + "','" + file.getAbsolutePath() + "')");
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} else {
+
+			GroupTableObject group = savedGroups.getSelectionModel().selectedItemProperty().get();
+			MessageVO mess = new MessageVO(user.getNinerId(), user.getFirstName(), file.getAbsolutePath());
+			ObservableList<MessageVO> chatList = userChats.get(group.getGroupID() + "");
+			chatList.add(mess);
+			chatString.scrollTo(chatList.size() - 1);
+			presenter.sendFile(file, group.getGroupID() + "", ReceiverTypeEnum.GROUP_MSG, contact.getNinerID());
+			DatabaseConnecter dbConnector = new DatabaseConnecter();
+			Connection conn = dbConnector.getConn();
+			try {
+				Statement stat = conn.createStatement();
+				stat.execute("INSERT INTO Grp_" + user.getNinerId() + "_" + group.getGroupID() + " VALUES('"
+						+ user.getNinerId() + "','" + user.getFirstName() + "','" + file.getAbsolutePath() + "')");
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
 	}
 
 }
