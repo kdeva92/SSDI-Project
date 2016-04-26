@@ -43,9 +43,7 @@ public class User {
 	@Column(name = "password")
 	private String password;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "GROUP_USER", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
-			@JoinColumn(name = "group_id") })
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "members")
 	private List<Group> groups = new ArrayList<Group>();
 
 	public List<Group> getGroups() {

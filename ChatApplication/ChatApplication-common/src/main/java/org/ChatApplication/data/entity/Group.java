@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -31,7 +33,9 @@ public class Group {
 	@Column(name = "name")
 	private String name;
 
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "groups")
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "GROUP_USER", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "user_id") })
 	private List<User> members = new ArrayList<User>();
 
 	public int getGroupId() {

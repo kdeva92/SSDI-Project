@@ -139,6 +139,8 @@ public class DataMessageHandler implements IDataMessageHandler {
 					List<User> members = group.getMembers();
 					for (Iterator iterator = members.iterator(); iterator.hasNext();) {
 						User user = (User) iterator.next();
+						if(user.getNinerId().equals(message.getSender()))
+							continue;
 						sender.sendMessage(user.getNinerId(), byteBuffer.duplicate());
 					}
 
@@ -152,6 +154,12 @@ public class DataMessageHandler implements IDataMessageHandler {
 			}
 		}
 
+	}
+	
+	public static void main(String[] args) throws Exception {
+		UserService userService = UserService.getInstance();
+		Group group = userService.getGroup(100000031);
+		System.out.println(" "+group.getGroupId()+" users "+group.getMembers().size());
 	}
 
 }
