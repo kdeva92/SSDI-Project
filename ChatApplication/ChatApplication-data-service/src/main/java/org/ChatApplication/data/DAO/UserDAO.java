@@ -9,6 +9,7 @@ import org.ChatApplication.data.util.HibernateUtil;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 
 /**
@@ -104,6 +105,39 @@ public class UserDAO {
 		}
 		logger.info("Leaving getGroup");
 		return groups.get(0);
+
+	}
+
+	public Group deleteMemberFromGroup(Group group, List<User> users) {
+		logger.info("Entering deleteMemberFromGroup");
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+		for (User user : users) {
+			String sql = "delete from GROUP_USER where user_id=" + user.getId() + " AND group_id=" + group.getGroupId()
+					+ ";";
+			SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+			// Query query = sessionFactory.getCurrentSession().createQuery(
+			// "delete from GROUP_USER where user_id=" + user.getId() + " AND
+			// group_id=" + group.getGroupId());
+			query.executeUpdate();
+		}
+		logger.info("Leaving deleteMemberFromGroup");
+//		return getGroup(group.getGroupId());
+		return group;
+	}
+
+	public Group addMemberToGroup(Group group, List<User> users) {
+		logger.info("Entering addMemberToGroup");
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+		for (User user : users) {
+			String sql = "insert into GROUP_USER values(" + group.getGroupId() + "," + user.getId() + ");";
+			SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+			// Query query = sessionFactory.getCurrentSession().createQuery(
+			// "insert into group_user values("+ user.getId() + "," +
+			// group.getGroupId()+")");
+			query.executeUpdate();
+		}
+		logger.info("Leaving addMemberToGroup");
+		return getGroup(group.getGroupId());
 
 	}
 

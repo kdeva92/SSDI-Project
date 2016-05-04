@@ -1,7 +1,6 @@
 package org.ChatApplication.data.service;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.ChatApplication.data.DAO.DAOObjectFactory;
@@ -125,20 +124,52 @@ public class UserService {
 			throw new Exception(e.getMessage());
 		}
 		return group;
-
 	}
 
+	public Group addMemberToGroup(Group group, List<User> users) throws Exception {
+
+		logger.info("Entering addMemberToGroup");
+		SessionFactory sessionFactory = HibernateSessionUtil.getCurrentSessionTransaction();
+		try {
+			group = DAOObjectFactory.getUserDAO().addMemberToGroup(group, users);
+			sessionFactory.getCurrentSession().getTransaction().commit();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new Exception(e.getMessage());
+		}
+		return group;
+	}
+
+	public Group removeMembersFromGroup(Group group, List<User> users) throws Exception {
+		logger.info("Entering addMemberToGroup");
+		SessionFactory sessionFactory = HibernateSessionUtil.getCurrentSessionTransaction();
+		try {
+			group = DAOObjectFactory.getUserDAO().deleteMemberFromGroup(group, users);
+			sessionFactory.getCurrentSession().getTransaction().commit();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new Exception(e.getMessage());
+		}
+		return group;
+	}                                 
+
 	public static void main(String[] args) throws Exception {
-//		List<String> ninerids = new ArrayList<String>();
-//		ninerids.add("000000000");
-//		ninerids.add("000000001");
-//		List<User> users = UserService.getInstance().getUsers(ninerids);
-//		for (Iterator iterator = users.iterator(); iterator.hasNext();) {
-//			User user = (User) iterator.next();
-//			System.out.println(user.getEmail());
-//		}
-		Group group = new Group();
-		group.setName("group1");
-		getInstance().createGroup(group);
+		// List<String> ninerids = new ArrayList<String>();
+		// ninerids.add("000000000");
+		// ninerids.add("000000001");
+		// List<User> users = UserService.getInstance().getUsers(ninerids);
+		// for (Iterator iterator = users.iterator(); iterator.hasNext();) {
+		// User user = (User) iterator.next();
+		// System.out.println(user.getEmail());
+		// }
+		Group group = UserService.getInstance().getGroup(100000004);
+		// List<User> members = group.getMembers();
+		// members.remove(0);
+		// group.setMembers(new ArrayList<User>());
+		// UserService.getInstance().updateGroup(group);
+		List<User> users = UserService.getInstance().getUsers("800908989");
+
+		UserService.getInstance().addMemberToGroup(group, users);
+		Group group2 = UserService.getInstance().getGroup(100000004);
 	}
 }
