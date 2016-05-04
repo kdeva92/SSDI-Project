@@ -94,4 +94,14 @@ public class Alerts {
 
 	}
 
+	public static Alert createFileKeepAlert() {
+		// TODO Auto-generated method stub
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("New incoming file");
+		alert.setHeaderText("Do you want to keep this file?");
+		
+		
+		return alert;
+	}
+
 }

@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.ChatApplication.common.converter.ByteToEntityConverter;
 import org.ChatApplication.data.entity.GroupVO;
@@ -34,6 +35,8 @@ import org.codehaus.jackson.map.JsonMappingException;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 public class Presenter {
 
@@ -337,7 +340,20 @@ public class Presenter {
 								stream.write(arrayList.get(i).getData());
 							}
 							stream.close();
-							Desktop.getDesktop().open(new File(filePath));
+							
+							Alert alert = Alerts.createFileKeepAlert();
+							ButtonType buttonYes = new ButtonType("Yes");
+							ButtonType buttonNo = new ButtonType("No");
+							alert.getButtonTypes().setAll(buttonYes, buttonNo);
+							Optional<ButtonType> result = alert.showAndWait();
+							if (result.get() == buttonYes) {
+								File file = new File(filePath);
+								Desktop.getDesktop().open(file);
+							} else {
+								alert.close();
+							}
+							
+							
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
