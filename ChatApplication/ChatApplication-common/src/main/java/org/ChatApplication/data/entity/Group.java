@@ -1,8 +1,11 @@
 package org.ChatApplication.data.entity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,10 +36,10 @@ public class Group {
 	@Column(name = "name")
 	private String name;
 
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "GROUP_USER", joinColumns = { @JoinColumn(name = "group_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "user_id") })
-	private List<User> members = new ArrayList<User>();
+	private Set<User> members = new HashSet<User>();
 
 	public int getGroupId() {
 		return groupId;
@@ -54,11 +57,11 @@ public class Group {
 		this.name = name;
 	}
 
-	public List<User> getMembers() {
+	public Set<User> getMembers() {
 		return members;
 	}
 
-	public void setMembers(List<User> members) {
+	public void setMembers(Set<User> members) {
 		this.members = members;
 	}
 

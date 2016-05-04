@@ -3,6 +3,7 @@ package org.ChatApplication.data.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -39,11 +40,10 @@ public class User {
 	@Column(name = "email", unique = true)
 	private String email;
 
-
 	@Column(name = "password")
 	private String password;
 
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "members")
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "members", cascade = CascadeType.ALL)
 	private List<Group> groups = new ArrayList<Group>();
 
 	public List<Group> getGroups() {
@@ -101,13 +101,13 @@ public class User {
 	public void setNinerId(String ninerId) {
 		this.ninerId = ninerId;
 	}
-	
+
 	@Override
 	public boolean equals(Object arg0) {
 		// TODO Auto-generated method stub
-		if(!(arg0 instanceof User))
+		if (!(arg0 instanceof User))
 			return false;
-		return getNinerId().equals(((User)arg0).getNinerId());
+		return getNinerId().equals(((User) arg0).getNinerId());
 	}
 
 }
