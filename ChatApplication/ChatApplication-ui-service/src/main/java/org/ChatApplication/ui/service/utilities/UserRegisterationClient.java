@@ -13,7 +13,7 @@ public class UserRegisterationClient {
 			return 2;
 		
 		//Validate ninerID
-		if(user.getNinerId().length()!=9 || user.getNinerId().startsWith("800"))
+		if(user.getNinerId().length()!=9 || !user.getNinerId().startsWith("800"))
 			return 3;
 		
 		

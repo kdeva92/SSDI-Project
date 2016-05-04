@@ -288,6 +288,7 @@ public class Presenter {
 	 */
 
 	public void searchContact(String searchString) {
+		this.chatPage.searchUserT.clear();
 		senderController.sendSearchContactString(searchString, user.getNinerId());
 
 	}
@@ -353,7 +354,7 @@ public class Presenter {
 			messageBody = new String(message.getData());
 		}
 
-		//String group = new String(message.getReceiver());
+		// String group = new String(message.getReceiver());
 
 		switch (message.getReceiverType()) {
 
@@ -367,13 +368,12 @@ public class Presenter {
 			break;
 
 		case 1:// Group Message
-			if (!messageBody.isEmpty()){
-			addGroupMessageToDB(message.getReceiver(), receiver, receiverName, messageBody);
-			ObservableList<MessageVO> chatArray = this.chatPage.userChats.get(message.getReceiver());
-			chatArray.add(new MessageVO(receiver, receiverName, messageBody));
-			this.chatPage.chatString.scrollTo(chatArray.size() - 1);
-			
-			
+			if (!messageBody.isEmpty()) {
+				addGroupMessageToDB(message.getReceiver(), receiver, receiverName, messageBody);
+				ObservableList<MessageVO> chatArray = this.chatPage.userChats.get(message.getReceiver());
+				chatArray.add(new MessageVO(receiver, receiverName, messageBody));
+				this.chatPage.chatString.scrollTo(chatArray.size() - 1);
+
 			}
 			break;
 		}
@@ -397,17 +397,18 @@ public class Presenter {
 			e.printStackTrace();
 		}
 	}
-	
-	private void addGroupMessageToDB(String groupID,String receiver, String receiverName, String messageBody) {
+
+	private void addGroupMessageToDB(String groupID, String receiver, String receiverName, String messageBody) {
 		DatabaseConnecter dbConnector = new DatabaseConnecter();
 		conn = dbConnector.getConn();
 		try {
 			stat = conn.createStatement();
-			stat.execute("CREATE TABLE IF NOT EXISTS Grp_" + user.getNinerId() + "_" + groupID+ "(sender varchar(10),senderName varchar(50),messageBody varchar(500))");
+			stat.execute("CREATE TABLE IF NOT EXISTS Grp_" + user.getNinerId() + "_" + groupID
+					+ "(sender varchar(10),senderName varchar(50),messageBody varchar(500))");
 			for (GroupTableObject group : this.chatPage.groupT) {
-				if ((group.getGroupID()+"").equals(groupID))
-					stat.execute("INSERT INTO Grp_" + user.getNinerId() + "_" + groupID + " VALUES('"
-							+ receiver + "','" + receiverName + "','" + messageBody.trim() + "')");
+				if ((group.getGroupID() + "").equals(groupID))
+					stat.execute("INSERT INTO Grp_" + user.getNinerId() + "_" + groupID + " VALUES('" + receiver + "','"
+							+ receiverName + "','" + messageBody.trim() + "')");
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -538,6 +539,7 @@ public class Presenter {
 		try {
 
 			initConnection();
+			System.out.println("Connection Initialized");
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -546,6 +548,7 @@ public class Presenter {
 			e.printStackTrace();
 		}
 		senderController.signUpMessage(userVO.getNinerId(), userVO);
+		loadHomepage();
 	}
 
 	public void sendEditGroupMessage(GroupVO groupVO) {
@@ -601,6 +604,14 @@ public class Presenter {
 	public void sendFile(File file, String senderId, ReceiverTypeEnum receiverTypeEnum, String receiverId) {
 		senderController.sendFile(file, senderId, receiverTypeEnum, receiverId);
 
+	}
+	
+	public void terminateSocket(){
+		try {
+			serverController.terminateConnection();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}
 	}
 
 }

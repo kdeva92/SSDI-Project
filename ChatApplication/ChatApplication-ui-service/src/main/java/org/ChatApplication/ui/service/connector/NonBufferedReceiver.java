@@ -44,8 +44,9 @@ public class NonBufferedReceiver {
 					read = streamreader.read();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
-					// System.exit(0);
+					//e.printStackTrace();
+					System.out.println("Socket Closed");
+					//System.exit(0);
 					break;
 				}
 				if (read == 0 && endZeroTrimFlag)
