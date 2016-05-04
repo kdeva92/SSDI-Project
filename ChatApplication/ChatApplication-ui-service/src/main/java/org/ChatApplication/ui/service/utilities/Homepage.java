@@ -81,7 +81,7 @@ public class Homepage {
 		signupBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				// TODO Auto-generated method stub
+				
 				UserRegisteration userRegister = new UserRegisteration();
 				try {
 					userRegister.loadSignupPage(presenter);

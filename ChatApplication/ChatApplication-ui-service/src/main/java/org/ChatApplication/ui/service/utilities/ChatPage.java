@@ -225,12 +225,15 @@ public class ChatPage {
 			public void handle(ActionEvent event) {
 				// TODO Auto-generated method stub
 				presenter.searchContact(searchUserT.getText().trim());
+			
 			}
 		});
 
 		logoutBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
+				//presenter.handleTermination();
+				presenter.terminateSocket();
 				presenter.loadHomepage();
 
 			}
@@ -332,30 +335,50 @@ public class ChatPage {
 
 		// Handling user to Chat binding
 
-		savedContacts.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Contact>() {
+//		savedContacts.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Contact>() {
+//
+//			public void changed(ObservableValue<? extends Contact> observable, Contact oldValue, Contact newValue) {
+//				// dataT.clear();
+//				System.out.println("Contact Selected");
+//				Contact contact = (Contact) newValue;
+//				String niner = contact.getNinerID();
+//				ObservableList<MessageVO> messageList = userChats.get(niner);
+//				chatString.setItems(messageList);
+//
+//			}
+//		});
+//
+//		// Handling group to chat binding
+//
+//		savedGroups.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<GroupTableObject>() {
+//			public void changed(ObservableValue<? extends GroupTableObject> observable, GroupTableObject oldValue,
+//					GroupTableObject newValue) {
+//				// dataT.clear();
+//				System.out.println("Group Selected");
+//				GroupTableObject group = (GroupTableObject) newValue;
+//				String groupId = group.getGroupID() + "";
+//				ObservableList<MessageVO> messageList = userChats.get(groupId);
+//				chatString.setItems(messageList);
+//
+//			}
+//		});
+		
+		
+		savedContacts.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newValue) -> {
+			System.out.println("Contact Selected");
+			Contact contact = (Contact) newValue;
+			String niner = contact.getNinerID();
+			ObservableList<MessageVO> messageList = userChats.get(niner);
+			chatString.setItems(messageList);
 
-			public void changed(ObservableValue<? extends Contact> observable, Contact oldValue, Contact newValue) {
-				// dataT.clear();
-				Contact contact = (Contact) newValue;
-				String niner = contact.getNinerID();
-				ObservableList<MessageVO> messageList = userChats.get(niner);
-				chatString.setItems(messageList);
-
-			}
 		});
-
-		// Handling group to chat binding
-
-		savedGroups.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<GroupTableObject>() {
-			public void changed(ObservableValue<? extends GroupTableObject> observable, GroupTableObject oldValue,
-					GroupTableObject newValue) {
-				// dataT.clear();
-				GroupTableObject group = (GroupTableObject) newValue;
-				String groupId = group.getGroupID() + "";
-				ObservableList<MessageVO> messageList = userChats.get(groupId);
-				chatString.setItems(messageList);
-
-			}
+		
+		savedGroups.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newValue) -> {
+			System.out.println("Group Selected");
+			GroupTableObject group = (GroupTableObject) newValue;
+			String groupId = group.getGroupID() + "";
+			ObservableList<MessageVO> messageList = userChats.get(groupId);
+			chatString.setItems(messageList);
 		});
 
 		/*
