@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.ChatApplication.common.util.MessageUtility;
@@ -136,7 +137,7 @@ public class DataMessageHandler implements IDataMessageHandler {
 							message.getSender(), message.getReceiver(), ReceiverTypeEnum.GROUP_MSG, message.getType(),
 							message.getPacketNo(), message.getNoOfPackets());
 
-					List<User> members = group.getMembers();
+					Set<User> members = group.getMembers();
 					for (Iterator iterator = members.iterator(); iterator.hasNext();) {
 						User user = (User) iterator.next();
 						if(user.getNinerId().equals(message.getSender()))
