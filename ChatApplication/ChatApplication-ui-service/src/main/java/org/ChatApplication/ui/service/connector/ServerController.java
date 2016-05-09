@@ -15,7 +15,7 @@ public class ServerController {
 	private Socket socket;
 	private SenderController senderController;
 	private NonBufferedReceiver nonBufferedReceiver;
-	private static String HOST = "localhost";
+	private static String HOST = "192.168.82.1";
 	private static int PORT = 1515;
 
 	public ServerController(MessageListener ml) throws UnknownHostException, IOException {

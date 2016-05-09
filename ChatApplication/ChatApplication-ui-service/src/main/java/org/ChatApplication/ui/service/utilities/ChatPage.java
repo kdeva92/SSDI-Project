@@ -365,6 +365,7 @@ public class ChatPage {
 		
 		
 		savedContacts.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newValue) -> {
+			savedGroups.getSelectionModel().clearSelection();
 			System.out.println("Contact Selected");
 			Contact contact = (Contact) newValue;
 			String niner = contact.getNinerID();
@@ -374,6 +375,7 @@ public class ChatPage {
 		});
 		
 		savedGroups.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newValue) -> {
+			savedContacts.getSelectionModel().clearSelection();
 			System.out.println("Group Selected");
 			GroupTableObject group = (GroupTableObject) newValue;
 			String groupId = group.getGroupID() + "";
