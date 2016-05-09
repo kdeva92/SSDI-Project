@@ -131,7 +131,7 @@ public class InstructionHandler implements IInstructionHandler {
 						GroupVO groupVO = ByteToEntityConverter.getInstance().getGroupVO(message.getData());
 						List<User> usersForGrp = UserService.getInstance().getUsers(groupVO.getListOfMembers());
 						Group group = new Group();
-						group.setMembers(usersForGrp);
+						group.setMembers(new HashSet<User>(usersForGrp));
 						group.setName(groupVO.getGroupName());
 						userService.createGroup(group);
 						System.out.println(
@@ -142,7 +142,7 @@ public class InstructionHandler implements IInstructionHandler {
 								EntityToByteConverter.getInstance().getJsonString(groupVO), message.getSender(),
 								message.getReceiver(), ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.CREATE_GROUP);
 						for (ByteBuffer byteBuffer : buffArray) {
-							List<User> members = group.getMembers();
+							Set<User> members = group.getMembers();
 							for (Iterator iterator = members.iterator(); iterator.hasNext();) {
 								try {
 									User user = (User) iterator.next();
@@ -176,21 +176,32 @@ public class InstructionHandler implements IInstructionHandler {
 						//get data from req
 						GroupVO groupVO = ByteToEntityConverter.getInstance().getGroupVO(message.getData());
 						List<User> usersForGrp = UserService.getInstance().getUsers(groupVO.getListOfMembers());
-						
+
 						// get existing group
 						Group group = userService.getGroup(groupVO.getGroupId());
-						List<User> emembers = group.getMembers();
+						Set<User> emembers = group.getMembers();
 
+						Set<User> membersToRemove = new HashSet<User>(emembers);
+						membersToRemove.removeAll(usersForGrp);
+						
+						Set<User> membersToAdd = new HashSet<User>(usersForGrp);
+						membersToAdd.removeAll(emembers);
+						
+						Set<User> usersToUpdate = new HashSet<User>(emembers);
+						usersToUpdate.addAll(usersForGrp);
+						
+						
 						// update group
-						group.setMembers(usersForGrp);
-						group.setName(groupVO.getGroupName());
-						group.setGroupId(groupVO.getGroupId());
-						userService.updateGroup(group);
+						if(membersToAdd.size()>0)
+							userService.addMemberToGroup(group, membersToAdd);
+						if(membersToRemove.size()>0)
+							userService.removeMembersFromGroup(group, membersToRemove);
+							
 						System.out.println(
 								"Group updated: " + groupVO.getGroupName() + " #members: " + group.getMembers().size());
 						groupVO.setGroupId(group.getGroupId());
 
-						List<User> members = group.getMembers();
+						Set<User> members = group.getMembers();
 						List<ByteBuffer> buffArray = MessageUtility.packMessageToArray(
 								EntityToByteConverter.getInstance().getJsonString(groupVO), message.getSender(),
 								message.getReceiver(), ReceiverTypeEnum.GROUP_MSG, MessageTypeEnum.EDIT_GROUP);
@@ -237,6 +248,7 @@ public class InstructionHandler implements IInstructionHandler {
 					}
 
 					break;
+
 				default:
 					System.out.println("Default of inst handler");
 					break;

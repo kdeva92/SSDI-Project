@@ -2,6 +2,7 @@ package org.ChatApplication.data.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.ChatApplication.data.DAO.DAOObjectFactory;
 import org.ChatApplication.data.entity.Group;
@@ -126,7 +127,7 @@ public class UserService {
 		return group;
 	}
 
-	public Group addMemberToGroup(Group group, List<User> users) throws Exception {
+	public Group addMemberToGroup(Group group, Set<User> users) throws Exception {
 
 		logger.info("Entering addMemberToGroup");
 		SessionFactory sessionFactory = HibernateSessionUtil.getCurrentSessionTransaction();
@@ -140,7 +141,7 @@ public class UserService {
 		return group;
 	}
 
-	public Group removeMembersFromGroup(Group group, List<User> users) throws Exception {
+	public Group removeMembersFromGroup(Group group, Set<User> users) throws Exception {
 		logger.info("Entering addMemberToGroup");
 		SessionFactory sessionFactory = HibernateSessionUtil.getCurrentSessionTransaction();
 		try {
@@ -169,7 +170,7 @@ public class UserService {
 		// UserService.getInstance().updateGroup(group);
 		List<User> users = UserService.getInstance().getUsers("800908989");
 
-		UserService.getInstance().addMemberToGroup(group, users);
+		//		UserService.getInstance().addMemberToGroup(group, users);
 		Group group2 = UserService.getInstance().getGroup(100000004);
 	}
 }

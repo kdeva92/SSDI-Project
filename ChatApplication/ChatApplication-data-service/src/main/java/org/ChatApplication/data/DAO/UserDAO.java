@@ -2,6 +2,7 @@ package org.ChatApplication.data.DAO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.ChatApplication.data.entity.Group;
 import org.ChatApplication.data.entity.User;
@@ -108,7 +109,7 @@ public class UserDAO {
 
 	}
 
-	public Group deleteMemberFromGroup(Group group, List<User> users) {
+	public Group deleteMemberFromGroup(Group group, Set<User> users) {
 		logger.info("Entering deleteMemberFromGroup");
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 		for (User user : users) {
@@ -125,7 +126,7 @@ public class UserDAO {
 		return group;
 	}
 
-	public Group addMemberToGroup(Group group, List<User> users) {
+	public Group addMemberToGroup(Group group, Set<User> users) {
 		logger.info("Entering addMemberToGroup");
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 		for (User user : users) {

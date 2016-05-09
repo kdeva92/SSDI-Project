@@ -1,6 +1,7 @@
 package org.ChatApplication.server;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.ChatApplication.data.DAO.UserDAO;
@@ -108,7 +109,7 @@ public class AppTest extends TestCase {
 		List<User> users = new ArrayList<User>();
 
 		users.addAll(UserService.getInstance().getUsers("000000000"));
-		group.setMembers(users);
+		group.setMembers(new HashSet<User>(users));
 		UserService.getInstance().createGroup(group);
 
 		Group g = UserService.getInstance().getGroup(group.getGroupId());
