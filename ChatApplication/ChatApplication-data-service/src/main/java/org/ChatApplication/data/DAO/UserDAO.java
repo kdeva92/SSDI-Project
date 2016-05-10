@@ -109,36 +109,30 @@ public class UserDAO {
 
 	}
 
-	public Group deleteMemberFromGroup(Group group, Set<User> users) {
+	public void deleteMemberFromGroup(Group group, Set<User> users) {
 		logger.info("Entering deleteMemberFromGroup");
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 		for (User user : users) {
 			String sql = "delete from GROUP_USER where user_id=" + user.getId() + " AND group_id=" + group.getGroupId()
 					+ ";";
 			SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(sql);
-			// Query query = sessionFactory.getCurrentSession().createQuery(
-			// "delete from GROUP_USER where user_id=" + user.getId() + " AND
-			// group_id=" + group.getGroupId());
 			query.executeUpdate();
 		}
 		logger.info("Leaving deleteMemberFromGroup");
-//		return getGroup(group.getGroupId());
-		return group;
+		// return getGroup(group.getGroupId());
+		// return group;
 	}
 
-	public Group addMemberToGroup(Group group, Set<User> users) {
+	public void addMemberToGroup(Group group, Set<User> users) {
 		logger.info("Entering addMemberToGroup");
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 		for (User user : users) {
 			String sql = "insert into GROUP_USER values(" + group.getGroupId() + "," + user.getId() + ");";
 			SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(sql);
-			// Query query = sessionFactory.getCurrentSession().createQuery(
-			// "insert into group_user values("+ user.getId() + "," +
-			// group.getGroupId()+")");
 			query.executeUpdate();
 		}
 		logger.info("Leaving addMemberToGroup");
-		return getGroup(group.getGroupId());
+		// return getGroup(group.getGroupId());
 
 	}
 
@@ -148,5 +142,18 @@ public class UserDAO {
 		sessionFactory.getCurrentSession().update(group);
 		logger.info("Leaving createGroup");
 		return group;
+	}
+
+	public List<Object> getGroupMembers(int groupId) {
+
+		logger.info("Entering addMemberToGroup");
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+		String sql = "select USER.niner_id from GROUP_USER, USER where GROUP_USER.group_id=" + groupId + ";";
+		SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+		logger.info("Leaving addMemberToGroup");
+		return query.list();
+		
+		// return getGroup(group.getGroupId());
+
 	}
 }

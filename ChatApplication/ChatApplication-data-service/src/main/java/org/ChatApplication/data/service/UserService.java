@@ -127,32 +127,51 @@ public class UserService {
 		return group;
 	}
 
-	public Group addMemberToGroup(Group group, Set<User> users) throws Exception {
+	public List<User> getGroupMembers(int groupId) throws Exception {
 
-		logger.info("Entering addMemberToGroup");
+		List<User> users = new ArrayList<User>();
+		logger.info("Entering updateGroup");
 		SessionFactory sessionFactory = HibernateSessionUtil.getCurrentSessionTransaction();
 		try {
-			group = DAOObjectFactory.getUserDAO().addMemberToGroup(group, users);
-			sessionFactory.getCurrentSession().getTransaction().commit();
+			List<Object> groupMembers = DAOObjectFactory.getUserDAO().getGroupMembers(groupId);
+			for (Object groupMember : groupMembers) {
+				// users.add(getUsers(""));
+			}
 		} catch (HibernateException e) {
 			logger.error(e.getMessage());
 			throw new Exception(e.getMessage());
 		}
-		return group;
+
+		return users;
+
 	}
 
-	public Group removeMembersFromGroup(Group group, Set<User> users) throws Exception {
+	public void addMemberToGroup(Group group, Set<User> users) throws Exception {
+
 		logger.info("Entering addMemberToGroup");
 		SessionFactory sessionFactory = HibernateSessionUtil.getCurrentSessionTransaction();
 		try {
-			group = DAOObjectFactory.getUserDAO().deleteMemberFromGroup(group, users);
+			DAOObjectFactory.getUserDAO().addMemberToGroup(group, users);
 			sessionFactory.getCurrentSession().getTransaction().commit();
 		} catch (HibernateException e) {
 			logger.error(e.getMessage());
 			throw new Exception(e.getMessage());
 		}
-		return group;
-	}                                 
+		// return group;
+	}
+
+	public void removeMembersFromGroup(Group group, Set<User> users) throws Exception {
+		logger.info("Entering addMemberToGroup");
+		SessionFactory sessionFactory = HibernateSessionUtil.getCurrentSessionTransaction();
+		try {
+			DAOObjectFactory.getUserDAO().deleteMemberFromGroup(group, users);
+			sessionFactory.getCurrentSession().getTransaction().commit();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage());
+			throw new Exception(e.getMessage());
+		}
+		// return group;
+	}
 
 	public static void main(String[] args) throws Exception {
 		// List<String> ninerids = new ArrayList<String>();
@@ -170,7 +189,7 @@ public class UserService {
 		// UserService.getInstance().updateGroup(group);
 		List<User> users = UserService.getInstance().getUsers("800908989");
 
-		//		UserService.getInstance().addMemberToGroup(group, users);
+		// UserService.getInstance().addMemberToGroup(group, users);
 		Group group2 = UserService.getInstance().getGroup(100000004);
 	}
 }
