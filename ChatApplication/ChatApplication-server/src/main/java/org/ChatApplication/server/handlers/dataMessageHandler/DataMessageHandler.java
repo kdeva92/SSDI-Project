@@ -131,16 +131,15 @@ public class DataMessageHandler implements IDataMessageHandler {
 				// operate on group - DB access and individual send to each
 				// receiver
 				try {
-					Group group = userService.getGroup(Integer.parseInt(message.getReceiver()));
+					List<User> members = userService.getGroupMembers(Integer.parseInt(message.getReceiver()));
 
 					ByteBuffer byteBuffer = MessageUtility.packMessage(new String(message.getData()).trim().getBytes(),
 							message.getSender(), message.getReceiver(), ReceiverTypeEnum.GROUP_MSG, message.getType(),
 							message.getPacketNo(), message.getNoOfPackets());
 
-					Set<User> members = group.getMembers();
 					for (Iterator iterator = members.iterator(); iterator.hasNext();) {
 						User user = (User) iterator.next();
-						if(user.getNinerId().equals(message.getSender()))
+						if (user.getNinerId().equals(message.getSender()))
 							continue;
 						sender.sendMessage(user.getNinerId(), byteBuffer.duplicate());
 					}
@@ -156,11 +155,11 @@ public class DataMessageHandler implements IDataMessageHandler {
 		}
 
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		UserService userService = UserService.getInstance();
 		Group group = userService.getGroup(100000031);
-		System.out.println(" "+group.getGroupId()+" users "+group.getMembers().size());
+		System.out.println(" " + group.getGroupId() + " users " + group.getMembers().size());
 	}
 
 }

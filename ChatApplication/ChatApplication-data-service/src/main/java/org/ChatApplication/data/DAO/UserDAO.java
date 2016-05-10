@@ -148,11 +148,12 @@ public class UserDAO {
 
 		logger.info("Entering addMemberToGroup");
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-		String sql = "select USER.niner_id from GROUP_USER, USER where GROUP_USER.group_id=" + groupId + ";";
+		String sql = "select USER.niner_id from GROUP_USER, USER where GROUP_USER.group_id=" + groupId
+				+ " AND GROUP_USER.user_id=USER.user_id;";
 		SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(sql);
 		logger.info("Leaving addMemberToGroup");
 		return query.list();
-		
+
 		// return getGroup(group.getGroupId());
 
 	}

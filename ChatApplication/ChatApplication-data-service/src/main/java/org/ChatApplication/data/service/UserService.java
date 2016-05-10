@@ -135,7 +135,9 @@ public class UserService {
 		try {
 			List<Object> groupMembers = DAOObjectFactory.getUserDAO().getGroupMembers(groupId);
 			for (Object groupMember : groupMembers) {
-				// users.add(getUsers(""));
+				if (groupMember != null) {
+					users.add(getUsers(groupMember.toString()).get(0));
+				}
 			}
 		} catch (HibernateException e) {
 			logger.error(e.getMessage());
