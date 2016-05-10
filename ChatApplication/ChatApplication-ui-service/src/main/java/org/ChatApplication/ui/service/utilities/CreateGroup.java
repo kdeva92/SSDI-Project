@@ -130,6 +130,7 @@ public class CreateGroup {
 		createBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
+				if(!groupNameText.getText().isEmpty()){
 				listOfMembers.clear();
 				listOfMembers.add(presenter.getUser().getNinerId());
 				String groupName = groupNameText.getText();
@@ -138,7 +139,7 @@ public class CreateGroup {
 				}
 				ArrayList<String> membersList = new ArrayList<String>(listOfMembers);
 				presenter.sendCreateGroupMessage(new GroupVO(groupNameText.getText().trim(), membersList));
-				
+				}
 			}
 		});
 

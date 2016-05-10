@@ -368,7 +368,13 @@ public class ChatPage {
 			savedGroups.getSelectionModel().clearSelection();
 			System.out.println("Contact Selected");
 			Contact contact = (Contact) newValue;
-			String niner = contact.getNinerID();
+			String niner="";
+			try{
+			niner = contact.getNinerID();
+			}
+			catch(Exception e){
+				
+			}
 			ObservableList<MessageVO> messageList = userChats.get(niner);
 			chatString.setItems(messageList);
 
@@ -378,7 +384,13 @@ public class ChatPage {
 			savedContacts.getSelectionModel().clearSelection();
 			System.out.println("Group Selected");
 			GroupTableObject group = (GroupTableObject) newValue;
-			String groupId = group.getGroupID() + "";
+			String groupId="";
+			try{
+			groupId = group.getGroupID() + "";
+		}
+		catch(Exception e){
+			
+		}
 			ObservableList<MessageVO> messageList = userChats.get(groupId);
 			chatString.setItems(messageList);
 		});

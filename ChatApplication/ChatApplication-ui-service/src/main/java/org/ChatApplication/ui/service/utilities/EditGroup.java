@@ -129,6 +129,7 @@ public class EditGroup {
 		createBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
+				if(!groupNameText.getText().isEmpty()){
 				listOfMembers.clear();
 				listOfMembers.add(presenter.getUser().getNinerId());
 				String groupName = groupNameText.getText();
@@ -141,7 +142,7 @@ public class EditGroup {
 				System.out.println("Group being sent: "+grp.getGroupId()+" "+grp.getGroupName());
 				//presenter.sendCreateGroupMessage());
 				presenter.sendEditGroupMessage(grp);
-				
+				}
 			}
 		});
 
